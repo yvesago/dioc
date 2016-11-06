@@ -4,11 +4,15 @@ go:
   - 1.6
   - tip
 
-script:
+go_import_path: github.com/yvesago/dioc
+
+install:
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
   - go get github.com/gin-gonic/gin
   - go get github.com/mattn/go-sqlite3
   - go get gopkg.in/gorp.v1
   - go get gopkg.in/gomail.v2
+
+script:
   - go test -v ./models/
