@@ -11,4 +11,4 @@ script:
   - go get github.com/mattn/go-sqlite3
   - go get gopkg.in/gorp.v1
   - go get gopkg.in/gomail.v2
-  - go test -v -covermode=count ./models/
+  - go test -v ./models/
