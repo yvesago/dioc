@@ -2,6 +2,10 @@
 *.o
 *.a
 *.so
+conf.json
+test.sqlite3
+server
+agent
 
 # Folders
 _obj
