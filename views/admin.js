@@ -15,7 +15,7 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
         nga.field('role'),
         nga.field('level').cssClasses(['red']).template('<span ng-class="{ \'orange\': value === \'warn\' }"><ma-string-column field="::field" value="::entry.values[field.name()]"></ma-string-column></span>'),
         nga.field('crcs'),
-        nga.field('comment','text'),
+        nga.field('comment','wysiwyg'),
         nga.field('created','datetime'),
         nga.field('updated','datetime'),
     ]).filters([
