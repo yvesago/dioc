@@ -1,0 +1,321 @@
+package models
+
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"gopkg.in/gorp.v1"
+	//"log"
+	"hash/crc32"
+	"regexp"
+	//	"strconv"
+	"time"
+)
+
+/**
+Search for XXX to fix fields mapping in Update handler, mandatory fields
+or remove sqlite tricks
+
+ vim search and replace cmd to customize struct, handler and instances
+  :%s/Agent/NewStruct/g
+  :%s/agent/newinst/g
+
+**/
+
+// XXX custom struct name and fields
+type Agent struct {
+	//	Id         int64     `db:"id" json:"id"`
+	CRCa       string    `db:"crca" json:"crca"` //primary Key
+	IP         string    `db:"ip" json:"ip"`
+	FileSurvey string    `db:"filesurvey" json:"filesurvey"`
+	Role       string    `db:"role" json:"role"`
+	Comment    string    `db:"name:comment, size:16384" json:"comment"`
+	Lines      string    `db:"name:lines, size:16384" json:"lines"`
+	Status     string    `db:"status" json:"status"`
+	CMD        string    `db:"cmd" json:"cmd"`
+	Salt       string    `db:"-" json:"-"`
+	Created    time.Time `db:"created" json:"created"` // or int64
+	Updated    time.Time `db:"updated" json:"updated"`
+}
+
+// Hooks : PreInsert and PreUpdate
+
+func hashAgent(Salt string, IP string, File string) string {
+	crc32q := crc32.MakeTable(0xD5828281)
+	crca := fmt.Sprintf("%08x", crc32.Checksum([]byte(Salt+IP+":"+File), crc32q))
+	return crca
+}
+
+func (a *Agent) PreInsert(s gorp.SqlExecutor) error {
+	salt := a.Salt
+	a.CRCa = hashAgent(salt, a.IP, a.FileSurvey)
+	a.CMD = "SendLines"
+	a.Created = time.Now() // or time.Now().UnixNano()
+	a.Updated = a.Created
+	return nil
+}
+
+func (a *Agent) PreUpdate(s gorp.SqlExecutor) error {
+	a.Updated = time.Now()
+	return nil
+}
+
+// REST handlers
+
+func GetAgents(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	query := "SELECT * FROM agent"
+
+	// Parse query string
+	//  receive : map[_filters:[{"q":"wx"}] _sortField:[id] ...
+	q := c.Request.URL.Query()
+	//fmt.Println(q)
+	if q["_filters"] != nil {
+		re := regexp.MustCompile("{\"([a-zA-Z0-9_]+?)\":\"([a-zA-Z0-9_. ]+?)\"}")
+		r := re.FindStringSubmatch(q["_filters"][0])
+		// TODO: special col name for all fields via reflections
+		col := r[1]
+		search := r[2]
+		if col != "" && search != "" {
+			query = query + " WHERE " + col + " LIKE \"%" + search + "%\" "
+		}
+	}
+	if q["_sortField"] != nil && q["_sortDir"] != nil {
+		sortField := q["_sortField"][0]
+		// prevent SQLi
+		valid := regexp.MustCompile("^[A-Za-z0-9_]+$")
+		if !valid.MatchString(sortField) {
+			sortField = ""
+		}
+		if sortField == "id" {
+			sortField = "crca"
+		}
+		if sortField == "created" || sortField == "updated" { // XXX trick for sqlite
+			sortField = "datetime(" + sortField + ")"
+		}
+		sortOrder := q["_sortDir"][0]
+		if sortOrder != "ASC" {
+			sortOrder = "DESC"
+		}
+		// _page, _perPage, _sortDir, _sortField
+		if sortField != "" {
+			query = query + " ORDER BY " + sortField + " " + sortOrder
+		}
+	}
+	//fmt.Println(" -- " + query)
+
+	var agents []Agent
+	_, err := dbmap.Select(&agents, query)
+
+	if err == nil {
+		c.JSON(200, agents)
+	} else {
+		c.JSON(404, gin.H{"error": "no agent(s) into the table"})
+	}
+
+	// curl -i http://localhost:8080/api/v1/agents
+}
+
+func GetAgent(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	//id := c.Params.ByName("id")
+	crca := c.Params.ByName("crca")
+	//fmt.Println(" -- " + id + " -- " + crca)
+
+	var agent Agent
+	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=? LIMIT 1", id)
+	err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=? LIMIT 1", crca)
+
+	if err == nil {
+		c.JSON(200, agent)
+	} else {
+		c.JSON(404, gin.H{"error": "agent not found"})
+	}
+
+	// curl -i http://localhost:8080/api/v1/agents/1
+}
+
+func PostAgent(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+
+	var agent Agent
+	c.Bind(&agent)
+
+	//log.Println(agent)
+
+	if agent.IP != "" && agent.FileSurvey != "" { // XXX Check mandatory fields
+		err := dbmap.Insert(&agent)
+		if err == nil {
+			c.JSON(201, agent)
+		} else {
+			checkErr(err, "Insert failed")
+		}
+
+	} else {
+		c.JSON(400, gin.H{"error": "Mandatory fields are empty"})
+	}
+
+	// curl -i -X POST -H "Content-Type: application/json" -d "{ \"firstname\": \"Thea\", \"lastname\": \"Queen\" }" http://localhost:8080/api/v1/agents
+}
+
+func UpdateAgent(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	//id := c.Params.ByName("id")
+	crca := c.Params.ByName("crca")
+
+	var agent Agent
+	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=?", id)
+	err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=?", crca)
+	if err == nil {
+		var json Agent
+		c.Bind(&json)
+
+		//log.Println(json)
+		//agent_id, _ := strconv.ParseInt(id, 0, 64)
+
+		//TODO : find fields via reflections
+		//XXX custom fields mapping
+		agent := Agent{
+			//Id:         agent_id,
+			//CRCa:       json.CRCa,
+			CRCa:       crca,
+			IP:         json.IP,
+			FileSurvey: json.FileSurvey,
+			Role:       json.Role,
+			Lines:      json.Lines,
+			CMD:        json.CMD,
+			Status:     json.Status,
+			Created:    agent.Created, //agent read from previous select
+		}
+
+		if agent.CRCa != "" { // XXX Check mandatory fields
+			_, err = dbmap.Update(&agent)
+			if err == nil {
+				c.JSON(200, agent)
+			} else {
+				checkErr(err, "Updated failed")
+			}
+
+		} else {
+			c.JSON(400, gin.H{"error": "mandatory fields are empty"})
+		}
+
+	} else {
+		c.JSON(404, gin.H{"error": "agent not found"})
+	}
+
+	// curl -i -X PUT -H "Content-Type: application/json" -d "{ \"firstname\": \"Thea\", \"lastname\": \"Merlyn\" }" http://localhost:8080/api/v1/agents/1
+}
+
+func DeleteAgent(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	//id := c.Params.ByName("id")
+	crca := c.Params.ByName("crca")
+
+	var agent Agent
+	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=?", id)
+	err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=?", crca)
+
+	if err == nil {
+		_, err = dbmap.Delete(&agent)
+
+		if err == nil {
+			//c.JSON(200, gin.H{"id #" + id: "deleted"})
+			c.JSON(200, gin.H{"crca #" + crca: "deleted"})
+		} else {
+			checkErr(err, "Delete failed")
+		}
+
+	} else {
+		c.JSON(404, gin.H{"error": "agent not found"})
+	}
+
+	// curl -i -X DELETE http://localhost:8080/api/v1/agents/1
+}
+
+/**
+
+Agent handlers
+
+
+**/
+
+func RegisterHandler(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	//file := c.Params.ByName("file")
+	var json Agent
+	c.Bind(&json)
+	//		fmt.Println(json)
+	if json.FileSurvey != "" {
+		var agent Agent
+		agent = Agent{
+			IP:         c.ClientIP(),
+			FileSurvey: json.FileSurvey,
+		}
+		salt := c.MustGet("Salt").(string)
+        agent.Salt = salt
+		crca := hashAgent(salt, agent.IP, agent.FileSurvey)
+		// Check if exist
+		err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=?", crca)
+		if err == nil {
+			c.JSON(201, agent.CRCa)
+		} else {
+			err := dbmap.Insert(&agent)
+			if err == nil {
+				c.JSON(201, agent.CRCa)
+			} else {
+				checkErr(err, "Insert failed")
+			}
+		}
+	} else {
+		c.JSON(400, gin.H{"error": "missing mandatory file"})
+	}
+}
+
+func SendLinesHandler(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	crca := c.Params.ByName("crca")
+	//			fmt.Println("======>"+crca+"<==")
+	var agent Agent
+	err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=?", crca)
+	if err == nil {
+		var json Agent
+		c.Bind(&json)
+		//		fmt.Println(json)
+		if json.Lines != "" {
+			agent.Lines = json.Lines
+			agent.CMD = ""
+			//fmt.Println("=======>"+agent.Lines)
+			_, err = dbmap.Update(&agent)
+			if err == nil {
+				c.JSON(201, "0K")
+			} else {
+				checkErr(err, "Update failed")
+			}
+		} else {
+			c.JSON(400, gin.H{"error": "missing mandatory lines"})
+		}
+	} else {
+		c.JSON(400, gin.H{"error": "bad crca"})
+	}
+
+}
+
+func CMDHandler(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	crca := c.Params.ByName("crca")
+	var agent Agent
+	err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=?", crca)
+	if err == nil {
+		var listeSurveys []string
+		dbmap.Select(&listeSurveys, "SELECT crcs FROM survey WHERE role=?", agent.Role)
+		agent.Status = "OnLine"
+		_, err = dbmap.Update(&agent)
+		if err == nil {
+			c.JSON(200, gin.H{"CMD": agent.CMD, "ListeSurveys": listeSurveys})
+		} else {
+			checkErr(err, "Update failed")
+		}
+	} else {
+		c.JSON(400, gin.H{"error": "bad crca"})
+	}
+}
