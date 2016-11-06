@@ -1,0 +1,9 @@
+{
+    "DBName":"test.sqlite3",
+    "Salt":"xxxxxxx",
+    "Token": "basic",
+    "IPsAllowed": ["127.0.0.1","::1"],
+    "MailServer":"smtp.my.test:25",
+    "MailFrom":"No reply <noreply@my.test>",
+    "MailTo": ["me@my.org", "other@my.test"]
+}
