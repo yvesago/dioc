@@ -32,7 +32,7 @@ type Agent struct {
 	Lines      string    `db:"name:lines, size:16384" json:"lines"`
 	Status     string    `db:"status" json:"status"`
 	CMD        string    `db:"cmd" json:"cmd"`
-	Salt       string    `db:"-" json:"-"`
+	Salt       string    `db:"-" json:"-"`             // not registred in database
 	Created    time.Time `db:"created" json:"created"` // or int64
 	Updated    time.Time `db:"updated" json:"updated"`
 }
@@ -175,14 +175,13 @@ func UpdateAgent(c *gin.Context) {
 		//TODO : find fields via reflections
 		//XXX custom fields mapping
 		agent := Agent{
-			//Id:         agent_id,
-			//CRCa:       json.CRCa,
 			CRCa:       crca,
 			IP:         json.IP,
 			FileSurvey: json.FileSurvey,
 			Role:       json.Role,
 			Lines:      json.Lines,
 			CMD:        json.CMD,
+			Comment:    json.Comment,
 			Status:     json.Status,
 			Created:    agent.Created, //agent read from previous select
 		}
@@ -252,7 +251,7 @@ func RegisterHandler(c *gin.Context) {
 			FileSurvey: json.FileSurvey,
 		}
 		salt := c.MustGet("Salt").(string)
-        agent.Salt = salt
+		agent.Salt = salt
 		crca := hashAgent(salt, agent.IP, agent.FileSurvey)
 		// Check if exist
 		err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE crca=?", crca)
