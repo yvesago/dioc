@@ -69,7 +69,6 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
        nga.field('crca'),
        nga.field('ip'),
        nga.field('filesurvey'),
-       nga.field('status'),
        nga.field('lines','text'),
        nga.field('comment','text'),
        nga.field('role', 'choice').choices([ // XXX fix your categorys
