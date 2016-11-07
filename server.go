@@ -29,6 +29,7 @@ type Config struct {
 	MailServer string
 	MailFrom   string
 	MailTo     []string
+	Debug      bool
 }
 
 // gin Middlware to set Config
@@ -44,10 +45,10 @@ func SetConfig(config Config) gin.HandlerFunc {
 
 func main() {
 	confPtr := flag.String("c", "", "Json config file")
-	//	debugPtr := flag.Bool("d", false, "Debug mode")
+	debugPtr := flag.Bool("d", false, "Debug mode")
 	flag.Parse()
 	conf := *confPtr
-	//	Debug := *debugPtr
+	Debug := *debugPtr
 
 	file, err := os.Open(conf)
 	if err != nil {
@@ -63,6 +64,7 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
+	config.Debug = Debug
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -82,12 +84,16 @@ func checkOffline(dbname string) {
 }
 
 func servermain(config Config) {
-	//	gin.SetMode(gin.ReleaseMode)
+	if config.Debug == false {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	//r := gin.Default()
 	r := gin.New()
 
 	r.Use(gin.Recovery())
-	r.Use(Logger())
+	if config.Debug == true {
+		r.Use(Logger())
+	}
 
 	r.Use(SetConfig(config))
 	r.Use(Database(config.DBname))
