@@ -21,6 +21,7 @@ func Cors() gin.HandlerFunc {
 }
 
 type Config struct {
+	Port       string
 	DBname     string
 	Salt       string
 	Token      string
@@ -129,7 +130,7 @@ func servermain(config Config) {
 		client.GET("/survey/:crcs", GetSurveyByCRCs)
 	}
 
-	r.Run(":8080")
+	r.Run(config.Port)
 }
 
 func Options(c *gin.Context) {
