@@ -25,6 +25,7 @@ type Config struct {
 	MailServer string
 	MailFrom   string
 	MailTo     []string
+	Verbose    bool
 }
 
 func SetConfig(config Config) gin.HandlerFunc {
@@ -33,6 +34,7 @@ func SetConfig(config Config) gin.HandlerFunc {
 		c.Set("MailServer", config.MailServer)
 		c.Set("MailTo", config.MailTo)
 		c.Set("MailFrom", config.MailFrom)
+		c.Set("Verbose", config.Verbose)
 		c.Next()
 	}
 }
@@ -44,4 +46,5 @@ var config = Config{
 	MailServer: "smtp.my.test:25",
 	MailFrom:   "No reply <noreply@my.test>",
 	MailTo:     []string{"me@my.org", "other@my.test"},
+	Verbose:    true, // Set with cmd line in release mode
 }

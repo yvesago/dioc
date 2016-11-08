@@ -195,6 +195,7 @@ Survey handlers
 **/
 func GetSurveyByCRCs(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	verbose := c.MustGet("Verbose").(bool)
 	crcs := c.Params.ByName("crcs")
 
 	type ShortSurvey struct {
@@ -204,6 +205,9 @@ func GetSurveyByCRCs(c *gin.Context) {
 	}
 	var surveyResp ShortSurvey
 	err := dbmap.SelectOne(&surveyResp, "SELECT crcs,search,id FROM survey WHERE crcs=? LIMIT 1", crcs)
+	if verbose == true {
+		fmt.Println(surveyResp)
+	}
 
 	if err == nil {
 		c.JSON(200, surveyResp)

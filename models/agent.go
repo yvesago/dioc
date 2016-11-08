@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gorp.v1"
-	//"log"
 	"hash/crc32"
-	"regexp"
-	//	"strconv"
+	"strings"
 	"time"
 )
 
@@ -63,45 +61,17 @@ func (a *Agent) PreUpdate(s gorp.SqlExecutor) error {
 
 func GetAgents(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	verbose := c.MustGet("Verbose").(bool)
 	query := "SELECT * FROM agent"
 
 	// Parse query string
-	//  receive : map[_filters:[{"q":"wx"}] _sortField:[id] ...
 	q := c.Request.URL.Query()
-	//fmt.Println(q)
-	if q["_filters"] != nil {
-		re := regexp.MustCompile("{\"([a-zA-Z0-9_]+?)\":\"([a-zA-Z0-9_. ]+?)\"}")
-		r := re.FindStringSubmatch(q["_filters"][0])
-		// TODO: special col name for all fields via reflections
-		col := r[1]
-		search := r[2]
-		if col != "" && search != "" {
-			query = query + " WHERE " + col + " LIKE \"%" + search + "%\" "
-		}
+	tmpquery := query + ParseQuery(q)
+	query = strings.Replace(tmpquery, "ORDER BY id ", "ORDER BY crca ", 1) // workaround for ng-admin bug
+	if verbose == true {
+		fmt.Println(q)
+		fmt.Println("query: " + query)
 	}
-	if q["_sortField"] != nil && q["_sortDir"] != nil {
-		sortField := q["_sortField"][0]
-		// prevent SQLi
-		valid := regexp.MustCompile("^[A-Za-z0-9_]+$")
-		if !valid.MatchString(sortField) {
-			sortField = ""
-		}
-		if sortField == "id" {
-			sortField = "crca"
-		}
-		if sortField == "created" || sortField == "updated" { // XXX trick for sqlite
-			sortField = "datetime(" + sortField + ")"
-		}
-		sortOrder := q["_sortDir"][0]
-		if sortOrder != "ASC" {
-			sortOrder = "DESC"
-		}
-		// _page, _perPage, _sortDir, _sortField
-		if sortField != "" {
-			query = query + " ORDER BY " + sortField + " " + sortOrder
-		}
-	}
-	//fmt.Println(" -- " + query)
 
 	var agents []Agent
 	_, err := dbmap.Select(&agents, query)
@@ -239,11 +209,14 @@ Agent handlers
 **/
 
 func RegisterHandler(c *gin.Context) {
+	verbose := c.MustGet("Verbose").(bool)
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
-	//file := c.Params.ByName("file")
+
 	var json Agent
 	c.Bind(&json)
-	//		fmt.Println(json)
+	if verbose {
+		fmt.Println(json)
+	}
 	if json.FileSurvey != "" {
 		var agent Agent
 		agent = Agent{

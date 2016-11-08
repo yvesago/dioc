@@ -17,6 +17,7 @@ func TestSurveyModel(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
+	router.Use(SetConfig(config))
 	router.Use(Database(config.DBname))
 
 	var url = "/admin/api/v1/surveys"
@@ -136,6 +137,7 @@ func TestSurvey(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
+	router.Use(SetConfig(config))
 	router.Use(Database(config.DBname))
 
 	var url = "/admin/api/v1/surveys"

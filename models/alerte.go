@@ -50,17 +50,20 @@ func (a *Alerte) PreUpdate(s gorp.SqlExecutor) error {
 	return nil
 }
 
-
 // REST handlers
 
 func GetAlertes(c *gin.Context) {
+	verbose := c.MustGet("Verbose").(bool)
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	query := "SELECT * FROM alerte"
 
 	// Parse query string
 	q := c.Request.URL.Query()
 	query = query + ParseQuery(q)
-	//fmt.Println(" -- " + query)
+	if verbose == true {
+		fmt.Println(q)
+		fmt.Println("query: " + query)
+	}
 
 	var alertes []Alerte
 	_, err := dbmap.Select(&alertes, query)
@@ -190,12 +193,15 @@ func DeleteAlerte(c *gin.Context) {
 **/
 
 func PostNewAlerte(c *gin.Context) {
+	verbose := c.MustGet("Verbose").(bool)
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 
 	var alerte Alerte
 	c.Bind(&alerte)
 
-	//log.Println(alerte)
+	if verbose == true {
+		fmt.Println(alerte)
+	}
 
 	if alerte.CRCa != "" && alerte.CRCs != "" && alerte.Line != "" { // XXX Check mandatory fields
 		var agent Agent
@@ -215,7 +221,9 @@ func PostNewAlerte(c *gin.Context) {
 			mto := c.MustGet("MailTo").([]string)
 			mfrom := c.MustGet("MailFrom").(string)
 			//SendMail
-			//fmt.Printf("Sendmail : %s, %s %s %s\n", agent.CMD, mserver, mto, mfrom)
+			if verbose == true {
+				fmt.Printf("Sendmail : %s, %s %s %s\n", agent.CMD, mserver, mto, mfrom)
+			}
 			alerte.SendMail(mserver, mfrom, mto)
 		}
 

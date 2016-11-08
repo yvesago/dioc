@@ -30,6 +30,7 @@ type Config struct {
 	MailFrom   string
 	MailTo     []string
 	Debug      bool
+	Verbose    bool
 }
 
 // gin Middlware to set Config
@@ -39,6 +40,7 @@ func SetConfig(config Config) gin.HandlerFunc {
 		c.Set("MailServer", config.MailServer)
 		c.Set("MailTo", config.MailTo)
 		c.Set("MailFrom", config.MailFrom)
+		c.Set("Verbose", config.Verbose)
 		c.Next()
 	}
 }
@@ -46,9 +48,14 @@ func SetConfig(config Config) gin.HandlerFunc {
 func main() {
 	confPtr := flag.String("c", "", "Json config file")
 	debugPtr := flag.Bool("d", false, "Debug mode")
+	verbosePtr := flag.Bool("v", false, "Verbose mode, need Debug mode")
 	flag.Parse()
 	conf := *confPtr
 	Debug := *debugPtr
+	Verbose := *verbosePtr
+	if Debug == false { // Verbose need Debug
+		Verbose = false
+	}
 
 	file, err := os.Open(conf)
 	if err != nil {
@@ -65,6 +72,7 @@ func main() {
 		os.Exit(0)
 	}
 	config.Debug = Debug
+	config.Verbose = Verbose
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -173,13 +181,15 @@ func TokenAuthMiddleware(config Config) gin.HandlerFunc {
 		}
 		token := q["X-MyToken"][0]
 
-		//fmt.Println("token : ", token)
+		if config.Verbose == true {
+			fmt.Println("token : ", token)
+			fmt.Println("clienIP : " + c.ClientIP())
+		}
+
 		if token != config.Token {
 			respondWithError(401, "Invalid API token", c)
 			return
 		}
-
-		//fmt.Println("clienIP : " + c.ClientIP())
 
 		if contains(config.IPsAllowed, c.ClientIP()) == false {
 			respondWithError(401, "Acces denied", c)

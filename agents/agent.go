@@ -78,7 +78,7 @@ func main() {
 
 func Tail(fname string) {
 	// Monitor file
-	t, _ := tail.TailFile(fname, tail.Config{Follow: true})
+	t, _ := tail.TailFile(fname, tail.Config{Follow: true, ReOpen: true})
 	for line := range t.Lines {
 		for crcs, re := range Surveys {
 			if re != nil {
