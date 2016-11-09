@@ -111,7 +111,7 @@ func servermain(config Config) {
 	r.Use(cors.Middleware(cors.Config{
 		Origins:         config.CorsOrigin,
 		Methods:         "GET, PUT, POST, DELETE",
-		RequestHeaders:  "Origin, Authorization, Content-Type",
+		RequestHeaders:  "Origin, Authorization, Content-Type, X-MyToken",
 		ExposedHeaders:  "x-total-count",
 		MaxAge:          50 * time.Second,
 		Credentials:     true,
@@ -188,13 +188,7 @@ func contains(s []string, e string) bool {
 func TokenAuthMiddleware(config Config) gin.HandlerFunc {
 	// some init
 	return func(c *gin.Context) {
-		//token := c.Request.Header.Get("x-mytoken")
-		q := c.Request.URL.Query()
-		if q["X-MyToken"] == nil {
-			respondWithError(401, "API token required", c)
-			return
-		}
-		token := q["X-MyToken"][0]
+		token := c.Request.Header.Get("X-MyToken")
 
 		if config.Verbose == true {
 			fmt.Println("token : ", token)

@@ -1,8 +1,8 @@
 
 var myApp = angular.module('myApp', ['restangular','ng-admin']);
 myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (nga,rp) {
-    //rp.setDefaultHeaders({"X-MyToken":'basic'}); // BUG between Restangular and ng-admin
-    rp.setDefaultRequestParams({"X-MyToken":'basic'}); // XXX fix token
+
+    rp.setDefaultHeaders({"X-MyToken":'basic'}); // XXX fix token
 
     // create an admin application
     var admin = nga.application('My REST Admin')
