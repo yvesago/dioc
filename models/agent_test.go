@@ -12,14 +12,12 @@ import (
 	"testing"
 )
 
-
 func TestAgentModel(t *testing.T) {
 	defer deleteFile(config.DBname)
 
-
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-    router.Use(SetConfig(config))
+	router.Use(SetConfig(config))
 	router.Use(Database(config.DBname))
 
 	var url = "/admin/api/v1/agents"
@@ -108,6 +106,15 @@ func TestAgentModel(t *testing.T) {
 	//fmt.Println(len(as))
 	assert.Equal(t, 1, len(as), "1 result")
 
+	req, _ = http.NewRequest("GET", url+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "No more /1")
+	req, _ = http.NewRequest("DELETE", url+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "No more /1")
+
 	// Update one
 	log.Println("= http PUT one Agent")
 	a2.Role = "Role test2 updated"
@@ -131,6 +138,11 @@ func TestAgentModel(t *testing.T) {
 	//fmt.Println(resp.Body)
 	assert.Equal(t, a2.Role, a3.Role, "a2 Role updated")
 
+	req, _ = http.NewRequest("PUT", url+"/1", b)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "Can't update /1")
+
 }
 
 func TestAgent(t *testing.T) {
@@ -138,7 +150,7 @@ func TestAgent(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
-    router.Use(SetConfig(config))
+	router.Use(SetConfig(config))
 	router.Use(Database(config.DBname))
 
 	var url = "/agent/api/v1/agent"

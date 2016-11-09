@@ -69,10 +69,10 @@ func TestModelAlerte(t *testing.T) {
 	assert.Equal(t, 2, len(as), "2 results")
 
 	log.Println("= Test parsing query")
-    s := "http://127.0.0.1:8080/api?_filters={\"line\":\"t\"}&_sortDir=ASC&_sortField=created"
+	s := "http://127.0.0.1:8080/api?_filters={\"line\":\"t\"}&_sortDir=ASC&_sortField=created"
 	u, _ := url.Parse(s)
 	q, _ := url.ParseQuery(u.RawQuery)
-    //fmt.Println(q)
+	//fmt.Println(q)
 	query := ParseQuery(q)
 	//fmt.Println(query)
 	assert.Equal(t, "  WHERE line LIKE \"%t%\"  ORDER BY datetime(created) ASC", query, "Parse query")
@@ -115,6 +115,15 @@ func TestModelAlerte(t *testing.T) {
 	//fmt.Println(len(as))
 	assert.Equal(t, 1, len(as), "1 result")
 
+	req, _ = http.NewRequest("GET", urla+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "No more /1")
+	req, _ = http.NewRequest("DELETE", urla+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "No more /1")
+
 	// Update one
 	log.Println("= http PUT one Alerte")
 	a2.Comment = "Comment test2 updated"
@@ -124,6 +133,11 @@ func TestModelAlerte(t *testing.T) {
 	resp = httptest.NewRecorder()
 	router.ServeHTTP(resp, req)
 	assert.Equal(t, 200, resp.Code, "http PUT success")
+
+	req, _ = http.NewRequest("PUT", urla+"/1", b)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "Can't update /1")
 
 	var a3 Alerte
 	req, err = http.NewRequest("GET", urla+"/2", nil)
@@ -150,6 +164,8 @@ func TestAlerte(t *testing.T) {
 
 	var urlagent = "/agent/api/v1/agent"
 	router.POST(urlagent, RegisterHandler)
+	var urladminagent = "/admin/api/v1/agent"
+	router.PUT(urladminagent+"/:crca", UpdateAgent)
 	var urlsurvey = "/admin/api/v1/surveys"
 	router.POST(urlsurvey, PostSurvey)
 	var urlalerte = "/agent/api/v1/alerte"
@@ -169,11 +185,24 @@ func TestAlerte(t *testing.T) {
 	var crca string
 	json.NewDecoder(resp.Body).Decode(&crca)
 	assert.Equal(t, 201, resp.Code, "http Register success")
+	fmt.Println("====", urladminagent)
+
+	// remove cmd to test mail
+	var a = Agent{CRCa: crca}
+	b := new(bytes.Buffer)
+	a.CMD = ""
+	json.NewEncoder(b).Encode(a)
+	req, err = http.NewRequest("PUT", urladminagent+"/"+crca, b)
+	req.Header.Set("Content-Type", "application/json")
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	fmt.Println(resp)
+	assert.Equal(t, 200, resp.Code, "http PUT success")
 
 	// Add survey
 	log.Println("= http POST Survey")
 	var s = Survey{Search: "something", Level: "warn"}
-	b := new(bytes.Buffer)
+	b = new(bytes.Buffer)
 	json.NewEncoder(b).Encode(s)
 	req, err = http.NewRequest("POST", urlsurvey, b)
 	req.Header.Set("Content-Type", "application/json")
