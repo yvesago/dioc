@@ -1,6 +1,7 @@
 {
     "Port":":8080",
     "DBName":"test.sqlite3",
+    "CorsOrigin":"*",
     "Salt":"xxxxxxx",
     "Token": "basic",
     "IPsAllowed": ["127.0.0.1","::1"],

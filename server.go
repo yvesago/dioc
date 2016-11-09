@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/itsjamie/gin-cors"
 	"os"
 	"sync"
 	"time"
@@ -12,18 +13,11 @@ import (
 	. "./models"
 )
 
-func Cors() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Add("Access-Control-Allow-Origin", "*")
-		//	c.Writer.Header().Add("Access-Control-Expose-Headers", "X-myToken")
-		c.Next()
-	}
-}
-
 type Config struct {
 	Port       string
 	DBname     string
 	Salt       string
+	CorsOrigin string
 	Token      string
 	IPsAllowed []string
 	MailServer string
@@ -37,6 +31,7 @@ type Config struct {
 func SetConfig(config Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("Salt", config.Salt)
+		c.Set("CorsOrigin", config.CorsOrigin)
 		c.Set("MailServer", config.MailServer)
 		c.Set("MailTo", config.MailTo)
 		c.Set("MailFrom", config.MailFrom)
@@ -91,11 +86,19 @@ func checkOffline(dbname string) {
 	}
 }
 
+func addHeaders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Add("X-Total-Count", "0") // workaround for admin-on-rest
+		//	c.Writer.Header().Add("Access-Control-Expose-Headers", "X-myToken")
+		c.Next()
+	}
+}
+
 func servermain(config Config) {
 	if config.Debug == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	//r := gin.Default()
+
 	r := gin.New()
 
 	r.Use(gin.Recovery())
@@ -105,7 +108,16 @@ func servermain(config Config) {
 
 	r.Use(SetConfig(config))
 	r.Use(Database(config.DBname))
-	r.Use(Cors())
+	r.Use(cors.Middleware(cors.Config{
+		Origins:         config.CorsOrigin,
+		Methods:         "GET, PUT, POST, DELETE",
+		RequestHeaders:  "Origin, Authorization, Content-Type",
+		ExposedHeaders:  "x-total-count",
+		MaxAge:          50 * time.Second,
+		Credentials:     true,
+		ValidateHeaders: false,
+	}))
+	r.Use(addHeaders())
 
 	admin := r.Group("admin/api/v1")
 	admin.Use(TokenAuthMiddleware(config))
@@ -148,7 +160,10 @@ func servermain(config Config) {
 }
 
 func Options(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,OPTIONS,DELETE,POST,PUT")
+	Origin := c.MustGet("CorsOrigin").(string)
+
+	c.Writer.Header().Set("Access-Control-Allow-Origin", Origin)
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET,DELETE,POST,PUT")
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	c.Next()
