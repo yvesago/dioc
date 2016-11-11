@@ -153,10 +153,15 @@ func TestAgent(t *testing.T) {
 	router.Use(SetConfig(config))
 	router.Use(Database(config.DBname))
 
+	dbtest := InitDb(config.DBname)
+
 	var url = "/agent/api/v1/agent"
 	router.POST(url, RegisterHandler)
 	router.PUT(url+"/:crca", SendLinesHandler)
 	router.GET(url+"/:crca", CMDHandler)
+
+	res := CheckAgentOffLine(dbtest)
+	assert.Equal(t, true, res, "No error in CheckAgentOffLine")
 
 	// Add
 	log.Println("= POST Register Agent")
@@ -172,6 +177,9 @@ func TestAgent(t *testing.T) {
 	var crca string
 	json.NewDecoder(resp.Body).Decode(&crca)
 	assert.Equal(t, 201, resp.Code, "http Register success")
+
+	res = CheckAgentOffLine(dbtest)
+	assert.Equal(t, true, res, "No error in CheckAgentOffLine")
 
 	// CMD
 	log.Println("= GET CMD")

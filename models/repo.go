@@ -34,7 +34,7 @@ func InitDb(dbName string) *gorp.DbMap {
 	return dbmap
 }
 
-func CheckAgentOffLine(dbmap *gorp.DbMap) {
+func CheckAgentOffLine(dbmap *gorp.DbMap) bool {
 	var agents []Agent
 	_, err := dbmap.Select(&agents, "SELECT * FROM agent WHERE status=\"OnLine\"")
 	if err == nil {
@@ -44,10 +44,14 @@ func CheckAgentOffLine(dbmap *gorp.DbMap) {
 			//fmt.Printf("%s %d : %d \n", a.CRCa, t, now-t)
 			if now-t > 300000 {
 				a.Status = "OffLine"
-				dbmap.Update(&a)
+				_, err = dbmap.Update(&a)
+				if err != nil {
+					return false
+				}
 			}
 		}
 	}
+	return true
 }
 
 func ParseQuery(q map[string][]string) string {
