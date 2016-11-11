@@ -160,7 +160,7 @@ func TestAgent(t *testing.T) {
 	router.PUT(url+"/:crca", SendLinesHandler)
 	router.GET(url+"/:crca", CMDHandler)
 
-	res := CheckAgentOffLine(dbtest)
+	res := CheckAgentOffLine(dbtest, 300000)
 	assert.Equal(t, true, res, "No error in CheckAgentOffLine")
 
 	// Add
@@ -221,7 +221,7 @@ func TestAgent(t *testing.T) {
 	json.Unmarshal(resp.Body.Bytes(), &cmd)
 	assert.Equal(t, "", cmd.CMD, "no more CMD SendLines after lines sended")
 
-	res = CheckAgentOffLine(dbtest)
+	res = CheckAgentOffLine(dbtest, 1)
 	assert.Equal(t, true, res, "No error in CheckAgentOffLine")
 
 }

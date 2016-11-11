@@ -25,6 +25,7 @@ type Config struct {
 	MailTo     []string
 	Debug      bool
 	Verbose    bool
+	OffLineMs  int64
 }
 
 // gin Middlware to set Config
@@ -41,6 +42,7 @@ func SetConfig(config Config) gin.HandlerFunc {
 }
 
 func main() {
+	// Parameters
 	confPtr := flag.String("c", "", "Json config file")
 	debugPtr := flag.Bool("d", false, "Debug mode")
 	verbosePtr := flag.Bool("v", false, "Verbose mode, need Debug mode")
@@ -52,6 +54,7 @@ func main() {
 		Verbose = false
 	}
 
+	// Load config frome file
 	file, err := os.Open(conf)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
@@ -68,21 +71,26 @@ func main() {
 	}
 	config.Debug = Debug
 	config.Verbose = Verbose
+	offLineTest := int64(300000)
+	if config.OffLineMs != 0 {
+		offLineTest = config.OffLineMs
+	}
 
+	// Main Loop
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go servermain(config)
 	wg.Add(1)
-	go checkOffline(config.DBname)
+	go checkOffline(config.DBname, offLineTest)
 	wg.Wait()
 
 }
 
-func checkOffline(dbname string) {
+func checkOffline(dbname string, offLineMs int64) {
 	db := InitDb(dbname)
 	for {
 		time.Sleep(30 * time.Second)
-		CheckAgentOffLine(db)
+		CheckAgentOffLine(db, offLineMs)
 	}
 }
 
