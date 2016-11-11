@@ -178,9 +178,6 @@ func TestAgent(t *testing.T) {
 	json.NewDecoder(resp.Body).Decode(&crca)
 	assert.Equal(t, 201, resp.Code, "http Register success")
 
-	res = CheckAgentOffLine(dbtest)
-	assert.Equal(t, true, res, "No error in CheckAgentOffLine")
-
 	// CMD
 	log.Println("= GET CMD")
 	req, err = http.NewRequest("GET", url+"/"+crca, nil)
@@ -223,4 +220,8 @@ func TestAgent(t *testing.T) {
 	//fmt.Println(resp.Body)
 	json.Unmarshal(resp.Body.Bytes(), &cmd)
 	assert.Equal(t, "", cmd.CMD, "no more CMD SendLines after lines sended")
+
+	res = CheckAgentOffLine(dbtest)
+	assert.Equal(t, true, res, "No error in CheckAgentOffLine")
+
 }
