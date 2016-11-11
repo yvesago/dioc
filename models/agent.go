@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gorp.v1"
 	"hash/crc32"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -77,6 +78,7 @@ func GetAgents(c *gin.Context) {
 	_, err := dbmap.Select(&agents, query)
 
 	if err == nil {
+		c.Header("X-Total-Count", strconv.Itoa(len(agents)))
 		c.JSON(200, agents)
 	} else {
 		c.JSON(404, gin.H{"error": "no agent(s) into the table"})

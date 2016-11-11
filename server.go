@@ -94,13 +94,13 @@ func checkOffline(dbname string, offLineMs int64) {
 	}
 }
 
-func addHeaders() gin.HandlerFunc {
+/*func addHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Add("X-Total-Count", "0") // workaround for admin-on-rest
+		c.Writer.Header().Add("X-Total-Count", "0")
 		//	c.Writer.Header().Add("Access-Control-Expose-Headers", "X-myToken")
 		c.Next()
 	}
-}
+}*/
 
 func servermain(config Config) {
 	if config.Debug == false {
@@ -125,7 +125,7 @@ func servermain(config Config) {
 		Credentials:     true,
 		ValidateHeaders: false,
 	}))
-	r.Use(addHeaders())
+	//r.Use(addHeaders())
 
 	admin := r.Group("admin/api/v1")
 	admin.Use(TokenAuthMiddleware(config))

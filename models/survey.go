@@ -72,6 +72,7 @@ func GetSurveys(c *gin.Context) {
 	_, err := dbmap.Select(&surveys, query)
 
 	if err == nil {
+		c.Header("X-Total-Count", strconv.Itoa(len(surveys)))
 		c.JSON(200, surveys)
 	} else {
 		c.JSON(404, gin.H{"error": "no survey(s) into the table"})
