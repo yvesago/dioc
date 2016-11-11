@@ -195,12 +195,12 @@ func TokenAuthMiddleware(config Config) gin.HandlerFunc {
 			fmt.Println("clienIP : " + c.ClientIP())
 		}
 
-		if token != config.Token {
+		if config.Token != "" && token != config.Token {
 			respondWithError(401, "Invalid API token", c)
 			return
 		}
 
-		if contains(config.IPsAllowed, c.ClientIP()) == false {
+		if config.IPsAllowed != nil && contains(config.IPsAllowed, c.ClientIP()) == false {
 			respondWithError(401, "Acces denied", c)
 			return
 		}
