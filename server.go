@@ -103,7 +103,7 @@ func servermain(config Config) {
 
 	r.Use(gin.Recovery())
 	if config.Debug == true {
-		r.Use(Logger())
+		r.Use(gin.Logger())
 	}
 
 	r.Use(SetConfig(config))
