@@ -21,7 +21,10 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
     ]).filters([
             nga.field('search')
             .label('Search')
-            .pinned(true)]);
+            .pinned(true),
+            nga.field('comment')
+            .label('Comment')
+            ]);
     survey.creationView().fields([
         nga.field('search'),
         nga.field('level', 'choice').choices([

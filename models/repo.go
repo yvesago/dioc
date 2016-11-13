@@ -58,6 +58,7 @@ func ParseQuery(q map[string][]string) string {
 	query := " "
 	if q["_filters"] != nil {
 		re := regexp.MustCompile("{\"([a-zA-Z0-9_]+?)\":\"([a-zA-Z0-9_. ]+?)\"}")
+		// _filters=%7B%22search%22:%22whoopsie%22,%22comment%22:%22il%22%7D&_
 		r := re.FindStringSubmatch(q["_filters"][0])
 		// TODO: special col name for all fields via reflections
 		col := r[1]
@@ -80,11 +81,26 @@ func ParseQuery(q map[string][]string) string {
 		if sortOrder != "ASC" {
 			sortOrder = "DESC"
 		}
-		// _page, _perPage, _sortDir, _sortField
 		if sortField != "" {
 			query = query + " ORDER BY " + sortField + " " + sortOrder
 		}
 	}
+	// _page, _perPagea : LIMIT + OFFSET
+	if q["_perPage"] != nil {
+		perPage := q["_perPage"][0]
+		valid := regexp.MustCompile("^[0-9]+$")
+		if valid.MatchString(perPage) {
+			query = query + " LIMIT " + perPage
+		}
+	}
+	if q["_page"] != nil {
+		page := q["_page"][0]
+		valid := regexp.MustCompile("^[0-9]+$")
+		if valid.MatchString(page) {
+			query = query + " OFFSET " + page
+		}
+	}
+
 	return query
 }
 
