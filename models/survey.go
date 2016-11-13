@@ -27,7 +27,7 @@ type Survey struct {
 	Role    string    `db:"role" json:"role"`
 	Search  string    `db:"search" json:"search"`
 	Level   string    `db:"level" json:"level"`
-	Comment string    `db:"name:comment, size:16384" json:"comment"`
+	Comment string    `db:"comment, size:16384" json:"comment"`
 	Checked int       `db:"checked" json:"checked"`
 	Created time.Time `db:"created" json:"created"` // or int64
 	Updated time.Time `db:"updated" json:"updated"`
