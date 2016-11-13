@@ -27,8 +27,8 @@ type Agent struct {
 	IP         string    `db:"ip" json:"ip"`
 	FileSurvey string    `db:"filesurvey" json:"filesurvey"`
 	Role       string    `db:"role" json:"role"`
-	Comment    string    `db:"comment, size:16384" json:"comment"`
-	Lines      string    `db:"lines, size:16384" json:"lines"`
+	Comment    string    `db:"comment" json:"comment"`
+	Lines      string    `db:"lines" json:"lines"`
 	Status     string    `db:"status" json:"status"`
 	CMD        string    `db:"cmd" json:"cmd"`
 	Salt       string    `db:"-" json:"-"`             // not registred in database

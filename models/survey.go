@@ -27,7 +27,7 @@ type Survey struct {
 	Role    string    `db:"role" json:"role"`
 	Search  string    `db:"search" json:"search"`
 	Level   string    `db:"level" json:"level"`
-	Comment string    `db:"comment, size:16384" json:"comment"`
+	Comment string    `db:"comment" json:"comment"`
 	Checked int       `db:"checked" json:"checked"`
 	Created time.Time `db:"created" json:"created"` // or int64
 	Updated time.Time `db:"updated" json:"updated"`
@@ -59,14 +59,17 @@ func (a *Survey) PreUpdate(s gorp.SqlExecutor) error {
 
 func GetSurveys(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	verbose := c.MustGet("Verbose").(bool)
 	query := "SELECT * FROM survey"
 
 	// Parse query string
 	//  receive : map[_filters:[{"q":"wx"}] _sortField:[id] ...
 	q := c.Request.URL.Query()
-	//log.Println(q)
 	query = query + ParseQuery(q)
-	//log.Println(" -- " + query)
+	if verbose == true {
+		fmt.Println(q)
+		fmt.Println(" -- " + query)
+	}
 
 	var surveys []Survey
 	_, err := dbmap.Select(&surveys, query)
