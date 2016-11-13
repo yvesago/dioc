@@ -2,12 +2,14 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	//"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"gopkg.in/gorp.v1"
 	"log"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -57,14 +59,18 @@ func CheckAgentOffLine(dbmap *gorp.DbMap, offLineMs int64) bool {
 func ParseQuery(q map[string][]string) string {
 	query := " "
 	if q["_filters"] != nil {
-		re := regexp.MustCompile("{\"([a-zA-Z0-9_]+?)\":\"([a-zA-Z0-9_. ]+?)\"}")
-		// _filters=%7B%22search%22:%22whoopsie%22,%22comment%22:%22il%22%7D&_
-		r := re.FindStringSubmatch(q["_filters"][0])
-		// TODO: special col name for all fields via reflections
-		col := r[1]
-		search := r[2]
-		if col != "" && search != "" {
-			query = query + " WHERE " + col + " LIKE \"%" + search + "%\" "
+		data := make(map[string]string)
+		err := json.Unmarshal([]byte(q["_filters"][0]), &data)
+		if err == nil {
+			query = query + " WHERE "
+			var searches []string
+			for col, search := range data {
+				valid := regexp.MustCompile("^[A-Za-z0-9_]+$")
+				if col != "" && search != "" && valid.MatchString(col) && valid.MatchString(search) {
+					searches = append(searches, col+" LIKE \"%"+search+"%\"")
+				}
+			}
+			query = query + strings.Join(searches, " AND ") // TODO join with OR for same keys
 		}
 	}
 	if q["_sortField"] != nil && q["_sortDir"] != nil {
@@ -85,7 +91,7 @@ func ParseQuery(q map[string][]string) string {
 			query = query + " ORDER BY " + sortField + " " + sortOrder
 		}
 	}
-	// _page, _perPagea : LIMIT + OFFSET
+	// _page, _perPage : LIMIT + OFFSET
 	if q["_perPage"] != nil {
 		perPage := q["_perPage"][0]
 		valid := regexp.MustCompile("^[0-9]+$")
