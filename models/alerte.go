@@ -32,7 +32,7 @@ type Alerte struct {
 	Line       string    `db:"line" json:"line"`
 	Search     string    `db:"search" json:"search"`
 	Level      string    `db:"level" json:"level"`
-	Comment    string    `db:"comment,size:16384" json:"comment"`
+	Comment    string    `db:"comment" json:"comment"`
 	Created    time.Time `db:"created" json:"created"` // or int64
 	Updated    time.Time `db:"updated" json:"updated"`
 }
