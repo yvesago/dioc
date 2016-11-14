@@ -206,7 +206,7 @@ func TestAlerte(t *testing.T) {
 
 	// Add agent
 	log.Println("= POST Register Agent")
-	var jsonStr = []byte(`{"FileSurvey":"/some/file"}`)
+	var jsonStr = []byte(`{"FileSurvey":"/some/file","Hostname":"xxxx"}`)
 	req, err := http.NewRequest("POST", urlagent, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {

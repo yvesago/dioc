@@ -46,8 +46,10 @@ func main() {
 	// Register
 	type param struct {
 		FileSurvey string
+		Hostname   string
 	}
-	var p = param{FileSurvey: file}
+	name, _ := os.Hostname()
+	var p = param{FileSurvey: file, Hostname: name}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(p)
 	req, _ := http.NewRequest("POST", Pannel+"/agent", b)

@@ -32,6 +32,7 @@ type Agent struct {
 	Status     string    `db:"status" json:"status"`
 	CMD        string    `db:"cmd" json:"cmd"`
 	Salt       string    `db:"-" json:"-"`             // not registred in database
+	Hostname   string    `db:"-" json:"hostname"`      // not registred in database
 	Created    time.Time `db:"created" json:"created"` // or int64
 	Updated    time.Time `db:"updated" json:"updated"`
 }
@@ -222,7 +223,7 @@ func RegisterHandler(c *gin.Context) {
 	if json.FileSurvey != "" {
 		var agent Agent
 		agent = Agent{
-			IP:         c.ClientIP(),
+			IP:         json.Hostname + " " + c.ClientIP(),
 			FileSurvey: json.FileSurvey,
 		}
 		salt := c.MustGet("Salt").(string)
