@@ -32,7 +32,7 @@ type Alerte struct {
 	Line       string    `db:"line" json:"line"`
 	Search     string    `db:"search" json:"search"`
 	Level      string    `db:"level" json:"level"`
-	Comment    string    `db:"comment,size:16384" json:"comment"`
+	Comment    string    `db:"comment" json:"comment"`
 	Created    time.Time `db:"created" json:"created"` // or int64
 	Updated    time.Time `db:"updated" json:"updated"`
 }
@@ -140,6 +140,7 @@ func UpdateAlerte(c *gin.Context) {
 			FileSurvey: alerte.FileSurvey,
 			Role:       alerte.Role,
 			Line:       alerte.Line,
+			Level:      alerte.Level,
 			Search:     alerte.Search,
 			Comment:    json.Comment,   // update only comment
 			Created:    alerte.Created, //alerte read from previous select
@@ -252,7 +253,7 @@ func (a *Alerte) SendMail(mserver string, from string, to []string) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
 	m.SetHeader("To", strings.Join(to, ","))
-	m.SetHeader("Subject", "[ALERTE] "+a.Level+" "+a.Search)
+	m.SetHeader("Subject", "[ALERTE] ("+strings.ToUpper(a.Level)+") "+a.Search)
 	m.SetBody("text/plain", msg)
 
 	d := gomail.Dialer{Host: server, Port: port}

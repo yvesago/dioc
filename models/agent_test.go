@@ -29,7 +29,7 @@ func TestAgentModel(t *testing.T) {
 
 	// Add
 	log.Println("= http POST Agent")
-	var a = Agent{IP: "192.168.1.1", FileSurvey: "/some/file"}
+	var a = Agent{IP: "192.168.1.1", Hostname: "xxxx", FileSurvey: "/some/file"}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(a)
 	req, err := http.NewRequest("POST", url, b)
@@ -45,7 +45,7 @@ func TestAgentModel(t *testing.T) {
 
 	// Add second agent
 	log.Println("= http POST more Agent")
-	var a2 = Agent{IP: "192.168.1.2", FileSurvey: "/some/file"}
+	var a2 = Agent{IP: "192.168.1.2", Hostname: "yyyy", FileSurvey: "/some/file"}
 	json.NewEncoder(b).Encode(a2)
 	req, err = http.NewRequest("POST", url, b)
 	req.Header.Set("Content-Type", "application/json")
@@ -165,7 +165,7 @@ func TestAgent(t *testing.T) {
 
 	// Add
 	log.Println("= POST Register Agent")
-	var jsonStr = []byte(`{"FileSurvey":"/some/file"}`)
+	var jsonStr = []byte(`{"FileSurvey":"/some/file","Hostname":"xxxx"}`)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {

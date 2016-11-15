@@ -5,8 +5,28 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
     rp.setDefaultHeaders({"X-MyToken":'basic'}); // XXX fix token
 
     // create an admin application
-    var admin = nga.application('My REST Admin')
+    var admin = nga.application('Distributed IOC Monitor')
       .baseApiUrl('http://localhost:8080/admin/api/v1/'); // XXX fix main API endpoint
+
+    var roles = [ // XXX fix your categorys
+        { label: 'Squid', value: 'squid' },
+        { label: 'Radius', value: 'radius' },
+        { label: 'Web', value: 'web' },
+        { label: 'DNS', value: 'dns' },
+        { label: 'Honeypot', value: 'honeypot' },
+        { label: 'NetFlow', value: 'netflow' },
+        { label: 'Auth', value: 'auth' },
+        { label: 'SMTP', value: 'smtp' },
+        { label: 'Mail', value: 'mail' },
+        { label: 'Test', value: 'test' },
+        { label: 'None', value: '' }
+    ];
+
+    var levels = [
+        { label: 'Warn', value: 'warn' },
+        { label: 'Critic', value: 'critic' },
+        { label: 'None', value: '' }
+    ];
 
     // create a survey entity
     var survey = nga.entity('surveys');
@@ -17,7 +37,7 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
         nga.field('crcs'),
         nga.field('comment','wysiwyg'),
         nga.field('created','datetime'),
-        nga.field('updated','datetime'),
+        nga.field('updated','datetime')
     ]).filters([
             nga.field('search')
             .label('Search')
@@ -27,25 +47,9 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
             ]);
     survey.creationView().fields([
         nga.field('search'),
-        nga.field('level', 'choice').choices([
-                       { label: 'Warn', value: 'warn' },
-                       { label: 'Critic', value: 'critic' },
-                       { label: 'None', value: '' }
-                   ]),
-        nga.field('role', 'choice').choices([ // XXX fix your categorys
-                       { label: 'Squid', value: 'squid' },
-                       { label: 'Radius', value: 'radius' },
-                       { label: 'Web', value: 'web' },
-                       { label: 'DNS', value: 'dns' },
-                       { label: 'Honeypot', value: 'honeypot' },
-                       { label: 'NetFlow', value: 'netflow' },
-                       { label: 'Auth', value: 'auth' },
-                       { label: 'SMTP', value: 'smtp' },
-                       { label: 'Mail', value: 'mail' },
-                       { label: 'Test', value: 'test' },
-                       { label: 'None', value: '' }
-                   ]),
-        nga.field('comment','wysiwyg'),
+        nga.field('level', 'choice').choices(levels),
+        nga.field('role', 'choice').choices(roles),
+        nga.field('comment','wysiwyg')
     ]);
     // use the same fields for the editionView as for the creationView
     survey.editionView().fields(survey.creationView().fields());
@@ -62,11 +66,15 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
        nga.field('comment','text'),
        nga.field('cmd'),
        nga.field('created','datetime'),
-       nga.field('updated','datetime'),
+       nga.field('updated','datetime')
     ]).filters([
             nga.field('ip')
             .label('IP')
             .pinned(true),
+            nga.field('comment')
+            .label('Comment'),
+            nga.field('lines')
+            .label('Lines')
             ]);
     agent.creationView().fields([
        nga.field('crca'),
@@ -74,25 +82,13 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
        nga.field('filesurvey'),
        nga.field('lines','text'),
        nga.field('comment','text'),
-       nga.field('role', 'choice').choices([ // XXX fix your categorys
-                       { label: 'Squid', value: 'squid' },
-                       { label: 'Radius', value: 'radius' },
-                       { label: 'Web', value: 'web' },
-                       { label: 'DNS', value: 'dns' },
-                       { label: 'Honeypot', value: 'honeypot' },
-                       { label: 'NetFlow', value: 'netflow' },
-                       { label: 'Auth', value: 'auth' },
-                       { label: 'SMTP', value: 'smtp' },
-                       { label: 'Mail', value: 'mail' },
-                       { label: 'Test', value: 'test' },
-                       { label: 'None', value: '' }
-                   ]),
+       nga.field('role', 'choice').choices(roles),
        nga.field('cmd', 'choice').choices([
                        { label: 'Send Lines', value: 'SendLines' },
                        { label: 'Search Full File', value: 'FullSearch' },
                        { label: 'STOP', value: 'STOP' },
                        { label: 'None', value: '' }
-                   ]),
+                   ])
     ]);
     agent.editionView().fields(agent.creationView().fields());
     admin.addEntity(agent);
@@ -107,20 +103,61 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
         nga.field('line'),
         nga.field('comment','text'),
         nga.field('created','datetime'),
-        nga.field('updated','datetime'),
+        nga.field('updated','datetime')
     ]).filters([
             nga.field('line')
             .label('Line')
-            .pinned(true)]);
+            .pinned(true),
+            nga.field('comment')
+            .label('Comment'),
+            nga.field('line')
+            .label('Line')
+            ]);
     alerte.creationView().fields([
         nga.field('crca'),
         nga.field('crcs'),
         nga.field('line'),
-        nga.field('comment','text'),
+        nga.field('comment','text')
         //nga.field('comment','wysiwyg'),
     ]);
     alerte.editionView().fields(alerte.creationView().fields());
     admin.addEntity(alerte);
+	admin.menu(nga.menu()
+            .addChild(nga.menu(survey))
+            .addChild(nga.menu(agent))
+            .addChild(nga.menu(alerte))
+	    // add custom menu
+            .addChild(nga.menu().title('Miscellaneous').icon('<span class="glyphicon glyphicon-wrench"></span>')
+              .addChild(nga.menu().title('Download Agent').link('/dwnloadagent').icon('<span class="glyphicon glyphicon-file"></span>'))
+	      .addChild(nga.menu().template(`
+		<a href="https://github.com/yvesago/dioc" target="_blank">
+		    <span class="glyphicon glyphicon-download"></span>
+		    Source code
+		</a>`
+	      ))
+            )
+	);
+
     // attach the admin application to the DOM and execute it
     nga.configure(admin);
 }]);
+
+var dwnloadAgentTemplate =
+    '<div class="row"><div class="col-lg-12">' +
+        '<ma-view-actions><ma-back-button></ma-back-button></ma-view-actions>' +
+        '<div class="page-header">' +
+            '<h1>Download agent</h1>' +
+        '</div>' +
+    '</div></div>' +
+    '<div class="row">' +
+        '<div class="col-lg-10"><tt>[MD5sum] <a href="/ioc/agent" target="_blank">agent</a></tt></div>' +
+        '<div class="col-lg-10"><tt>[MD5sum] <a href="/ioc/start-stop-agent" target="_blank">start-stop-agent</a></tt></div>' +
+    '</div>';
+
+myApp.config(function ($stateProvider) {
+    $stateProvider.state('dwnloadagent', {
+	parent: 'ng-admin',
+	url: '/dwnloadagent',
+	template: dwnloadAgentTemplate
+    });
+});
