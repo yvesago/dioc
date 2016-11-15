@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"crypto/tls" // for TLS config
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -18,6 +19,7 @@ import (
 
 var (
 	Pannel        string
+	client        *http.Client
 	ReconnectTime time.Duration = 180
 	Debug         bool          = false
 	Surveys                     = make(map[string]*regexp.Regexp)
@@ -27,7 +29,7 @@ var (
 func main() {
 	filePtr := flag.String("f", "", "File to monitor")
 	debugPtr := flag.Bool("d", false, "Debug mode")
-	serverPtr := flag.String("s", "http://127.0.0.1:8080/client/api/v1", "Pannel url")
+	serverPtr := flag.String("s", "https://127.0.0.1:8080/client/api/v1", "Pannel url")
 	flag.Parse()
 	file := *filePtr
 	Debug = *debugPtr
@@ -43,6 +45,11 @@ func main() {
 		os.Exit(0)
 	}
 
+	// TLS config, TODO read root pem
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
 	// Register
 	type param struct {
 		FileSurvey string
@@ -52,7 +59,7 @@ func main() {
 	json.NewEncoder(b).Encode(p)
 	req, _ := http.NewRequest("POST", Pannel+"/agent", b)
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
+	client = &http.Client{Transport: tr}
 	for { // wait for server
 		rsp, err := client.Do(req)
 		if err == nil {
@@ -64,13 +71,16 @@ func main() {
 	}
 	DebugLog("crca: " + CRCa)
 
+	// Main loops
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go Tail(file)
 
+	// don't wait first GET on startup
 	time.Sleep(5 * time.Second)
 	currentList := httpGETCommands(file)
 	SyncList(currentList)
+
 	wg.Add(1)
 	go SyncCMD(file)
 	wg.Wait()
@@ -83,7 +93,6 @@ func Tail(fname string) {
 		for crcs, re := range Surveys {
 			if re != nil {
 				if re.MatchString(line.Text) {
-					//fmt.Println(crcs + " " + line.Text)
 					httpPOSTAlerte(crcs, line.Text)
 				}
 			}
@@ -137,7 +146,7 @@ func SyncList(liste []string) {
 
 func httpGETSurvey(crcs string) string {
 	req, err := http.NewRequest("GET", Pannel+"/survey/"+crcs, nil)
-	client := &http.Client{}
+	//client := &http.Client{}
 	//req.Header.Add("X-myToken", "ixxxx")
 	rsp, err := client.Do(req)
 	if err != nil {
@@ -160,8 +169,7 @@ func httpGETSurvey(crcs string) string {
 
 func httpGETCommands(filename string) []string {
 	req, err := http.NewRequest("GET", Pannel+"/agent/"+CRCa, nil)
-	client := &http.Client{}
-	//req.Header.Add("X-myToken", "ixxxx")
+	//client := &http.Client{}
 	rsp, err := client.Do(req)
 	if err != nil {
 		DebugLog("Bad connection to panel...")
@@ -216,7 +224,7 @@ func httpPUTlines(lines []string) {
 	DebugLog(fmt.Sprintf("%v", b))
 	req, _ := http.NewRequest("PUT", Pannel+"/agent/"+CRCa, b)
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
+	//client := &http.Client{}
 	//req.Header.Add("X-myToken", "ixxxx")
 	_, err := client.Do(req)
 	if err != nil {
@@ -238,7 +246,7 @@ func httpPOSTAlerte(crcs string, line string) {
 	DebugLog(fmt.Sprintf("%v", b))
 	req, _ := http.NewRequest("POST", Pannel+"/alerte", b)
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
+	//client := &http.Client{}
 	//req.Header.Add("X-myToken", "ixxxx")
 	_, err := client.Do(req)
 	if err != nil {

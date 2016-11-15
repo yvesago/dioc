@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -26,6 +27,8 @@ type Config struct {
 	Debug      bool
 	Verbose    bool
 	OffLineMs  int64
+	TLScert    string
+	TLSkey     string
 }
 
 // gin Middlware to set Config
@@ -164,7 +167,18 @@ func servermain(config Config) {
 		client.GET("/survey/:crcs", GetSurveyByCRCs)
 	}
 
-	r.Run(config.Port)
+	if config.TLScert != "" && config.TLSkey != "" {
+		if config.Debug == true {
+			fmt.Println("Listening and serving HTTPS on ", config.Port)
+		}
+		err := http.ListenAndServeTLS(config.Port, config.TLScert, config.TLSkey, r)
+		if err != nil {
+			fmt.Println("ListenAndServe: ", err)
+			os.Exit(0)
+		}
+	} else {
+		r.Run(config.Port)
+	}
 }
 
 func Options(c *gin.Context) {
