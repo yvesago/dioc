@@ -1,14 +1,14 @@
 #!/bin/bash
 #
 BASE=/tmp   #TODO fix path
-LOG='test.log' #TODO fix log file
+SLOG='test.log' #TODO fix log file
 
 PID=$BASE/iocagent.pid
 LOG=$BASE/iocagent.log
 ERROR=$BASE/iocagent-error.log
 
 CMD='./agent'
-COMMAND="$CMD -f $LOG"
+COMMAND="$CMD -f $SLOG"
 
 status() {
     echo
