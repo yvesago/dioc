@@ -33,14 +33,12 @@ func main() {
 	serverPtr := flag.String("s", "https://127.0.0.1:8080/client/api/v1", "Pannel url")
 	caFilePtr := flag.String("CA", "", "An optional PEM encoded CA's certificate file.")
 	insecurePtr := flag.Bool("insecureTLS", false, "Don't verify CA cert, for test only")
-	//noTLSPtr := flag.Bool("noTLS", false, "Don't use TLS, for test only")
 	flag.Parse()
 
 	file := *filePtr
 	Debug = *debugPtr
 	Pannel = *serverPtr
 	insecure := *insecurePtr
-	//noTLS := *noTLSPtr
 	caFile := *caFilePtr
 
 	if Debug {
@@ -70,7 +68,6 @@ func main() {
 			panic(err)
 		}
 
-		//ok := roots.AppendCertsFromPEM([]byte(rootPEM))
 		ok := roots.AppendCertsFromPEM(caCert)
 		if !ok {
 			panic("failed to parse root certificate")
@@ -99,11 +96,7 @@ func main() {
 	json.NewEncoder(b).Encode(p)
 	req, _ := http.NewRequest("POST", Pannel+"/agent", b)
 	req.Header.Set("Content-Type", "application/json")
-	//if noTLS == true {
-	//	client = &http.Client{}
-	//} else {
-		client = &http.Client{Transport: tr}
-	//}
+	client = &http.Client{Transport: tr}
 
 	for { // wait for server
 		rsp, err := client.Do(req)
