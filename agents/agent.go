@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/tls" // for TLS config
+	"crypto/x509"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -30,10 +31,17 @@ func main() {
 	filePtr := flag.String("f", "", "File to monitor")
 	debugPtr := flag.Bool("d", false, "Debug mode")
 	serverPtr := flag.String("s", "https://127.0.0.1:8080/client/api/v1", "Pannel url")
+	caFilePtr := flag.String("CA", "", "An optional PEM encoded CA's certificate file.")
+	insecurePtr := flag.Bool("insecureTLS", false, "Don't verify CA cert, for test only")
+	//noTLSPtr := flag.Bool("noTLS", false, "Don't use TLS, for test only")
 	flag.Parse()
+
 	file := *filePtr
 	Debug = *debugPtr
 	Pannel = *serverPtr
+	insecure := *insecurePtr
+	//noTLS := *noTLSPtr
+	caFile := *caFilePtr
 
 	if Debug {
 		ReconnectTime = 5
@@ -45,9 +53,39 @@ func main() {
 		os.Exit(0)
 	}
 
-	// TLS config, TODO read root pem
+	// TLS config
+	/*
+	   // For an embeded root PEM
+	   const rootPEM = `
+	   -----BEGIN CERTIFICATE-----
+	   MIIE...
+	   ....
+	   -----END CERTIFICATE-----`
+	*/
+	// Read RootCA from optionnal caFile
+	roots := x509.NewCertPool()
+	if caFile != "" {
+		caCert, err := ioutil.ReadFile(caFile)
+		if err != nil {
+			panic(err)
+		}
+
+		//ok := roots.AppendCertsFromPEM([]byte(rootPEM))
+		ok := roots.AppendCertsFromPEM(caCert)
+		if !ok {
+			panic("failed to parse root certificate")
+		}
+	}
+
+	tlsConfig := &tls.Config{}
+	if caFile != "" {
+		tlsConfig = &tls.Config{RootCAs: roots}
+	}
+	if insecure == true {
+		tlsConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: tlsConfig,
 	}
 
 	// Register
@@ -61,7 +99,12 @@ func main() {
 	json.NewEncoder(b).Encode(p)
 	req, _ := http.NewRequest("POST", Pannel+"/agent", b)
 	req.Header.Set("Content-Type", "application/json")
-	client = &http.Client{Transport: tr}
+	//if noTLS == true {
+	//	client = &http.Client{}
+	//} else {
+		client = &http.Client{Transport: tr}
+	//}
+
 	for { // wait for server
 		rsp, err := client.Do(req)
 		if err == nil {
