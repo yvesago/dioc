@@ -46,22 +46,29 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
             .label('Comment')
             ]);
     survey.creationView().fields([
-        nga.field('search'),
+        nga.field('search').validation({ required: true }),
         nga.field('level', 'choice').choices(levels),
         nga.field('role', 'choice').choices(roles),
         nga.field('comment','wysiwyg')
     ]);
-    // use the same fields for the editionView as for the creationView
-    survey.editionView().fields(survey.creationView().fields());
+    survey.editionView().fields([
+        nga.field('search').validation({ required: true }),
+        nga.field('crcs').editable(false),
+        nga.field('created','datetime').editable(false),
+        nga.field('updated','datetime').editable(false),
+        nga.field('level', 'choice').choices(levels),
+        nga.field('role', 'choice').choices(roles),
+        nga.field('comment','wysiwyg')
+    ]);
     admin.addEntity(survey);
 
     var agent = nga.entity('agents').identifier(nga.field('crca'));
     agent.listView().fields([
-       nga.field('crca').isDetailLink(true),
-       nga.field('ip'),
+    //   nga.field('crca').isDetailLink(true),
+       nga.field('ip').isDetailLink(true),
+       nga.field('filesurvey'),
        nga.field('status').cssClasses(['red','green']).template('<span ng-class="{ \'red\': value === \'OffLine\' }"><ma-string-column field="::field" value="::entry.values[field.name()]"></ma-string-column></span>'),
        nga.field('role'),
-       nga.field('filesurvey'),
        nga.field('lines','text'),
        nga.field('comment','text'),
        nga.field('cmd'),
@@ -76,8 +83,11 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
             nga.field('lines')
             .label('Lines')
             ]);
-    agent.creationView().fields([
-       nga.field('crca'),
+    agent.editionView().fields([
+       nga.field('crca').editable(false),
+       nga.field('created','datetime').editable(false),
+       nga.field('updated','datetime').editable(false),
+       nga.field('status').cssClasses(['red','green']).template('<span ng-class="{ \'red\': value === \'OffLine\' }"><ma-string-column field="::field" value="::entry.values[field.name()]"></ma-string-column></span>'),
        nga.field('ip'),
        nga.field('filesurvey'),
        nga.field('lines','text'),
@@ -90,7 +100,7 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
                        { label: 'None', value: '' }
                    ])
     ]);
-    agent.editionView().fields(agent.creationView().fields());
+    //agent.editionView().fields(agent.creationView().fields());
     admin.addEntity(agent);
 
     var alerte = nga.entity('alertes');
@@ -113,14 +123,18 @@ myApp.config(['NgAdminConfigurationProvider','RestangularProvider', function (ng
             nga.field('line')
             .label('Line')
             ]);
-    alerte.creationView().fields([
-        nga.field('crca'),
-        nga.field('crcs'),
+    alerte.editionView().fields([
+        nga.field('crca').editable(false),
+        nga.field('crcs').editable(false),
+        nga.field('ip').editable(false),
+        nga.field('filesurvey').editable(false),
+        nga.field('role').editable(false),
+        nga.field('level', 'choice').choices(levels),
         nga.field('line'),
-        nga.field('comment','text')
-        //nga.field('comment','wysiwyg'),
+        //nga.field('comment','text')
+        nga.field('comment','wysiwyg'),
     ]);
-    alerte.editionView().fields(alerte.creationView().fields());
+    //alerte.editionView().fields(alerte.creationView().fields());
     admin.addEntity(alerte);
 	admin.menu(nga.menu()
             .addChild(nga.menu(survey))
