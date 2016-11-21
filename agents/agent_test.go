@@ -44,7 +44,7 @@ func _TestSyncList(t *testing.T) {
 	fmt.Println(Surveys)
 	currentList := []string{"test 2", "test 1", "test 3"}
 	fmt.Println(currentList)
-//	SyncList(currentList)
+	//	SyncList(currentList)
 	fmt.Println(Surveys)
 }
 

@@ -106,15 +106,14 @@ func TestSurveyModel(t *testing.T) {
 	//fmt.Println(len(as))
 	assert.Equal(t, 1, len(as), "1 result")
 
-    req, _ = http.NewRequest("GET", url+"/1", nil)
-    resp = httptest.NewRecorder()
-    router.ServeHTTP(resp, req)
-    assert.Equal(t, 404, resp.Code, "No more /1")
-    req, _ = http.NewRequest("DELETE", url+"/1", nil)
-    resp = httptest.NewRecorder()
-    router.ServeHTTP(resp, req)
-    assert.Equal(t, 404, resp.Code, "No more /1")
-
+	req, _ = http.NewRequest("GET", url+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "No more /1")
+	req, _ = http.NewRequest("DELETE", url+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "No more /1")
 
 	// Update one
 	log.Println("= http PUT one Survey")
@@ -140,10 +139,10 @@ func TestSurveyModel(t *testing.T) {
 	assert.Equal(t, a2.Role, a3.Role, "a2 Role updated")
 	assert.NotEqual(t, a2.CRCs, a3.CRCs, "Change CRCs on role update")
 
-    req, _ = http.NewRequest("PUT", url+"/1", nil)
-    resp = httptest.NewRecorder()
-    router.ServeHTTP(resp, req)
-    assert.Equal(t, 404, resp.Code, "Can't update /1")
+	req, _ = http.NewRequest("PUT", url+"/1", nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 404, resp.Code, "Can't update /1")
 
 }
 

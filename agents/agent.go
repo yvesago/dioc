@@ -53,7 +53,7 @@ func main() {
 
 	// TLS config
 	/*
-	   // For an embeded root PEM
+	   // For an embedded root PEM
 	   const rootPEM = `
 	   -----BEGIN CERTIFICATE-----
 	   MIIE...
@@ -124,6 +124,7 @@ func main() {
 	wg.Wait()
 }
 
+// Tail read and test new line
 func Tail(fname string) {
 	// Monitor file
 	t, _ := tail.TailFile(fname, tail.Config{Follow: true, ReOpen: true})
@@ -138,6 +139,7 @@ func Tail(fname string) {
 	}
 }
 
+// SyncCMD read CMD from server
 func SyncCMD(filename string) {
 	// Loop
 	for {
@@ -156,6 +158,7 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+// SyncList update survey list
 func SyncList(liste []string) {
 	for _, crcs := range liste {
 		_, ok := Surveys[crcs]
@@ -174,7 +177,7 @@ func SyncList(liste []string) {
 			DebugLog(fmt.Sprintf(" Get Survey: %v", Surveys[crcs]))
 		}
 	}
-	for crcs, _ := range Surveys {
+	for crcs := range Surveys {
 		if contains(liste, crcs) == false {
 			DebugLog(" Remove Survey: " + crcs)
 			delete(Surveys, crcs)
@@ -190,19 +193,17 @@ func httpGETSurvey(crcs string) string {
 	if err != nil {
 		DebugLog("Bad connection to panel...")
 		return ""
-	} else {
-		defer rsp.Body.Close()
-		buf, _ := ioutil.ReadAll(rsp.Body)
-		type ShortSurvey struct {
-			CRCs   string
-			Search string
-			Id     int64
-		}
-		var s ShortSurvey
-		json.Unmarshal(buf, &s)
-		return s.Search
 	}
-	return ""
+	defer rsp.Body.Close()
+	buf, _ := ioutil.ReadAll(rsp.Body)
+	type ShortSurvey struct {
+		CRCs   string
+		Search string
+		Id     int64
+	}
+	var s ShortSurvey
+	json.Unmarshal(buf, &s)
+	return s.Search
 }
 
 func httpGETCommands(filename string) []string {
@@ -212,44 +213,43 @@ func httpGETCommands(filename string) []string {
 	if err != nil {
 		DebugLog("Bad connection to panel...")
 		return nil
-	} else {
-		defer rsp.Body.Close()
-		buf, err := ioutil.ReadAll(rsp.Body)
-		if err != nil {
-			DebugLog("bad body")
-			return nil
-		} else {
-			type CMDresp struct {
-				CMD          string
-				ListeSurveys []string
-			}
-			var cmd CMDresp
-			json.Unmarshal(buf, &cmd)
-			if cmd.CMD != "" {
-				DebugLog(cmd.CMD)
-			}
-			if cmd.CMD == "STOP" {
-				fmt.Println("CMD STOP")
-				os.Exit(0)
-			}
-			if cmd.CMD == "FullSearch" {
-				lines := FullSearch(filename)
-				for _, l := range lines {
-					httpPOSTAlerte(l.crcs, l.line)
-				}
-				cmd.CMD = "SendLines" // Update lines reset CMD
-			}
-			// if SendLines PUT lines
-			if cmd.CMD == "SendLines" {
-				lines := GetLines(filename)
-				httpPUTlines(lines)
-			}
-			DebugLog(strings.Join(cmd.ListeSurveys, ", "))
-			return cmd.ListeSurveys
-		}
-
 	}
-	return nil
+	defer rsp.Body.Close()
+	buf, err := ioutil.ReadAll(rsp.Body)
+	if err != nil {
+		DebugLog("bad body")
+		return nil
+	}
+
+	type CMDresp struct {
+		CMD          string
+		ListeSurveys []string
+	}
+	var cmd CMDresp
+
+	json.Unmarshal(buf, &cmd)
+	if cmd.CMD != "" {
+		DebugLog(cmd.CMD)
+	}
+	if cmd.CMD == "STOP" {
+		fmt.Println("CMD STOP")
+		os.Exit(0)
+	}
+	if cmd.CMD == "FullSearch" {
+		lines := FullSearch(filename)
+		for _, l := range lines {
+			httpPOSTAlerte(l.crcs, l.line)
+		}
+		cmd.CMD = "SendLines" // Update lines reset CMD
+	}
+	// if SendLines PUT lines
+	if cmd.CMD == "SendLines" {
+		lines := GetLines(filename)
+		httpPUTlines(lines)
+	}
+	DebugLog(strings.Join(cmd.ListeSurveys, ", "))
+	return cmd.ListeSurveys
+
 }
 
 func httpPUTlines(lines []string) {
@@ -293,6 +293,7 @@ func httpPOSTAlerte(crcs string, line string) {
 	}
 }
 
+// FullSearch test all lines of current file
 func FullSearch(filename string) []struct{ crcs, line string } {
 	f, _ := os.Open(filename)
 	defer f.Close()
@@ -313,6 +314,7 @@ func FullSearch(filename string) []struct{ crcs, line string } {
 	return linesFound
 }
 
+// GetLines read 3 first and last line
 func GetLines(filename string) []string {
 	var lines []string
 	f, err := os.Open(filename)
@@ -326,8 +328,8 @@ func GetLines(filename string) []string {
 	size := fi.Size()
 	lines = append(lines, fmt.Sprintf("file: %s %s %dK", filename, fi.Mode(), int(size/1024)))
 	scanner := bufio.NewScanner(f)
-	var i int64 = 0
-	var tmpline string = ""
+	var i int64
+	var tmpline string
 	for scanner.Scan() {
 		tmpline = scanner.Text()
 		if i < 3 {
@@ -346,6 +348,7 @@ func GetLines(filename string) []string {
 	return lines
 }
 
+// DebugLog print timestamped log
 func DebugLog(text string) {
 	if !Debug {
 		return
