@@ -118,6 +118,8 @@ func servermain(config Config) {
 		r.Use(gin.Logger())
 	}
 
+	r.Static("/updates", "./updates")
+
 	r.Use(SetConfig(config))
 	r.Use(Database(config.DBname))
 	r.Use(cors.Middleware(cors.Config{

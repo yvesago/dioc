@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/hpcloud/tail"
+	"github.com/sanbornm/go-selfupdate/selfupdate"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -19,7 +20,8 @@ import (
 )
 
 var (
-	version       string = ".0.1"
+	version       string = "0.1"
+	updates       string = "http://127.0.0.1:8080/"
 	Pannel        string = "https://127.0.0.1:8080/client/api/v1"
 	client        *http.Client
 	ReconnectTime time.Duration = 180
@@ -100,6 +102,8 @@ func main() {
 	req.Header.Set("Content-Type", "application/json")
 	client = &http.Client{Transport: tr}
 
+	DebugLog(fmt.Sprintf("Version %v", updater.CurrentVersion))
+
 	for { // wait for server
 		rsp, err := client.Do(req)
 		if err == nil {
@@ -110,6 +114,8 @@ func main() {
 		}
 	}
 	DebugLog("crca: " + CRCa)
+
+	checkUpdate()
 
 	// Main loops
 	var wg sync.WaitGroup
@@ -123,7 +129,17 @@ func main() {
 
 	wg.Add(1)
 	go SyncCMD(file)
+
 	wg.Wait()
+}
+
+func checkUpdate() {
+	err := updater.BackgroundRun()
+	if err != nil {
+		DebugLog(fmt.Sprintf("Error %v", err))
+	} else {
+		DebugLog(fmt.Sprintf("Upgrade on next run to %v", updater.Info.Version))
+	}
 }
 
 // Tail read and test new line
@@ -357,4 +373,14 @@ func DebugLog(text string) {
 	}
 	currenttime := time.Now().Local()
 	fmt.Println("[", currenttime.Format("2006-01-02 15:04:05"), "] "+text)
+}
+
+var updater = &selfupdate.Updater{
+	CurrentVersion: version, // Manually update the const, or set it using `go build -ldflags="-X main.VERSION=<newver>" -o hello-updater src/hello-updater/main.go`
+	ApiURL:         updates, // The server hosting `$CmdName/$GOOS-$ARCH.json` which contains the checksum for the binary
+	BinURL:         updates, // The server hosting the zip file containing the binary application which is a fallback for the patch method
+	//	DiffURL:        updates,   // The server hosting the binary patch diff for incremental updates
+	Dir:        "update/", // The directory created by the app when run which stores the cktime file
+	CmdName:    "updates", // The app name which is appended to the ApiURL to look for an update
+	ForceCheck: true,      // For this example, always check for an update unless the version is "dev"
 }
