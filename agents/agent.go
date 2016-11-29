@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	Pannel        string
+	Pannel        string = "https://127.0.0.1:8080/client/api/v1"
 	client        *http.Client
 	ReconnectTime time.Duration = 180
 	Debug         bool          = false
@@ -30,7 +30,7 @@ var (
 func main() {
 	filePtr := flag.String("f", "", "File to monitor")
 	debugPtr := flag.Bool("d", false, "Debug mode")
-	serverPtr := flag.String("s", "https://127.0.0.1:8080/client/api/v1", "Pannel url")
+	serverPtr := flag.String("s", Pannel, "Pannel url")
 	caFilePtr := flag.String("CA", "", "An optional PEM encoded CA's certificate file.")
 	insecurePtr := flag.Bool("insecureTLS", false, "Don't verify CA cert, for test only")
 	flag.Parse()
