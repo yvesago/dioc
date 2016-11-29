@@ -19,6 +19,7 @@ import (
 )
 
 var (
+	version       string = ".0.1"
 	Pannel        string = "https://127.0.0.1:8080/client/api/v1"
 	client        *http.Client
 	ReconnectTime time.Duration = 180
@@ -89,9 +90,10 @@ func main() {
 	type param struct {
 		FileSurvey string
 		Hostname   string
+		Version    string
 	}
 	name, _ := os.Hostname()
-	var p = param{FileSurvey: file, Hostname: name}
+	var p = param{FileSurvey: file, Hostname: name, Version: version}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(p)
 	req, _ := http.NewRequest("POST", Pannel+"/agent", b)
