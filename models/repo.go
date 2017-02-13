@@ -112,6 +112,20 @@ func ParseQuery(q map[string][]string) string {
 			query = query + " OFFSET " + strconv.Itoa(offset)
 		}
 	}
+	// _start, _end : LIMIT start, size
+	if q["_start"] != nil && q["_end"] != nil {
+		start := q["_start"][0]
+		end := q["_end"][0]
+		valid := regexp.MustCompile("^[0-9]+$")
+		startInt, _ := strconv.Atoi(start)
+		endInt, _ := strconv.Atoi(end)
+		startInt = startInt - 1 // indice start from 0
+
+		if valid.MatchString(start) && valid.MatchString(end) && endInt > startInt {
+			size := endInt - startInt
+			query = query + " LIMIT " + strconv.Itoa(startInt) + ", " + strconv.Itoa(size)
+		}
+	}
 
 	return query
 }
