@@ -71,7 +71,7 @@ func GetAlertes(c *gin.Context) {
 	_, err := dbmap.Select(&alertes, query)
 
 	if err == nil {
-		c.Header("X-Total-Count", strconv.FormatInt(count,10)) // float64 to string
+		c.Header("X-Total-Count", strconv.FormatInt(count, 10)) // float64 to string
 		c.JSON(200, alertes)
 	} else {
 		c.JSON(404, gin.H{"error": "no alerte(s) into the table"})
@@ -254,7 +254,8 @@ func (a *Alerte) SendMail(mserver string, from string, to []string) {
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
-	m.SetHeader("To", strings.Join(to, ","))
+	m.SetHeader("To", to[0])
+	m.SetHeader("CC", strings.Join(to[:], " ,"))
 	m.SetHeader("Subject", "[ALERTE] ("+strings.ToUpper(a.Level)+") "+a.Search)
 	m.SetBody("text/plain", msg)
 
