@@ -65,11 +65,13 @@ func GetAlertes(c *gin.Context) {
 		fmt.Println("query: " + query)
 	}
 
+	count, _ := dbmap.SelectInt("SELECT COUNT(*) FROM alerte")
+
 	var alertes []Alerte
 	_, err := dbmap.Select(&alertes, query)
 
 	if err == nil {
-		c.Header("X-Total-Count", strconv.Itoa(len(alertes)))
+		c.Header("X-Total-Count", strconv.FormatInt(count,10)) // float64 to string
 		c.JSON(200, alertes)
 	} else {
 		c.JSON(404, gin.H{"error": "no alerte(s) into the table"})
