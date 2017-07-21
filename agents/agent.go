@@ -26,32 +26,11 @@ var (
 	Debug         bool          = false
 	Surveys                     = make(map[string]*regexp.Regexp)
 	CRCa          string
+	caFile        string
+	insecure      bool
 )
 
-func main() {
-	filePtr := flag.String("f", "", "File to monitor")
-	debugPtr := flag.Bool("d", false, "Debug mode")
-	serverPtr := flag.String("s", Pannel, "Pannel url")
-	caFilePtr := flag.String("CA", "", "An optional PEM encoded CA's certificate file.")
-	insecurePtr := flag.Bool("insecureTLS", false, "Don't verify CA cert, for test only")
-	flag.Parse()
-
-	file := *filePtr
-	Debug = *debugPtr
-	Pannel = *serverPtr
-	insecure := *insecurePtr
-	caFile := *caFilePtr
-
-	if Debug {
-		ReconnectTime = 5
-	}
-
-	if _, err := os.Stat(file); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		flag.PrintDefaults()
-		os.Exit(0)
-	}
-
+func setClient() *http.Client {
 	// TLS config
 	/*
 	   // For an embedded root PEM
@@ -85,6 +64,36 @@ func main() {
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 	}
+	timeout := time.Duration(10 * time.Second)
+	cl := &http.Client{Timeout: timeout, Transport: tr}
+	return cl
+}
+
+func main() {
+	filePtr := flag.String("f", "", "File to monitor")
+	debugPtr := flag.Bool("d", false, "Debug mode")
+	serverPtr := flag.String("s", Pannel, "Pannel url")
+	caFilePtr := flag.String("CA", "", "An optional PEM encoded CA's certificate file.")
+	insecurePtr := flag.Bool("insecureTLS", false, "Don't verify CA cert, for test only")
+	flag.Parse()
+
+	file := *filePtr
+	Debug = *debugPtr
+	Pannel = *serverPtr
+	insecure = *insecurePtr
+	caFile = *caFilePtr
+
+	if Debug {
+		ReconnectTime = 5
+	}
+
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+
+	client = setClient()
 
 	// Register
 	type param struct {
@@ -98,7 +107,6 @@ func main() {
 	json.NewEncoder(b).Encode(p)
 	req, _ := http.NewRequest("POST", Pannel+"/agent", b)
 	req.Header.Set("Content-Type", "application/json")
-	client = &http.Client{Transport: tr}
 
 	for { // wait for server
 		rsp, err := client.Do(req)
@@ -193,7 +201,7 @@ func httpGETSurvey(crcs string) string {
 	//req.Header.Add("X-myToken", "ixxxx")
 	rsp, err := client.Do(req)
 	if err != nil {
-		DebugLog("Bad connection to panel...")
+		DebugLog("httpGETSurvey: Bad connection to panel...")
 		return ""
 	}
 	defer rsp.Body.Close()
@@ -213,7 +221,7 @@ func httpGETCommands(filename string) []string {
 	//client := &http.Client{}
 	rsp, err := client.Do(req)
 	if err != nil {
-		DebugLog("Bad connection to panel...")
+		DebugLog(fmt.Sprintf("httpGETCommands: Bad connection to panel... %v\n", err))
 		return nil
 	}
 	defer rsp.Body.Close()
@@ -268,7 +276,7 @@ func httpPUTlines(lines []string) {
 	//req.Header.Add("X-myToken", "ixxxx")
 	_, err := client.Do(req)
 	if err != nil {
-		DebugLog("Bad connection to panel...")
+		DebugLog("httpPUTlines: Bad connection to panel...")
 		return
 	}
 }
@@ -290,7 +298,7 @@ func httpPOSTAlerte(crcs string, line string) {
 	//req.Header.Add("X-myToken", "ixxxx")
 	_, err := client.Do(req)
 	if err != nil {
-		DebugLog("Bad connection to panel...")
+		DebugLog("httpPOSTAlerte: Bad connection to panel...")
 		return
 	}
 }
