@@ -5,27 +5,14 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
+import { roles } from './MyConfig';
 
-const roles = [ // XXX fix your categorys
-    { name: 'Squid', id: 'squid' },
-    { name: 'Radius', id: 'radius' },
-    { name: 'Web', id: 'web' },
-    { name: 'DNS', id: 'dns' },
-    { name: 'Honeypot', id: 'honeypot' },
-    { name: 'NetFlow', id: 'netflow' },
-    { name: 'Auth', id: 'auth' },
-    { name: 'SMTP', id: 'smtp' },
-    { name: 'Mail', id: 'mail' },
-    { name: 'Test', id: 'test' },
-];
-    //{ label: 'None', id: 0, value: '' }
 
 const cmd = [
     { label: 'Send Lines', id: 'SendLines', name: 'SendLines' },
     { label: 'Search Full File', id: 'FullSearch', name: 'FullSearch' },
     { label: 'STOP', id: 'STOP', name: 'STOP' },
 ];
-    //{ label: 'None', id: 0, value: '' }
 
 
 const colored = WrappedComponent => props => props.record.status === 'OffLine' ?
@@ -80,7 +67,6 @@ export const AgentCreate = (props) => (
         </SimpleForm>
     </Create>
 );
-//<DateInput label="Publication date" source="published_at" defaultValue={new Date()} />
 
 export const AgentEdit = (props) => (
     <Edit title={<AgentTitle />} {...props}>

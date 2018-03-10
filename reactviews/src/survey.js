@@ -5,25 +5,12 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
+import { roles } from './MyConfig';
+
 const levels = [
     { name: 'Critic', id: 'critic' },
     { name: 'Warn', id: 'warn' },
 ];
-    //{ label: 'None', value: '' }
-
-const roles = [ // XXX fix your categorys
-    { name: 'Squid', id: 'squid' },
-    { name: 'Radius', id: 'radius' },
-    { name: 'Web', id: 'web' },
-    { name: 'DNS', id: 'dns' },
-    { name: 'Honeypot', id: 'honeypot' },
-    { name: 'NetFlow', id: 'netflow' },
-    { name: 'Auth', id: 'auth' },
-    { name: 'SMTP', id: 'smtp' },
-    { name: 'Mail', id: 'mail' },
-    { name: 'Test', id: 'test' },
-];
-
 
 const colored = WrappedComponent => props => props.record.level === 'critic' ?
     <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
@@ -58,7 +45,7 @@ export const SurveyCreate = (props) => (
         </SimpleForm>
     </Create>
 );
-//<DateInput label="Publication date" source="published_at" defaultValue={new Date()} />
+
 
 export const SurveyEdit = (props) => (
     <Edit  {...props}>
