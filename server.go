@@ -134,6 +134,8 @@ func servermain(config Config) {
 	admin := r.Group("admin/api/v1")
 	admin.Use(TokenAuthMiddleware(config))
 	{
+		admin.GET("/board", GetBoard)
+
 		admin.GET("/surveys", GetSurveys)
 		admin.GET("/surveys/:id", GetSurvey)
 		admin.POST("/surveys", PostSurvey)
