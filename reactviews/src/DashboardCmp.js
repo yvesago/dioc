@@ -23,7 +23,7 @@ class DashboardCmp extends Component {
             .get(MyConfig.API_URL + '/admin/api/v1/board')
             .set('X-MyToken', MyConfig.API_KEY)
             .end(function(error, response){
-                if (error && error.status === 401) {
+                if ( (error && error.status === 401 ) || response === undefined) {
                     window.location.href = '/#/';
                     return;
                 }

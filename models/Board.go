@@ -11,6 +11,7 @@ type m map[string]int64
 type Board struct {
 	Agents  []m `json:"agents" db:"-"`  // ignore sql
 	Surveys []m `json:"surveys" db:"-"` // ignore sql
+	Alerts  []m `json:"alerts" db:"-"`  // ignore sql
 }
 
 func (b *Board) Load(tx *gorp.DbMap) error {
@@ -32,6 +33,16 @@ func (b *Board) Load(tx *gorp.DbMap) error {
 	for _, r := range roles {
 		c, _ := tx.SelectInt("select Count(*) from Survey where role=?", r)
 		b.Surveys = append(b.Surveys, m{r: c})
+	}
+
+	var rls []string
+	_, err = tx.Select(&rls, "select DISTINCT(role) from Alerte")
+	if err != nil {
+		return err
+	}
+	for _, r := range rls {
+		c, _ := tx.SelectInt("select Count(*) from Alerte where role=?", r)
+		b.Alerts = append(b.Alerts, m{r: c})
 	}
 	//fmt.Printf("%+v\n", b)
 	return err

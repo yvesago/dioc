@@ -25,11 +25,21 @@ func TestBoardModel(t *testing.T) {
 	dbmap.Insert(&a2)
 	dbmap.Insert(&a3)
 
+	s1 := Survey{Search: "a", Role: "test"}
+	s2 := Survey{Search: "b", Role: "test"}
+	s3 := Survey{Search: "c", Role: "test2"}
+	dbmap.Insert(&s1)
+	dbmap.Insert(&s2)
+	dbmap.Insert(&s3)
+
+	al := Alerte{CRCa: a1.CRCa, CRCs: s1.CRCs, Role: "test"}
+	dbmap.Insert(&al)
+
 	b := Board{}
 	b.Load(dbmap)
 	d, _ := json.Marshal(b)
 	fmt.Println(string(d))
-	assert.Equal(t, `{"agents":[{"OffLine":2},{"OnLine":1}],"surveys":null}`, string(d), "todo")
+	assert.Equal(t, `{"agents":[{"OffLine":2},{"OnLine":1}],"surveys":[{"test":2},{"test2":1}],"alerts":[{"test":1}]}`, string(d), "todo")
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
