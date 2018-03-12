@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, DisabledInput, required, EditButton, DateField, 
-    RichTextField, SelectInput 
+    RichTextField, SelectInput, Filter
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
@@ -20,9 +20,16 @@ const colored = WrappedComponent => props => props.record.level === 'critic' ?
 
 const ColoredTextField = colored(TextField);
 
+const SurveyFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="Comment" source="comment" />
+        <SelectInput source="role" choices={roles} allowEmpty alwaysOn />
+    </Filter>
+);
+
 
 export const SurveyList = (props) => (
-    <List {...props}>
+    <List filters={<SurveyFilter />} {...props}>
         <Datagrid>
             <TextField source="search" />
             <TextField source="role" />

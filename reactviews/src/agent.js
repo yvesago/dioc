@@ -17,7 +17,7 @@ const cmd = [
 
 const colored = WrappedComponent => props => props.record.status === 'OffLine' ?
     <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
-    props.record.level === 'OnLine' ?
+    props.record.status === 'OnLine' ?
         <span style={{ color: 'green' }}><WrappedComponent {...props} /></span> :
         <WrappedComponent {...props} />;
 
