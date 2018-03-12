@@ -45,7 +45,7 @@ class DonutWithText extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if (props.data.length !== 0) {
+        if (props.data !== null && props.data.length !== 0) {
             this.setState({ alertes: props.data });
             this.setData(props.data);
         }
@@ -76,7 +76,7 @@ class DonutWithText extends React.Component {
 
     render() {
         var a = this.props.data;
-        if (a.length === 0) {
+        if (a === null || a.length === 0) {
             return ( 
                 <div>...</div> 
             );
