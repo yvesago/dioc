@@ -45,10 +45,11 @@ export const AlertEdit = (props) => (
         <SimpleForm>
             <TextField source="crca" />
             <TextField source="crcs" />
+            <TextField source="search" />
             <TextField source="ip" />
             <TextField source="filesurvey" />
             <TextField source="role" />
-            <TextField source="level" />
+            <ColoredTextField source="level" />
             <TextField source="lines"  style={{whiteSpace: 'pre-line'}}/>
             <RichTextInput source="comment" />
             <DateField label="created" source="created" showTime />

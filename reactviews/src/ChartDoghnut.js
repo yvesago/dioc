@@ -66,7 +66,7 @@ class DonutWithText extends React.Component {
         }
 
         o.backgroundColor = [ '#ff7f0e', '#1f77b4', '#aec7e8', '#ffca28', '#d4e157','#4caf50','#26a69a','#00e5ff', '#00b0ff', '#ff1744' ]; 
-        o.hoverBackgroundColor = [ '#ff4f00', '#3f97d4', '#bed7f8', '#ffca28', '#d4e157','#4caf50','#26a69a','#00e5ff', '#00b0ff', '#ff1744'];
+        o.hoverBackgroundColor = [ '#ff9f2e', '#3f97d4', '#bed7f8', '#ffca28', '#d4e157','#4caf50','#26a69a','#00e5ff', '#00b0ff', '#ff1744'];
         ndata.datasets.push(o);
 
         this.setState({ data: ndata });
