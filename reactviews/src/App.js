@@ -5,6 +5,8 @@ import { fetchUtils, Admin, Resource, Delete } from 'admin-on-rest';
 import AlertIcon from 'material-ui/svg-icons/action/assessment';
 import SurveyIcon from 'material-ui/svg-icons/device/wifi-tethering';
 import AgentIcon from 'material-ui/svg-icons/notification/wifi';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import myTheme from './myTheme';
 
 import { Dashboard } from './Dashboard';
 import { AlertList, AlertEdit } from './alert';
@@ -30,7 +32,7 @@ const restClient = mySimpleRest( MyConfig.API_URL  + '/admin/api/v1', httpClient
 
 
 const App = () => (
-    <Admin title='DIOC' dashboard={Dashboard} restClient={restClient}>
+    <Admin title='Distributed IOC manager' theme={getMuiTheme(myTheme)} dashboard={Dashboard} restClient={restClient}>
         <Resource name="alertes" list={AlertList} edit={AlertEdit} remove={Delete} icon={AlertIcon} />
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} remove={Delete} icon={SurveyIcon} />
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />
