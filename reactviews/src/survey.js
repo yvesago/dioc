@@ -29,7 +29,7 @@ const SurveyFilter = (props) => (
 
 
 export const SurveyList = (props) => (
-    <List filters={<SurveyFilter />} {...props}>
+    <List filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
         <Datagrid>
             <TextField source="search" />
             <TextField source="role" />

@@ -16,7 +16,7 @@ const ColoredTextField = colored(TextField);
 
 const AlertFilter = (props) => (
     <Filter {...props}>
-        <TextInput label="Lines" source="lines" />
+        <TextInput label="Line" source="line" />
         <TextInput label="Comment" source="comment" />
         <SelectInput source="role" choices={roles} allowEmpty alwaysOn />
     </Filter>
@@ -24,11 +24,11 @@ const AlertFilter = (props) => (
 
 
 export const AlertList = (props) => (
-    <List filters={<AlertFilter />} {...props}>
+    <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
         <Datagrid>
             <TextField source="search" />
             <TextField source="role" />
-            <TextField source="ip" />
+            <TextField source="ip" label="Agent" />
             <TextField source="filesurvey" />
             <ColoredTextField source="level" />
             <TextField source="line" />
@@ -43,14 +43,12 @@ export const AlertList = (props) => (
 export const AlertEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <TextField source="crca" />
-            <TextField source="crcs" />
             <TextField source="search" />
-            <TextField source="ip" />
+            <TextField source="ip" label="Agent" />
             <TextField source="filesurvey" />
             <TextField source="role" />
-            <ColoredTextField source="level" />
-            <TextField source="lines"  style={{whiteSpace: 'pre-line'}}/>
+            <span style={{transform: 'scale(0.75) translate(0px, 10px)', transformOrigin: 'left top 0px',  color: 'rgba(0, 0, 0, 0.3)'}}>Level</span><ColoredTextField source="level" />
+            <TextField source="line"  style={{whiteSpace: 'pre-line'}}/>
             <RichTextInput source="comment" />
             <DateField label="created" source="created" showTime />
             <DateField label="updated" source="updated" showTime />
