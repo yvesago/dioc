@@ -58,11 +58,11 @@ export const SurveyEdit = (props) => (
     <Edit  {...props}>
         <SimpleForm>
             <TextInput source="search" validate={required} />
-            <DateField label="Created" source="created" showTime />
-            <DateField label="Updated" source="updated" showTime />
             <SelectInput source="role" choices={roles} allowEmpty />
             <SelectInput source="level" choices={levels} allowEmpty />
             <RichTextInput source="comment" />
+            <DateField label="Created" source="created" showTime />
+            <DateField label="Updated" source="updated" showTime />
             <DisabledInput source="crcs" validate={required} />
         </SimpleForm>
     </Edit>
