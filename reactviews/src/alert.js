@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, DateField, EditButton,
-    Edit, SimpleForm, Filter, TextInput, SelectInput, DeleteButton
+    Edit, SimpleForm, Filter, TextInput, SelectInput, DeleteButton,
+    Responsive, SimpleList
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
@@ -25,18 +26,29 @@ const AlertFilter = (props) => (
 
 export const AlertList = (props) => (
     <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
-        <Datagrid>
-            <TextField source="search" />
-            <TextField source="role" />
-            <TextField source="ip" label="Agent" />
-            <TextField source="filesurvey" />
-            <ColoredTextField source="level" />
-            <TextField source="line" />
-            <TextField source="comment" />
-            <DateField label="updated" source="updated" showTime />
-            <EditButton />
-            <DeleteButton />
-        </Datagrid>
+        <Responsive
+            small={
+                <SimpleList
+                    primaryText={record => `[${record.level}] ${record.search}`}
+                    secondaryText={record => record.line}
+                    tertiaryText={record => new Date(record.updated).toLocaleString()}
+                />
+            }
+            medium={
+                <Datagrid>
+                    <TextField source="search" />
+                    <TextField source="role" />
+                    <TextField source="ip" label="Agent" />
+                    <TextField source="filesurvey" />
+                    <ColoredTextField source="level" />
+                    <TextField source="line" />
+                    <TextField source="comment" />
+                    <DateField label="updated" source="updated" showTime />
+                    <EditButton />
+                    <DeleteButton />
+                </Datagrid>
+            }
+        />
     </List>
 );
 

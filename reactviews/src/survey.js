@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, DisabledInput, required, EditButton, DateField, 
-    RichTextField, SelectInput, Filter
+    RichTextField, SelectInput, Filter, Responsive, SimpleList
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
@@ -31,14 +31,25 @@ const SurveyFilter = (props) => (
 
 export const SurveyList = (props) => (
     <List filters={<SurveyFilter />} perPage={30} {...props}>
-        <Datagrid>
-            <TextField source="search" />
-            <TextField source="role" />
-            <ColoredTextField source="level" />
-            <RichTextField source="comment" stripTags elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
-            <DateField label="updated" source="updated" showTime />
-            <EditButton />
-        </Datagrid>
+        <Responsive
+            small={
+                <SimpleList
+                    primaryText={record => record.search}
+                    secondaryText={record => `Role: ${record.role}, Level: ${record.level}`}
+                    tertiaryText={record => new Date(record.updated).toLocaleString()}
+                />
+            }
+            medium={
+                <Datagrid>
+                    <TextField source="search" />
+                    <TextField source="role" />
+                    <ColoredTextField source="level" />
+                    <RichTextField source="comment" stripTags elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <DateField label="updated" source="updated" showTime />
+                    <EditButton />
+                </Datagrid>
+            }
+        />
     </List>
 );
 

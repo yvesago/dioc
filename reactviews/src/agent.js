@@ -1,7 +1,8 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, DisabledInput, required, EditButton, DateField, 
-    RichTextField, SelectInput, LongTextInput, Filter
+    RichTextField, SelectInput, LongTextInput, Filter, Responsive,
+    SimpleList
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
@@ -40,17 +41,28 @@ const AgentFilter = (props) => (
 
 export const AgentList = (props) => (
     <List filters={<AgentFilter />} {...props}>
-        <Datagrid>
-            <TextField source="ip" />
-            <TextField source="filesurvey" />
-            <ColoredTextField source="status" />
-            <TextField source="role" />
-            <TextField source="lines" />
-            <RichTextField source="comment" stripTags />
-            <TextField source="cmd" />
-            <DateField label="updated" source="updated" showTime />
-            <EditButton />
-        </Datagrid>
+        <Responsive
+            small={
+                <SimpleList
+                    primaryText={record => `[${record.status}] ${record.ip}`}
+                    secondaryText={record => record.filesurvey}
+                    tertiaryText={record => new Date(record.updated).toLocaleString()}
+                />
+            }
+            medium={
+                <Datagrid>
+                    <TextField source="ip" />
+                    <TextField source="filesurvey" />
+                    <ColoredTextField source="status" />
+                    <TextField source="role" />
+                    <RichTextField source="lines" elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <RichTextField source="comment" stripTags />
+                    <TextField source="cmd" />
+                    <DateField label="updated" source="updated" showTime />
+                    <EditButton />
+                </Datagrid>
+            }
+        />
     </List>
 );
 
