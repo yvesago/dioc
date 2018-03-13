@@ -66,7 +66,7 @@ func ParseQuery(q map[string][]string) string {
 			query = query + " WHERE "
 			var searches []string
 			for col, search := range data {
-				valid := regexp.MustCompile("^[A-Za-z0-9_]+$")
+				valid := regexp.MustCompile("^[A-Za-z0-9_.]+$")
 				if col != "" && search != "" && valid.MatchString(col) && valid.MatchString(search) {
 					searches = append(searches, col+" LIKE \"%"+search+"%\"")
 				}
