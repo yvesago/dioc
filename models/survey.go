@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/gorp.v1"
+	"gopkg.in/gorp.v2"
 	//"log"
 	"hash/crc32"
 	"strconv"
@@ -27,7 +27,7 @@ type Survey struct {
 	Role    string    `db:"role" json:"role"`
 	Search  string    `db:"search" json:"search"`
 	Level   string    `db:"level" json:"level"`
-	Comment string    `db:"comment" json:"comment"`
+	Comment string    `db:"comment" json:"comment,size:65534"`
 	Checked int       `db:"checked" json:"checked"`
 	Created time.Time `db:"created" json:"created"` // or int64
 	Updated time.Time `db:"updated" json:"updated"`

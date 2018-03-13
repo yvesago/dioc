@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
-	"gopkg.in/gorp.v1"
+	"gopkg.in/gorp.v2"
 	//	"log"
 	"strconv"
 	"strings"
@@ -29,10 +29,10 @@ type Alerte struct {
 	IP         string    `db:"ip" json:"ip"`
 	FileSurvey string    `db:"filesurvey" json:"filesurvey"`
 	Role       string    `db:"role" json:"role"`
-	Line       string    `db:"line" json:"line"`
+	Line       string    `db:"line" json:"line,size:16384"`
 	Search     string    `db:"search" json:"search"`
 	Level      string    `db:"level" json:"level"`
-	Comment    string    `db:"comment" json:"comment"`
+	Comment    string    `db:"comment" json:"comment,size:16384"`
 	Created    time.Time `db:"created" json:"created"` // or int64
 	Updated    time.Time `db:"updated" json:"updated"`
 }

@@ -6,7 +6,7 @@ import (
 	//"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	"gopkg.in/gorp.v1"
+	"gopkg.in/gorp.v2"
 	"log"
 	"regexp"
 	"strconv"
@@ -31,9 +31,15 @@ func InitDb(dbName string) *gorp.DbMap {
 	dbmap.AddTableWithName(Agent{}, "Agent").SetKeys(false, "CRCa")
 	dbmap.AddTableWithName(Survey{}, "Survey").SetKeys(true, "Id")
 	dbmap.AddTableWithName(Alerte{}, "Alerte").SetKeys(true, "Id")
+	dbmap.AddTableWithName(Board{}, "Board").SetKeys(true, "Id")
 	err = dbmap.CreateTablesIfNotExists()
 	checkErr(err, "Create tables failed")
 
+	var b Board
+	dbmap.SelectOne(&b, "select * from Board where id = 1")
+	if b.Id != 1 {
+		dbmap.Insert(&b)
+	}
 	return dbmap
 }
 

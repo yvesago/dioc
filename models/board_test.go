@@ -1,7 +1,7 @@
 package models
 
 import (
-	//	"bytes"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -37,9 +37,15 @@ func TestBoardModel(t *testing.T) {
 
 	b := Board{}
 	b.Load(dbmap)
-	d, _ := json.Marshal(b)
+	d, _ := json.Marshal(b.Agents)
 	fmt.Println(string(d))
-	assert.Equal(t, `{"agents":[{"OffLine":2},{"OnLine":1}],"surveys":[{"test":2},{"test2":1}],"alerts":[{"test":1}]}`, string(d), "todo")
+	assert.Equal(t, `[{"OffLine":2},{"OnLine":1}]`, string(d), "Agents results")
+	d, _ = json.Marshal(b.Surveys)
+	fmt.Println(string(d))
+	assert.Equal(t, `[{"test":2},{"test2":1}]`, string(d), "Surveys results")
+	d, _ = json.Marshal(b.Alerts)
+	fmt.Println(string(d))
+	assert.Equal(t, `[{"test":1}]`, string(d), "Alerts results")
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
@@ -48,6 +54,7 @@ func TestBoardModel(t *testing.T) {
 
 	var urla = "/admin/api/v1/board"
 	router.GET(urla, GetBoard)
+	router.PUT(urla, UpdateBoard)
 
 	// Get Board
 	log.Println("= http GET Board")
@@ -64,5 +71,29 @@ func TestBoardModel(t *testing.T) {
 	//fmt.Println(b2)
 	a := b2.Agents[0]
 	assert.Equal(t, int64(2), a["OffLine"], "2 results")
+
+	// Update Board
+	log.Println("= http PUT Board")
+	b2.Docs = "Docs test2 updated"
+	by := new(bytes.Buffer)
+	json.NewEncoder(by).Encode(b2)
+	req, err = http.NewRequest("PUT", urla, by)
+	req.Header.Set("Content-Type", "application/json")
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 200, resp.Code, "http PUT success")
+
+	var b3 Board
+	req, err = http.NewRequest("GET", urla, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 200, resp.Code, "http success")
+	json.Unmarshal(resp.Body.Bytes(), &b3)
+	fmt.Println(b3)
+	fmt.Println(resp.Body)
+	assert.Equal(t, b2.Docs, b3.Docs, "Docs test2 updated")
 
 }

@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/gorp.v1"
+	"gopkg.in/gorp.v2"
 	"hash/crc32"
 	"strconv"
 	"strings"
@@ -27,8 +27,8 @@ type Agent struct {
 	IP         string    `db:"ip" json:"ip"`
 	FileSurvey string    `db:"filesurvey" json:"filesurvey"`
 	Role       string    `db:"role" json:"role"`
-	Comment    string    `db:"comment" json:"comment"`
-	Lines      string    `db:"lines" json:"lines"`
+	Comment    string    `db:"comment" json:"comment,size:16384"`
+	Lines      string    `db:"lines" json:"lines,size:16384"`
 	Status     string    `db:"status" json:"status"`
 	CMD        string    `db:"cmd" json:"cmd"`
 	Salt       string    `db:"-" json:"-"`             // not registred in database
