@@ -20,6 +20,7 @@ const colored = WrappedComponent => props => props.record.level === 'critic' ?
 
 const ColoredTextField = colored(TextField);
 
+
 const SurveyFilter = (props) => (
     <Filter {...props}>
         <TextInput label="Comment" source="comment" />
@@ -29,12 +30,12 @@ const SurveyFilter = (props) => (
 
 
 export const SurveyList = (props) => (
-    <List filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
+    <List filters={<SurveyFilter />} perPage={30} {...props}>
         <Datagrid>
             <TextField source="search" />
             <TextField source="role" />
             <ColoredTextField source="level" />
-            <RichTextField source="comment" stripTags />
+            <RichTextField source="comment" stripTags elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
             <DateField label="updated" source="updated" showTime />
             <EditButton />
         </Datagrid>
