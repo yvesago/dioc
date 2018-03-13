@@ -135,6 +135,8 @@ func servermain(config Config) {
 	admin.Use(TokenAuthMiddleware(config))
 	{
 		admin.GET("/board", GetBoard)
+		admin.GET("/board/:id", GetBoard)
+		admin.PUT("/board/:id", UpdateBoard)
 
 		admin.GET("/surveys", GetSurveys)
 		admin.GET("/surveys/:id", GetSurvey)
