@@ -12,7 +12,7 @@ install:
   - go get github.com/gin-gonic/gin
   - go get github.com/mattn/go-sqlite3
   - go get github.com/stretchr/testify/assert
-  - go get gopkg.in/gorp.v1
+  - go get gopkg.in/gorp.v2
   - go get gopkg.in/gomail.v2
 
 script:
