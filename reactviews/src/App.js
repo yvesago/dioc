@@ -12,6 +12,7 @@ import { Dashboard } from './Dashboard';
 import { AlertList, AlertEdit } from './alert';
 import { SurveyList, SurveyEdit, SurveyCreate } from './survey';
 import { AgentList, AgentEdit, AgentCreate } from './agent';
+import { BoardEdit } from './boarddocs';
 
 import { MyConfig } from './MyConfig';
 import mySimpleRest from './myJsonRestServer';
@@ -36,6 +37,7 @@ const App = () => (
         <Resource name="alertes" list={AlertList} edit={AlertEdit} remove={Delete} icon={AlertIcon} />
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} remove={Delete} icon={SurveyIcon} />
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />
+        <Resource name="board" edit={BoardEdit} />
     </Admin>
 );
 

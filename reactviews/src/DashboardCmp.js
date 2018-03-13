@@ -6,12 +6,20 @@ import withWidth from 'material-ui/utils/withWidth';
 import { AppBarMobile } from 'admin-on-rest';
 
 import DashTables from './DashTables';
+import { DashText } from './DashText';
 
 const styles = {
-    welcome: { marginBottom: '2em' },
+    docs: { 
+        icon: { float: 'right', width: 48, height: 48, padding: 16, color: '#2196F3' },
+        card: { borderLeft: 'solid 4px #2196F3', flex: 1, marginLeft: '1em' }
+    },
+    agents: { 
+        icon: { float: 'right', width: 48, height: 48, padding: 16, color: '#4caf50' },
+        card: { borderLeft: 'solid 4px #4caf50', flex: 1, marginLeft: '1em' }
+    },
     flex: { display: 'flex', marginBottom: '1em' },
-    leftCol: { flex: 1, marginRight: '1em' },
-    rightCol: { flex: 1, marginLeft: '1em' },
+    leftCol: { flex: 5, marginRight: '1em' },
+    rightCol: { flex: 4, marginLeft: '1em' },
     singleCol: { marginTop: '2em' },
 };
 
@@ -29,7 +37,7 @@ class DashboardCmp extends Component {
                 }
                 var r = response.body;
                 this.setState({
-                    //record: r,
+                    record: r,
                     nbAgents: r.agents,
                     nbSurveys: r.surveys,
                     nbAlerts: r.alerts
@@ -66,7 +74,7 @@ class DashboardCmp extends Component {
             nbAgents,
             nbSurveys,
             nbAlerts,
-            //record,
+            record,
         } = this.state;
         const { width } = this.props;
         return (
@@ -76,6 +84,29 @@ class DashboardCmp extends Component {
                     <div style={styles.leftCol}>
                         <div style={styles.flex}>
                             <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts}  />
+                        </div>
+                        <div style={styles.flex}>
+                            <DashText record={record} 
+                                style={styles.agents} 
+                                name="Agents" 
+                                subtitle="Downloadable agents"
+                                txt="docagents"  />
+                        </div>
+                    </div>
+                    <div style={styles.rightCol}>
+                        <div style={styles.flex}>
+                            <DashText record={record} 
+                                style={styles.docs} 
+                                name="Doc" 
+                                subtitle="Main doc"
+                                txt="docs"  />
+                        </div>
+                        <div style={styles.flex}>
+                            <DashText record={record} 
+                                style={styles.docs} 
+                                name="Searchs" 
+                                subtitle="Tips and trick"
+                                txt="docsearchs"  />
                         </div>
                     </div>
                 </div>
