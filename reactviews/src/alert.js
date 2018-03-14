@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, DateField, EditButton,
     Edit, SimpleForm, Filter, TextInput, SelectInput, DeleteButton,
-    Responsive, SimpleList
+    RichTextField, Responsive, SimpleList
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
@@ -42,7 +42,7 @@ export const AlertList = (props) => (
                     <TextField source="filesurvey" />
                     <ColoredTextField source="level" />
                     <TextField source="line" />
-                    <TextField source="comment" />
+                    <RichTextField source="comment" stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                     <DeleteButton />

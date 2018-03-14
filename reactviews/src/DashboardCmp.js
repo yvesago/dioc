@@ -92,6 +92,13 @@ class DashboardCmp extends Component {
                                 subtitle="Downloadable agents"
                                 txt="docagents"  />
                         </div>
+                        <div style={styles.flex}>
+                            <DashText record={record} 
+                                style={styles.docs} 
+                                name="Searchs" 
+                                subtitle="Tips and tricks"
+                                txt="docsearchs"  />
+                        </div>
                     </div>
                     <div style={styles.rightCol}>
                         <div style={styles.flex}>
@@ -100,13 +107,6 @@ class DashboardCmp extends Component {
                                 name="Doc" 
                                 subtitle="Main doc"
                                 txt="docs"  />
-                        </div>
-                        <div style={styles.flex}>
-                            <DashText record={record} 
-                                style={styles.docs} 
-                                name="Searchs" 
-                                subtitle="Tips and trick"
-                                txt="docsearchs"  />
                         </div>
                     </div>
                 </div>
