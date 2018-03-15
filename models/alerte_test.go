@@ -73,50 +73,50 @@ func TestModelAlerte(t *testing.T) {
 	u, _ := url.Parse(s)
 	q, _ := url.ParseQuery(u.RawQuery)
 	//fmt.Println(q)
-	query := ParseQuery(q)
+	query, order, limit := ParseQuery(q)
 	//fmt.Println(query)
-	assert.Equal(t, "  WHERE line LIKE \"%t%\" ORDER BY datetime(created) ASC", query, "Parse query")
+	assert.Equal(t, "line LIKE \"%t%\" ORDER BY datetime(created) ASC", query+order+limit, "Parse query")
 
 	log.Println("= Test parsing page query")
 	s = "http://127.0.0.1:8080/api?_perPage=5&_page=1"
 	u, _ = url.Parse(s)
 	q, _ = url.ParseQuery(u.RawQuery)
 	//fmt.Println(q)
-	query = ParseQuery(q)
+	query, order, limit = ParseQuery(q)
 	//fmt.Println(query)
-	assert.Equal(t, "  LIMIT 5", query, "Parse query")
+	assert.Equal(t, " LIMIT 5", query+order+limit, "Parse query")
 
 	log.Println("= Test parsing page query")
 	s = "http://127.0.0.1:8080/api?_perPage=5&_page=2"
 	u, _ = url.Parse(s)
 	q, _ = url.ParseQuery(u.RawQuery)
 	//fmt.Println(q)
-	query = ParseQuery(q)
+	query, order, limit = ParseQuery(q)
 	//fmt.Println(query)
-	assert.Equal(t, "  LIMIT 5 OFFSET 6", query, "Parse query")
+	assert.Equal(t, " LIMIT 5 OFFSET 6", query+order+limit, "Parse query")
 
 	log.Println("= Test parsing page query")
 	s = "http://127.0.0.1:8080/api?_start=2&_end=5"
 	u, _ = url.Parse(s)
 	q, _ = url.ParseQuery(u.RawQuery)
 	//fmt.Println(q)
-	query = ParseQuery(q)
+	query, order, limit = ParseQuery(q)
 	//fmt.Println(query)
-	assert.Equal(t, "  LIMIT 1, 4", query, "Parse query")
+	assert.Equal(t, " LIMIT 1, 4", query+order+limit, "Parse query")
 
 	log.Println("= Test parsing multi filter query")
 	s = "http://127.0.0.1:8080/api?_filters={\"line\":\"t\",\"line2\":\"t2\"}&_sortDir=DESC&_sortField=created"
 	u, _ = url.Parse(s)
 	q, _ = url.ParseQuery(u.RawQuery)
 	//fmt.Println(q)
-	query = ParseQuery(q)
-	//fmt.Println(query)
+	query, order, limit = ParseQuery(q)
+	//fmt.Println(query + order + limit)
 
 	// Managed unsorted queries map
-	res1 := "  WHERE line LIKE \"%t%\" AND line2 LIKE \"%t2%\" ORDER BY datetime(created) DESC"
-	res2 := "  WHERE line2 LIKE \"%t2%\" AND line LIKE \"%t%\" ORDER BY datetime(created) DESC"
-	if res1 != query && res2 != query {
-		assert.Equal(t, res1+" -- OR -- "+res2, query, "Parse query")
+	res1 := "line LIKE \"%t%\" AND line2 LIKE \"%t2%\" ORDER BY datetime(created) DESC"
+	res2 := "line2 LIKE \"%t2%\" AND line LIKE \"%t%\" ORDER BY datetime(created) DESC"
+	if res1 != query+order+limit && res2 != query+order+limit {
+		assert.Equal(t, res1+" -- OR -- "+res2, query+order+limit, "Parse query")
 	}
 
 	// Get one
@@ -145,7 +145,7 @@ func TestModelAlerte(t *testing.T) {
 	assert.Equal(t, 200, resp.Code, "http DELETE success")
 	//fmt.Println(a1.Name)
 	//fmt.Println(resp.Body)
-	req, err = http.NewRequest("GET", urla, nil)
+	req, err = http.NewRequest("GET", urla+"?_start=1&_end=5&_sortField=id&_sortDir=ASC&_filters={\"line\":\"some\"}", nil)
 	if err != nil {
 		fmt.Println(err)
 	}

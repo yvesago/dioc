@@ -65,13 +65,25 @@ func GetSurveys(c *gin.Context) {
 	// Parse query string
 	//  receive : map[_filters:[{"q":"wx"}] _sortField:[id] ...
 	q := c.Request.URL.Query()
-	query = query + ParseQuery(q)
+	s, o, l := ParseQuery(q)
+	var count int64 = 0
+	if s != "" {
+		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM survey  WHERE " + s)
+		query = query + " WHERE " + s
+	} else {
+		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM survey")
+	}
+	if o != "" {
+		query = query + o
+	}
+	if l != "" {
+		query = query + l
+	}
+
 	if verbose == true {
 		fmt.Println(q)
 		fmt.Println(" -- " + query)
 	}
-
-	count, _ := dbmap.SelectInt("SELECT COUNT(*) FROM survey")
 
 	var surveys []Survey
 	_, err := dbmap.Select(&surveys, query)

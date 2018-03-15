@@ -94,7 +94,7 @@ func TestSurveyModel(t *testing.T) {
 	assert.Equal(t, 200, resp.Code, "http success")
 	//fmt.Println(a1.Name)
 	//fmt.Println(resp.Body)
-	req, err = http.NewRequest("GET", url, nil)
+	req, err = http.NewRequest("GET", url+"?_start=1&_end=5&_sortField=id&_sortDir=ASC&_filters={\"search\":\"some\"}", nil)
 	if err != nil {
 		fmt.Println(err)
 	}

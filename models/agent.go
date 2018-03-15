@@ -68,14 +68,26 @@ func GetAgents(c *gin.Context) {
 
 	// Parse query string
 	q := c.Request.URL.Query()
-	tmpquery := query + ParseQuery(q)
-	query = strings.Replace(tmpquery, "ORDER BY id ", "ORDER BY crca ", 1) // workaround for ng-admin bug
+	s, o, l := ParseQuery(q)
+	var count int64 = 0
+	if s != "" {
+		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM agent  WHERE " + s)
+		query = query + " WHERE " + s
+	} else {
+		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM agent")
+	}
+	if o != "" {
+		query = query + o
+		query = strings.Replace(query, "ORDER BY id ", "ORDER BY crca ", 1) // workaround for ng-admin bug
+	}
+	if l != "" {
+		query = query + l
+	}
+
 	if verbose == true {
 		fmt.Println(q)
 		fmt.Println("query: " + query)
 	}
-
-	count, _ := dbmap.SelectInt("SELECT COUNT(*) FROM agent")
 
 	var agents []Agent
 	_, err := dbmap.Select(&agents, query)

@@ -59,13 +59,25 @@ func GetAlertes(c *gin.Context) {
 
 	// Parse query string
 	q := c.Request.URL.Query()
-	query = query + ParseQuery(q)
+	s, o, l := ParseQuery(q)
+	var count int64 = 0
+	if s != "" {
+		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM alerte  WHERE " + s)
+		query = query + " WHERE " + s
+	} else {
+		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM alerte")
+	}
+	if o != "" {
+		query = query + o
+	}
+	if l != "" {
+		query = query + l
+	}
+
 	if verbose == true {
 		fmt.Println(q)
 		fmt.Println("query: " + query)
 	}
-
-	count, _ := dbmap.SelectInt("SELECT COUNT(*) FROM alerte")
 
 	var alertes []Alerte
 	_, err := dbmap.Select(&alertes, query)
