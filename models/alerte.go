@@ -60,7 +60,7 @@ func GetAlertes(c *gin.Context) {
 	// Parse query string
 	q := c.Request.URL.Query()
 	s, o, l := ParseQuery(q)
-	var count int64 = 0
+	var count int64
 	if s != "" {
 		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM alerte  WHERE " + s)
 		query = query + " WHERE " + s
@@ -142,12 +142,12 @@ func UpdateAlerte(c *gin.Context) {
 		c.Bind(&json)
 
 		//log.Println(json)
-		alerte_id, _ := strconv.ParseInt(id, 0, 64)
+		alerteId, _ := strconv.ParseInt(id, 0, 64)
 
 		//TODO : find fields via reflections
 		//XXX custom fields mapping
 		alerte := Alerte{
-			Id:         alerte_id,
+			Id:         alerteId,
 			CRCa:       alerte.CRCa,
 			CRCs:       alerte.CRCs,
 			IP:         alerte.IP,

@@ -16,7 +16,7 @@ import (
 	. "./models"
 )
 
-// Config: types read from config file
+// Config types read from config file
 type Config struct {
 	Port            string
 	DBname          string
@@ -39,7 +39,7 @@ type Config struct {
 	AuthValidLogins []string // valid cas users
 }
 
-// SetConfig: gin Middlware to push some config values
+// SetConfig gin Middlware to push some config values
 func SetConfig(config Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("Salt", config.Salt)
@@ -209,7 +209,7 @@ func servermain(config Config) {
 	}
 }
 
-// Options: common response for rest options
+// Options common response for rest options
 func Options(c *gin.Context) {
 	Origin := c.MustGet("CorsOrigin").(string)
 
@@ -236,7 +236,7 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-// TokenAuthMiddleware: middleware with various auth options
+// TokenAuthMiddleware middleware with various auth options
 func TokenAuthMiddleware(config Config) gin.HandlerFunc {
 	// some init
 	return func(c *gin.Context) {

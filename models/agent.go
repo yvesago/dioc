@@ -69,7 +69,7 @@ func GetAgents(c *gin.Context) {
 	// Parse query string
 	q := c.Request.URL.Query()
 	s, o, l := ParseQuery(q)
-	var count int64 = 0
+	var count int64
 	if s != "" {
 		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM agent  WHERE " + s)
 		query = query + " WHERE " + s

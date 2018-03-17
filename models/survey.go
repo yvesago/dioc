@@ -66,7 +66,7 @@ func GetSurveys(c *gin.Context) {
 	//  receive : map[_filters:[{"q":"wx"}] _sortField:[id] ...
 	q := c.Request.URL.Query()
 	s, o, l := ParseQuery(q)
-	var count int64 = 0
+	var count int64
 	if s != "" {
 		count, _ = dbmap.SelectInt("SELECT COUNT(*) FROM survey  WHERE " + s)
 		query = query + " WHERE " + s
@@ -148,12 +148,12 @@ func UpdateSurvey(c *gin.Context) {
 		c.Bind(&json)
 
 		//log.Println(json)
-		survey_id, _ := strconv.ParseInt(id, 0, 64)
+		surveyId, _ := strconv.ParseInt(id, 0, 64)
 
 		//TODO : find fields via reflections
 		//XXX custom fields mapping
 		survey := Survey{
-			Id:      survey_id,
+			Id:      surveyId,
 			CRCs:    json.CRCs,
 			Role:    json.Role,
 			Search:  json.Search,

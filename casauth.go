@@ -35,7 +35,7 @@ import (
 
 type myCasHandler struct{ Config Config }
 
-const error_500 = `<!DOCTYPE html>
+const error500 = `<!DOCTYPE html>
 <html>
   <head>
     <title>Error 500</title>
@@ -93,11 +93,11 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if v == true {
 			fmt.Println("CAS jwt err")
 		}
-		fmt.Fprintf(w, error_500, err)
+		fmt.Fprintf(w, error500, err)
 		return
 	}
 
-	// Redirect to callback whith token and whithout cache
+	// Redirect to callback with token and whithout cache
 	w.Header().Set("Cache-Control", "no-cache, private, max-age=0")
 	w.Header().Set("Expires", time.Unix(0, 0).Format(http.TimeFormat))
 	w.Header().Set("Pragma", "no-cache")
