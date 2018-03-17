@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { MyConfig } from './MyConfig';
 import request from 'superagent';
+import jwt_decode from 'jwt-decode';
 
 import withWidth from 'material-ui/utils/withWidth';
 import { AppBarMobile } from 'admin-on-rest';
@@ -27,12 +28,15 @@ class DashboardCmp extends Component {
     state = {};
 
     handleGetBoard() {
+        const token = localStorage.getItem('token');
         request
             .get(MyConfig.API_URL + '/admin/api/v1/board')
-            .set('X-MyToken', MyConfig.API_KEY)
+            //.set('X-MyToken', MyConfig.API_KEY)
+            .set('Authorization', `Bearer ${token}`)
             .end(function(error, response){
                 if ( (error && error.status === 401 ) || response === undefined) {
-                    window.location.href = '/#/';
+                    localStorage.removeItem('token');
+                    window.location.href = '/#/login';
                     return;
                 }
                 var r = response.body;
@@ -58,6 +62,11 @@ class DashboardCmp extends Component {
     componentDidMount() {
         this.handleGetBoard();
         let timer = setInterval(this.tick, 60000);
+        const token = localStorage.getItem('token');
+        if (token !== null) {
+            var decoded = jwt_decode(localStorage.getItem('token'));
+            this.setState({username: decoded.id});
+        }
         this.setState({timer});
     }
 
@@ -74,6 +83,7 @@ class DashboardCmp extends Component {
             nbAgents,
             nbSurveys,
             nbAlerts,
+            username,
             record,
         } = this.state;
         const { width } = this.props;
@@ -83,7 +93,7 @@ class DashboardCmp extends Component {
                 <div style={styles.flex}>
                     <div style={styles.leftCol}>
                         <div style={styles.flex}>
-                            <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts}  />
+                            <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={username}  />
                         </div>
                         <div style={styles.flex}>
                             <DashText record={record} 

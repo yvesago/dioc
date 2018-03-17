@@ -17,14 +17,18 @@ import { BoardEdit } from './boarddocs';
 import { MyConfig } from './MyConfig';
 import mySimpleRest from './myJsonRestServer';
 
+import authLoginPage from './authLoginPage';
+import authClient from './authClient';
+import customRoutes from './customRoutes';
+
 const httpClient = (url, options = {}) => {
     if (!options.headers) {
         options.headers = new Headers({ Accept: 'application/json' });
     }
     // add your own headers here
-    options.headers.set('X-MyToken', MyConfig.API_KEY );
-    //const token = localStorage.getItem('token');
-    //options.headers.set('Authorization', `Bearer ${token}`);
+    //options.headers.set('X-MyToken', MyConfig.API_KEY );
+    const token = localStorage.getItem('token');
+    options.headers.set('Authorization', `Bearer ${token}`);
     return fetchUtils.fetchJson(url, options);
 };
 
@@ -33,7 +37,10 @@ const restClient = mySimpleRest( MyConfig.API_URL  + '/admin/api/v1', httpClient
 
 
 const App = () => (
-    <Admin title='Distributed IOC manager' theme={getMuiTheme(myTheme)} dashboard={Dashboard} restClient={restClient}>
+    <Admin title='Distributed IOC manager' theme={getMuiTheme(myTheme)} 
+        loginPage={authLoginPage} authClient={authClient(MyConfig.AUTH_URL)}
+        customRoutes={customRoutes} dashboard={Dashboard} 
+        restClient={restClient}>
         <Resource name="alertes" list={AlertList} edit={AlertEdit} remove={Delete} icon={AlertIcon} />
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} remove={Delete} icon={SurveyIcon} />
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />

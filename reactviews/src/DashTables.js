@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardTitle } from 'material-ui/Card';
+import { Card, CardHeader } from 'material-ui/Card';
 //import { List, ListItem } from 'material-ui/List';
 import TableIcon from 'material-ui/svg-icons/action/assessment';
 
@@ -11,10 +11,10 @@ const styles = {
     dognut: { float: 'left', display: 'inline-block', marginLeft: 15 },
 };
 
-export default ({ nbagents = [], nbsurveys = [], nbalerts = [] }) => (
+export default ({ nbagents = [], nbsurveys = [], nbalerts = [], subtitle }) => (
     <Card style={styles.card}>
         <TableIcon style={styles.icon} />
-        <CardTitle title="Tables" />
+        <CardHeader title="Tables" subtitle={subtitle} />
         <div style={styles.dognut} >
             <ChartDoghnut title="Agents" data={nbagents} />
         </div>
