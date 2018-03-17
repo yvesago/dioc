@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
+	//	"flag"
 	"fmt"
+	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
+	flag "github.com/spf13/pflag"
 	"net/http"
 	"os"
 	"sync"
@@ -16,20 +18,25 @@ import (
 
 // Config: types read from config file
 type Config struct {
-	Port       string
-	DBname     string
-	Salt       string
-	CorsOrigin string
-	Token      string
-	IPsAllowed []string
-	MailServer string
-	MailFrom   string
-	MailTo     []string
-	Debug      bool
-	Verbose    bool
-	OffLineMs  int64
-	TLScert    string
-	TLSkey     string
+	Port            string
+	DBname          string
+	Salt            string
+	CorsOrigin      string
+	Token           string
+	IPsAllowed      []string
+	MailServer      string
+	MailFrom        string
+	MailTo          []string
+	Debug           bool
+	Verbose         bool
+	OffLineMs       int64
+	TLScert         string
+	TLSkey          string
+	AuthCASUrl      string   // CAS server
+	AuthJWTTimeOut  int      // Hours for jwt timeout
+	AuthJWTPassword string   // JWT secret password
+	AuthJWTCallback string   // client url callback to validate and register jwt
+	AuthValidLogins []string // valid cas users
 }
 
 // SetConfig: gin Middlware to push some config values
@@ -46,11 +53,20 @@ func SetConfig(config Config) gin.HandlerFunc {
 }
 
 func main() {
+	var Usage = func() {
+		fmt.Fprintf(os.Stderr, "\nUsage of %s\n\n  Default behaviour: start daemon\n\n", os.Args[0])
+		//flag.SortFlags = false
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+	flag.Usage = Usage
+
 	// Parameters
-	confPtr := flag.String("c", "", "Json config file")
-	debugPtr := flag.Bool("d", false, "Debug mode")
-	verbosePtr := flag.Bool("v", false, "Verbose mode, need Debug mode")
+	confPtr := flag.StringP("conf", "c", "", "Json config file")
+	debugPtr := flag.BoolP("debug", "d", false, "Debug mode")
+	verbosePtr := flag.BoolP("Verbose", "V", false, "Verbose mode, need Debug mode")
 	flag.Parse()
+
 	conf := *confPtr
 	Debug := *debugPtr
 	Verbose := *verbosePtr
@@ -61,17 +77,15 @@ func main() {
 	// Load config from file
 	file, err := os.Open(conf)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		flag.PrintDefaults()
-		os.Exit(0)
+		fmt.Fprintf(os.Stderr, "\nError on mandatory config file:\n %s\n", err)
+		Usage()
 	}
 	decoder := json.NewDecoder(file)
 	config := Config{}
 	err = decoder.Decode(&config)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-		flag.PrintDefaults()
-		os.Exit(0)
+		Usage()
 	}
 	config.Debug = Debug
 	config.Verbose = Verbose
@@ -123,7 +137,7 @@ func servermain(config Config) {
 	r.Use(cors.Middleware(cors.Config{
 		Origins:         config.CorsOrigin,
 		Methods:         "GET, PUT, POST, DELETE",
-		RequestHeaders:  "Origin, Authorization, Content-Type, X-MyToken",
+		RequestHeaders:  "Origin, Authorization, Content-Type, X-MyToken, Bearer",
 		ExposedHeaders:  "x-total-count",
 		MaxAge:          50 * time.Second,
 		Credentials:     true,
@@ -131,8 +145,17 @@ func servermain(config Config) {
 	}))
 	//r.Use(addHeaders())
 
+	casHandler := setCasHandler("admin", config)
+	// add /auth/login /auth/logout to allow cas login to set jwt token
+	auth := r.Group("auth")
+	{
+		auth.GET("/login", gin.WrapH(casHandler))
+		auth.GET("/logout", gin.WrapH(casHandler))
+	}
+
 	admin := r.Group("admin/api/v1")
-	admin.Use(TokenAuthMiddleware(config))
+	//admin.Use(TokenAuthMiddleware(config))
+	admin.Use(jwt.Auth(config.AuthJWTPassword))
 	{
 		admin.GET("/board", GetBoard)
 		admin.GET("/board/:id", GetBoard)

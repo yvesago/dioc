@@ -7,5 +7,10 @@
     "IPsAllowed": ["127.0.0.1","::1"],
     "MailServer":"smtp.my.test:25",
     "MailFrom":"No reply <noreply@my.test>",
-    "MailTo": ["me@my.org", "other@my.test"]
+    "MailTo": ["me@my.org", "other@my.test"],
+    "AuthCASUrl": "https://auth.univ.fr",
+	"AuthJWTTimeout": 1,
+    "AuthJWTPassword": "secretpass",
+    "AuthJWTCallback": "http://localhost:8081/#callback",
+    "AuthValidLogins": ["admin1","admin2"]
 }
