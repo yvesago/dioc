@@ -145,7 +145,8 @@ func servermain(config Config) {
 	}))
 	//r.Use(addHeaders())
 
-	casHandler := setCasHandler("admin", config)
+	casHandler := setCasHandler(config)
+
 	// add /auth/login /auth/logout to allow cas login to set jwt token
 	auth := r.Group("auth")
 	{

@@ -108,11 +108,11 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func setCasHandler(path string, config Config) http.Handler {
+func setCasHandler(config Config) http.Handler {
 	mh := http.NewServeMux()
 	CasHandler := &myCasHandler{}
 	CasHandler.Config = config
-	mh.Handle(path, CasHandler)
+	mh.Handle("/", CasHandler)
 	url, _ := url.Parse(config.AuthCASUrl)
 	client := cas.NewClient(&cas.Options{
 		URL: url,
