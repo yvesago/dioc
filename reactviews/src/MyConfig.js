@@ -1,4 +1,5 @@
 export const MyConfig = {
+    BASE_PATH: '/',
     API_URL: 'http://localhost:8080',
     WS_URL: 'ws://localhost:8080/ws/',
     AUTH_URL: 'http://localhost:8080/auth/login',

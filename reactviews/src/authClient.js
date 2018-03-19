@@ -1,5 +1,6 @@
 import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK } from 'admin-on-rest';
 import request from 'superagent';
+import { MyConfig } from './MyConfig';
 
 export default (authUrl) => (type, params) => {
     if (type === AUTH_LOGIN) {
@@ -11,7 +12,7 @@ export default (authUrl) => (type, params) => {
         
         if (status === 401 || status === 403) {
             localStorage.removeItem('token');
-            window.location.href = '/#/login';
+            window.location.href = MyConfig.BASE_PATH + '#/login';
             return Promise.reject();
         }
 

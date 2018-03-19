@@ -36,7 +36,7 @@ class DashboardCmp extends Component {
             .end(function(error, response){
                 if ( (error && error.status === 401 ) || response === undefined) {
                     localStorage.removeItem('token');
-                    window.location.href = '/#/login';
+                    window.location.href = MyConfig.BASE_PATH + '#/login';
                     return;
                 }
                 var r = response.body;

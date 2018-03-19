@@ -116,6 +116,7 @@ func setCasHandler(config Config) http.Handler {
 	url, _ := url.Parse(config.AuthCASUrl)
 	client := cas.NewClient(&cas.Options{
 		URL: url,
+		SendService: true,
 	})
 
 	return client.Handle(mh)
