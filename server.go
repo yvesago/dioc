@@ -33,6 +33,7 @@ type Config struct {
 	TLScert         string
 	TLSkey          string
 	AuthCASUrl      string   // CAS server
+	AuthCASService  string   // Fix CAS service when a proxy need it
 	AuthJWTTimeOut  int      // Hours for jwt timeout
 	AuthJWTPassword string   // JWT secret password
 	AuthJWTCallback string   // client url callback to validate and register jwt
