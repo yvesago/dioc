@@ -6,12 +6,18 @@ import (
 	//"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/oschwald/geoip2-golang"
 	"gopkg.in/gorp.v2"
 	"log"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+)
+
+var (
+	gd *geoip2.Reader
+	ga *geoip2.Reader
 )
 
 // gin Middlware to select database
@@ -43,6 +49,22 @@ func InitDb(dbName string) *gorp.DbMap {
 		dbmap.Insert(&b)
 	}
 	return dbmap
+}
+
+func InitLocDbs(cityDb string, asnDb string) error {
+	var e error
+	gd, e = geoip2.Open(cityDb)
+	if e != nil {
+		return e
+	}
+	//defer gd.Close()
+
+	ga, e = geoip2.Open(asnDb)
+	if e != nil {
+		return e
+	}
+
+	return nil
 }
 
 func CheckAgentOffLine(dbmap *gorp.DbMap, offLineMs int64) bool {

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	geojson "github.com/paulmach/go.geojson"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"net/http"
@@ -29,7 +30,7 @@ func TestIPModel(t *testing.T) {
 
 	// Add
 	log.Println("= http POST IP")
-	var a = IP{Name: "something"}
+	var a = IP{Name: "2.125.160.216"}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(a)
 	req, err := http.NewRequest("POST", url, b)
@@ -148,6 +149,12 @@ func TestIPModel(t *testing.T) {
 func TestIP(t *testing.T) {
 	defer deleteFile(config.DBname)
 
+	e := InitLocDbs(config.CityDB, config.AsnDB)
+	if e != nil {
+		fmt.Println(e)
+		return
+	}
+
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 	router.Use(SetConfig(config))
@@ -155,10 +162,11 @@ func TestIP(t *testing.T) {
 
 	var url = "/admin/api/v1/ips"
 	router.POST(url, PostIP)
+	router.GET("/geojson", GetGeoJsonIPs)
 
 	// Add
 	log.Println("= http POST IP")
-	var a = IP{Name: "something"}
+	var a = IP{Name: "81.2.69.142"}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(a)
 	req, err := http.NewRequest("POST", url, b)
@@ -170,6 +178,21 @@ func TestIP(t *testing.T) {
 	router.ServeHTTP(resp, req)
 	json.Unmarshal(resp.Body.Bytes(), &a)
 	assert.Equal(t, 201, resp.Code, "http POST success")
-	//fmt.Println(resp.Body)
+	assert.Equal(t, "Londres", a.C, "Geoloc London City")
+	fmt.Println(resp.Body)
 
+	log.Println("= http GET geojson")
+	var a1 IP
+	req, err = http.NewRequest("GET", "/geojson", nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 200, resp.Code, "http success")
+	json.Unmarshal(resp.Body.Bytes(), &a1)
+	fmt.Println(resp.Body)
+	a2, _ := geojson.UnmarshalFeatureCollection(resp.Body.Bytes())
+	//fmt.Println(a2)
+	assert.Equal(t, "GB", a2.Features[0].Properties["Loc"], "IP loc country in GeoJson")
 }

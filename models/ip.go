@@ -3,8 +3,10 @@ package models
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/paulmach/go.geojson"
 	"gopkg.in/gorp.v2"
 	//"log"
+	"net"
 	"strconv"
 	"time"
 )
@@ -37,16 +39,105 @@ type IP struct {
 	Updated time.Time `db:"updated" json:"updated"`
 }
 
-// Hooks : PreInsert and PreUpdate
+func (i *IP) updateInfo(host bool) (err error) {
+	ip := net.ParseIP(i.Name)
 
-func (e *IP) PreInsert(s gorp.SqlExecutor) error {
-	e.Created = time.Now() // or time.Now().UnixNano()
-	e.Updated = e.Created
+	if ip == nil {
+		fmt.Printf("Bad ip: %+v\n", i.Name)
+		return nil
+	}
+
+	if ga == nil || gd == nil {
+		fmt.Println("No geoip DB")
+		return nil
+	}
+
+	asn, err := ga.ASN(ip)
+	if err != nil {
+		fmt.Printf("Err: %s", err)
+		return
+	}
+	i.ASNnum = fmt.Sprintf("AS%d", asn.AutonomousSystemNumber)
+	i.ASNname = asn.AutonomousSystemOrganization
+
+	record, err := gd.City(ip)
+	if err != nil {
+		fmt.Printf("Err: %s", err)
+		return err
+	}
+	dep := ""
+	if len(record.Subdivisions) > 1 {
+		dep = record.Subdivisions[0].Names["fr"] + "/" + record.Subdivisions[1].Names["fr"]
+	}
+	i.Lat = record.Location.Latitude
+	i.Lon = record.Location.Longitude
+	i.P = record.Country.IsoCode
+	i.R = dep
+	i.C = record.City.Names["fr"]
+
+	// Update Host name if host == true
+	if host == false {
+		return nil
+	}
+
+	names, e := net.LookupAddr(i.Name)
+	if e != nil {
+		names = []string{"", ""}
+	}
+	i.Host = names[0]
+
 	return nil
 }
 
-func (e *IP) PreUpdate(s gorp.SqlExecutor) error {
-	e.Updated = time.Now()
+var GFC *geojson.FeatureCollection
+
+func updateGeoJson(db *gorp.DbMap) *geojson.FeatureCollection {
+	var ips []IP
+	db.Select(&ips, "SELECT * FROM ip")
+
+	fc := geojson.NewFeatureCollection()
+
+	for _, ip := range ips {
+		f := geojson.NewPointFeature([]float64{ip.Lon, ip.Lat})
+		f.SetProperty("Title", ip.Id)
+		f.SetProperty("IP", ip.Name)
+		f.SetProperty("Loc", ip.P)
+
+		fc.AddFeature(f)
+	}
+
+	GFC = fc
+	return fc
+}
+
+func GetGeoJsonIPs(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	//verbose := c.MustGet("Verbose").(bool)
+	//    if GFC == nil {
+	fc := updateGeoJson(dbmap)
+	if fc == nil {
+		c.JSON(404, gin.H{"error": "no log(s) into the table"})
+	} else {
+		c.JSON(200, fc)
+	}
+	/*    } else {
+	      c.JSON(200, GFC)
+	      go updateGeoJson(dbmap)
+	  }*/
+	// curl -i http://localhost:8080/admin/api/v1/geojson  -X GET -H "X-MyToken: basic"
+}
+
+// Hooks : PreInsert and PreUpdate
+
+func (i *IP) PreInsert(s gorp.SqlExecutor) error {
+	i.Created = time.Now() // or time.Now().UnixNano()
+	i.updateInfo(true)
+	i.Updated = i.Created
+	return nil
+}
+
+func (i *IP) PreUpdate(s gorp.SqlExecutor) error {
+	i.Updated = time.Now()
 	return nil
 }
 

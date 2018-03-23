@@ -24,6 +24,8 @@ type Config struct {
 	CorsOrigin      string
 	Token           string
 	IPsAllowed      []string
+	CityDB          string
+	AsnDB           string
 	MailServer      string
 	MailFrom        string
 	MailTo          []string

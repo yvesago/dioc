@@ -26,6 +26,8 @@ type Config struct {
 	MailFrom   string
 	MailTo     []string
 	Verbose    bool
+	CityDB     string
+	AsnDB      string
 }
 
 func SetConfig(config Config) gin.HandlerFunc {
@@ -41,8 +43,11 @@ func SetConfig(config Config) gin.HandlerFunc {
 
 // Set test config
 var config = Config{
-	DBname:     "_test.sqlite3",
-	Salt:       "xxxx",
+	DBname: "_test.sqlite3",
+	Salt:   "xxxx",
+	// CityDB: "./GeoLite2-City.mmdb",
+	CityDB:     "./GeoIP2-City-Test.mmdb",
+	AsnDB:      "./GeoLite2-ASN-Test.mmdb",
 	MailServer: "smtp.my.test:25",
 	MailFrom:   "No reply <noreply@my.test>",
 	MailTo:     []string{"me@my.org", "other@my.test"},
