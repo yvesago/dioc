@@ -178,7 +178,7 @@ func TestExtract(t *testing.T) {
 
 	// Add
 	log.Println("= http POST Extract")
-	var e = Extract{Search: "IP: (.*)", Active: true, Role: "test"}
+	var e = Extract{Search: "IP: (.*)", Active: true, Role: "test", Action: "AddIP"}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(e)
 	req, err := http.NewRequest("POST", url, b)
@@ -195,4 +195,7 @@ func TestExtract(t *testing.T) {
 	// Searchs
 	res := ExtractSearchs(dbmap)
 	assert.Equal(t, 1, res, "1 alerte line match")
+
+	ip, _ := CreateOrUpdateIp(dbmap, "192.168.1.1")
+	assert.Equal(t, int64(2), ip.Count, "create IP")
 }

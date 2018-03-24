@@ -225,10 +225,15 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 			fmt.Printf(" => <%s>\n", ip)
 			switch e.Action {
 			case "Delete":
-				// TODO a.delete
+				// TODO dbmap.Delete(&a)
 			case "AddIP":
-				//iptxt := AddIP(dbmap, ip)
-				//UpdateAlerte(dbmap, a, iptxt)
+				i, _ := CreateOrUpdateIp(dbmap, ip)
+				fmt.Println(i.totxt(false))
+				if a.Comment == "" {
+					// Update comment Alerte
+					a.Comment = i.totxt(false)
+					dbmap.Update(&a)
+				}
 			}
 		}
 	}

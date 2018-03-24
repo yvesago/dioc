@@ -39,6 +39,29 @@ type IP struct {
 	Updated time.Time `db:"updated" json:"updated"`
 }
 
+func CreateOrUpdateIp(db *gorp.DbMap, name string) (IP, error) {
+	i := IP{Name: name}
+	err := db.SelectOne(&i, "select * from IP where name = ?", name)
+	var e error
+	if err != nil {
+		i.Count = 1
+		e = db.Insert(&i)
+	} else {
+		i.Count++
+		_, e = db.Update(&i)
+	}
+	return i, e
+}
+
+func (i *IP) totxt(short bool) string {
+	if short == true {
+		return fmt.Sprintf("%s: %s -- %s", i.P, i.ASNnum, i.ASNname)
+	}
+	return fmt.Sprintf("%s %s (%d)\n%s %s %s / %s -- %s",
+		i.Name, i.Host, i.Count,
+		i.P, i.R, i.C, i.ASNnum, i.ASNname)
+}
+
 func (i *IP) updateInfo(host bool) (err error) {
 	ip := net.ParseIP(i.Name)
 
@@ -209,7 +232,8 @@ func PostIP(c *gin.Context) {
 	//log.Println(ip)
 
 	if ip.Name != "" { // XXX Check mandatory fields
-		err := dbmap.Insert(&ip)
+		ip, err := CreateOrUpdateIp(dbmap, ip.Name)
+		fmt.Println(ip.totxt(true))
 		if err == nil {
 			c.JSON(201, ip)
 		} else {
@@ -240,7 +264,7 @@ func UpdateIP(c *gin.Context) {
 		//XXX custom fields mapping
 		ip := IP{
 			Id:      ipId,
-			Name:    json.Name,
+			Name:    ip.Name, // don't update name
 			Host:    json.Host,
 			Lat:     json.Lat,
 			Lon:     json.Lon,
