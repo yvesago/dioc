@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, required, EditButton, DateField, 
     RichTextField, SelectInput, Filter, Responsive, SimpleList,
-    BooleanInput, BooleanField
+    BooleanInput, BooleanField, DateInput
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
@@ -61,6 +61,22 @@ export const ExtractCreate = (props) => (
         <SimpleForm>
             <TextInput source="search" validate={required} />
             <SelectInput source="role" choices={roles} allowEmpty />
+            <DateInput label="From" source="fromdate"
+                options={{
+                    mode: 'landscape',
+                    defaultDate: new Date(),
+                    okLabel: 'OK',
+                    cancelLabel: 'Cancel',
+                    locale: 'fr'
+                }} allowEmpty />
+            <DateInput label="To" source="todate"
+                options={{
+                    mode: 'landscape',
+                    defaultDate: new Date(),
+                    okLabel: 'OK',
+                    cancelLabel: 'Cancel',
+                    locale: 'fr'
+                }} allowEmpty />
             <SelectInput source="action" choices={actions} allowEmpty />
             <BooleanInput source="active" />
             <RichTextInput source="comment" />
@@ -74,6 +90,22 @@ export const ExtractEdit = (props) => (
         <SimpleForm>
             <TextInput source="search" validate={required} />
             <SelectInput source="role" choices={roles} allowEmpty />
+            <DateInput label="From" source="fromdate"
+                options={{
+                    mode: 'landscape',
+                    defaultDate: new Date(),
+                    okLabel: 'OK',
+                    cancelLabel: 'Cancel',
+                    locale: 'fr'
+                }} allowEmpty />
+            <DateInput label="To" source="todate"
+                options={{
+                    mode: 'landscape',
+                    defaultDate: new Date(),
+                    okLabel: 'OK',
+                    cancelLabel: 'Cancel',
+                    locale: 'fr'
+                }} allowEmpty />
             <SelectInput source="action" choices={actions} allowEmpty />
             <BooleanInput source="active" />
             <RichTextInput source="comment" />
