@@ -1,6 +1,8 @@
 {
     "Port":":8080",
     "DBName":"test.sqlite3",
+    "CityDB": "./models/GeoIP2-City-Test.mmdb",
+    "AsnDB": "./models/GeoLite2-ASN-Test.mmdb",
     "CorsOrigin":"*",
     "Salt":"xxxxxxx",
     "Token": "basic",
