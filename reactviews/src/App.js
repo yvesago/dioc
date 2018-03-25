@@ -5,12 +5,16 @@ import { fetchUtils, Admin, Resource, Delete } from 'admin-on-rest';
 import AlertIcon from 'material-ui/svg-icons/action/assessment';
 import SurveyIcon from 'material-ui/svg-icons/device/wifi-tethering';
 import AgentIcon from 'material-ui/svg-icons/notification/wifi';
+import SettingsIcon from 'material-ui/svg-icons/action/settings';
+
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import myTheme from './myTheme';
 
 import { Dashboard } from './Dashboard';
 import { AlertList, AlertEdit } from './alert';
 import { SurveyList, SurveyEdit, SurveyCreate } from './survey';
+import { ExtractList, ExtractEdit, ExtractCreate } from './extract';
+import { IPList, IPEdit, IPCreate } from './ip';
 import { AgentList, AgentEdit, AgentCreate } from './agent';
 import { BoardEdit } from './boarddocs';
 
@@ -44,6 +48,8 @@ const App = () => (
         <Resource name="alertes" list={AlertList} edit={AlertEdit} remove={Delete} icon={AlertIcon} />
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} remove={Delete} icon={SurveyIcon} />
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />
+        <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} remove={Delete} icon={SettingsIcon} />
+        <Resource name="ips" list={IPList}  edit={IPEdit} create={IPCreate} remove={Delete} icon={AgentIcon} />
         <Resource name="board" edit={BoardEdit} />
     </Admin>
 );
