@@ -250,7 +250,6 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 				if a.Comment == "" {
 					// Update comment Alerte
 					a.Comment = i.totxt(false)
-					dbmap.Update(&a)
 				}
 			}
 		}
