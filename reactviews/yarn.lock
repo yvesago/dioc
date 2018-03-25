@@ -51,9 +51,9 @@ address@1.0.3, address@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/address/-/address-1.0.3.tgz#b5f50631f8d6cec8bd20c963963afb55e06cbce9"
 
-admin-on-rest@1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/admin-on-rest/-/admin-on-rest-1.3.4.tgz#e30e3902041cd6f484d126952b2dd018012ac61f"
+admin-on-rest@1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/admin-on-rest/-/admin-on-rest-1.4.0.tgz#161d2c6ea76af031f295e2e4aca306012c9f4792"
   dependencies:
     babel-runtime "~6.26.0"
     inflection "~1.12.0"
