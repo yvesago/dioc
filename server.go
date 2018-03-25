@@ -128,6 +128,11 @@ func servermain(config Config) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	e := InitLocDbs(config.CityDB, config.AsnDB)
+	if e != nil {
+		fmt.Println(e)
+	}
+
 	r := gin.New()
 
 	r.Use(gin.Recovery())
@@ -161,6 +166,8 @@ func servermain(config Config) {
 	//admin.Use(TokenAuthMiddleware(config))
 	admin.Use(jwt.Auth(config.AuthJWTPassword))
 	{
+		admin.GET("/geojson", GetGeoJsonIPs)
+
 		admin.GET("/board", GetBoard)
 		admin.GET("/board/:id", GetBoard)
 		admin.PUT("/board/:id", UpdateBoard)
@@ -188,6 +195,23 @@ func servermain(config Config) {
 		admin.DELETE("/alertes/:id", DeleteAlerte)
 		admin.OPTIONS("/alertes", Options)     // POST
 		admin.OPTIONS("/alertes/:id", Options) // PUT, DELETE
+
+		admin.GET("/ips", GetIPs)
+		admin.GET("/ips/:id", GetIP)
+		admin.POST("/ips", PostIP)
+		admin.PUT("/ips/:id", UpdateIP)
+		admin.DELETE("/ips/:id", DeleteIP)
+		admin.OPTIONS("/ips", Options)     // POST
+		admin.OPTIONS("/ips/:id", Options) // PUT, DELETE
+
+		admin.GET("/extracts", GetExtracts)
+		admin.GET("/extracts/:id", GetExtract)
+		admin.POST("/extracts", PostExtract)
+		admin.PUT("/extracts/:id", UpdateExtract)
+		admin.DELETE("/extracts/:id", DeleteExtract)
+		admin.OPTIONS("/extracts", Options)    // POST
+		admin.OPTIONS("/extracs/:id", Options) // PUT, DELETE
+
 	}
 
 	client := r.Group("client/api/v1")
