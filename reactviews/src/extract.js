@@ -2,16 +2,35 @@ import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, required, EditButton, DateField, 
     RichTextField, SelectInput, Filter, Responsive, SimpleList,
-    BooleanInput, BooleanField, DateInput
+    BooleanInput, BooleanField, DateInput, RefreshButton
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
+import { CardActions } from 'material-ui/Card';
+
+
+import ActionExtractButton from './ActionExtract';
 import { roles } from './MyConfig';
 
 const actions = [
     { name: 'AddIP', id: 'AddIP' },
     { name: 'Delete', id: 'Delete' },
 ];
+
+const cardActionStyle = {
+    zIndex: 2,
+    display: 'inline-block',
+    float: 'right',
+};
+
+const ExtractActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter }) => (
+    <CardActions style={cardActionStyle}>
+        {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
+        <ActionExtractButton />
+        <RefreshButton />
+    </CardActions>
+);
+
 
 const colored = WrappedComponent => props => props.record.actions === 'Delete' ?
     <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
@@ -31,7 +50,7 @@ const ExtractFilter = (props) => (
 
 
 export const ExtractList = (props) => (
-    <List filters={<ExtractFilter />} perPage={30} {...props}>
+    <List filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
         <Responsive
             small={
                 <SimpleList

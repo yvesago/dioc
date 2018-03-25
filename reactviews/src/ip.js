@@ -1,11 +1,30 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, required, EditButton, DateField, NumberInput,
-    RichTextField, Filter, Responsive, SimpleList,
+    RichTextField, Filter, Responsive, SimpleList, RefreshButton
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
 import MyLeaflet from './Leaflet';
+
+import { CardActions } from 'material-ui/Card';
+
+import ActionFlushIPButton from './ActionFlushIP';
+
+const cardActionStyle = {
+    zIndex: 2,
+    display: 'inline-block',
+    float: 'right',
+};
+
+const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter }) => (
+    <CardActions style={cardActionStyle}>
+        {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
+        <ActionFlushIPButton />
+        <RefreshButton />
+    </CardActions>
+);
+
 
 /*const colored = WrappedComponent => props => props.record.actions === 'Delete' ?
     <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
@@ -30,7 +49,7 @@ const IPFilter = (props) => (
 
 
 export const IPList = (props) => (
-    <List filters={<IPFilter />} perPage={30} {...props}>
+    <List filters={<IPFilter />} perPage={30} actions={<FlushIPActions />} {...props}>
         <Responsive
             small={
                 <SimpleList
