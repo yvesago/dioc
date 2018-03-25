@@ -167,6 +167,8 @@ func servermain(config Config) {
 	admin.Use(jwt.Auth(config.AuthJWTPassword))
 	{
 		admin.GET("/geojson", GetGeoJsonIPs)
+		admin.GET("/actionextract", RestExtract)
+		admin.GET("/actionfluship", RestFlushIP)
 
 		admin.GET("/board", GetBoard)
 		admin.GET("/board/:id", GetBoard)

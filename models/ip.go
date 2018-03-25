@@ -319,3 +319,14 @@ func DeleteIP(c *gin.Context) {
 
 	// curl -i -X DELETE http://localhost:8080/api/v1/ips/1
 }
+
+func RestFlushIP(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+
+	_, err := dbmap.Exec("DELETE FROM ip WHERE comment != ''")
+	if err == nil {
+		c.JSON(200, gin.H{"OK": "IP table flushed"})
+	} else {
+		c.JSON(404, gin.H{"error": err.Error()})
+	}
+}

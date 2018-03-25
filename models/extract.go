@@ -198,6 +198,12 @@ func DeleteExtract(c *gin.Context) {
 	// curl -i -X DELETE http://localhost:8080/api/v1/extracts/1
 }
 
+func RestExtract(c *gin.Context) {
+	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	i := ExtractSearchs(dbmap)
+	c.JSON(200, gin.H{"result": i})
+}
+
 func ExtractSearchs(dbmap *gorp.DbMap) int {
 	var extracts []Extract
 	dbmap.Select(&extracts, "SELECT * FROM extract WHERE active = 1")
@@ -215,7 +221,18 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 		dbmap.Select(&alertes, query, e.Role)
 		for _, a := range alertes {
 			//fmt.Printf("%+v\n", a)
-			// TODO continue if outside dates
+			// Continue if outside dates
+			if e.FromDate.IsZero() == false {
+				if a.Updated.Before(e.FromDate) {
+					continue
+				}
+			}
+			if e.ToDate.IsZero() == false {
+				if a.Updated.After(e.ToDate) {
+					continue
+				}
+			}
+
 			res := re.FindStringSubmatch(a.Line)
 			if res == nil {
 				continue
@@ -223,6 +240,7 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 			count++
 			ip := res[1]
 			fmt.Printf(" => <%s>\n", ip)
+
 			switch e.Action {
 			case "Delete":
 				// TODO dbmap.Delete(&a)

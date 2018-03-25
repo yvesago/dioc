@@ -163,6 +163,7 @@ func TestIP(t *testing.T) {
 	var url = "/admin/api/v1/ips"
 	router.POST(url, PostIP)
 	router.GET("/geojson", GetGeoJsonIPs)
+    router.GET("/actionfluship", RestFlushIP)
 
 	// Add
 	log.Println("= http POST IP")
@@ -195,4 +196,13 @@ func TestIP(t *testing.T) {
 	a2, _ := geojson.UnmarshalFeatureCollection(resp.Body.Bytes())
 	//fmt.Println(a2)
 	assert.Equal(t, "GB", a2.Features[0].Properties["Loc"], "IP loc country in GeoJson")
+
+	log.Println("= http GET actionfluship")
+	req, err = http.NewRequest("GET", "/actionfluship", nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, 200, resp.Code, "http success")
 }
