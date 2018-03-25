@@ -6,6 +6,7 @@ import AlertIcon from 'material-ui/svg-icons/action/assessment';
 import SurveyIcon from 'material-ui/svg-icons/device/wifi-tethering';
 import AgentIcon from 'material-ui/svg-icons/notification/wifi';
 import SettingsIcon from 'material-ui/svg-icons/action/settings';
+import MapIcon from 'material-ui/svg-icons/social/public';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import myTheme from './myTheme';
@@ -17,6 +18,7 @@ import { ExtractList, ExtractEdit, ExtractCreate } from './extract';
 import { IPList, IPEdit, IPCreate } from './ip';
 import { AgentList, AgentEdit, AgentCreate } from './agent';
 import { BoardEdit } from './boarddocs';
+import Mapview from './Mapview';
 
 import { MyConfig } from './MyConfig';
 import mySimpleRest from './myJsonRestServer';
@@ -50,6 +52,7 @@ const App = () => (
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />
         <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} remove={Delete} icon={SettingsIcon} />
         <Resource name="ips" list={IPList}  edit={IPEdit} create={IPCreate} remove={Delete} icon={AgentIcon} />
+        <Resource name='Map' options={{ label: 'Map'}} list={Mapview} icon={MapIcon} />
         <Resource name="board" edit={BoardEdit} />
     </Admin>
 );

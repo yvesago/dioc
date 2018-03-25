@@ -5,6 +5,8 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
 } from 'admin-on-rest';
 import RichTextInput from 'aor-rich-text-input';
 
+import MyLeaflet from './Leaflet';
+
 /*const colored = WrappedComponent => props => props.record.actions === 'Delete' ?
     <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
     props.record.level === 'warn' ? 
@@ -13,6 +15,10 @@ import RichTextInput from 'aor-rich-text-input';
 
 const ColoredTextField = colored(TextField);
 */
+
+const IPMap = ({ record }) => {
+    return <div id="mapContainer"><MyLeaflet zoom={12} lat={record.lat} lng={record.lon} point={record.id} /></div>;
+};
 
 const IPFilter = (props) => (
     <Filter {...props}>
@@ -79,6 +85,7 @@ export const IPEdit = (props) => (
             <DateField label="Updated" source="updated" showTime />
             <NumberInput source="lat" />
             <NumberInput source="lon" />
+            {<IPMap />}
         </SimpleForm>
     </Edit>
 );

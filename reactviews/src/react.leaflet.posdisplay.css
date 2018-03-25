@@ -1,0 +1,13 @@
+.leaflet-control-pos-display {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    width: 200px;
+    height: 26px;
+    line-height: 26px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    padding-top: 0.3em;
+    font: 12px/20px Tahoma, Verdana, sans-serif;
+}
