@@ -323,7 +323,7 @@ func DeleteIP(c *gin.Context) {
 func RestFlushIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 
-	_, err := dbmap.Exec("DELETE FROM ip WHERE comment != ''")
+	_, err := dbmap.Exec("DELETE FROM ip WHERE comment == ''")
 	if err == nil {
 		c.JSON(200, gin.H{"OK": "IP table flushed"})
 	} else {
