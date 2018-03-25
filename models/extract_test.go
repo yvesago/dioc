@@ -192,7 +192,7 @@ func TestExtract(t *testing.T) {
 	assert.Equal(t, 201, resp.Code, "http POST success")
 	//fmt.Println(resp.Body)
 
-	// Searchs
+	// Searches
 	res := ExtractSearchs(dbmap)
 	assert.Equal(t, 1, res, "1 alerte line match")
 

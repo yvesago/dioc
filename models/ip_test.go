@@ -163,7 +163,7 @@ func TestIP(t *testing.T) {
 	var url = "/admin/api/v1/ips"
 	router.POST(url, PostIP)
 	router.GET("/geojson", GetGeoJsonIPs)
-    router.GET("/actionfluship", RestFlushIP)
+	router.GET("/actionfluship", RestFlushIP)
 
 	// Add
 	log.Println("= http POST IP")
