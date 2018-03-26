@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
-    TextInput, required, EditButton, DateField, 
+    TextInput, required, EditButton, DateField, CreateButton,
     RichTextField, SelectInput, Filter, Responsive, SimpleList,
     BooleanInput, BooleanField, DateInput, RefreshButton
 } from 'admin-on-rest';
@@ -14,6 +14,7 @@ import { roles } from './MyConfig';
 
 const actions = [
     { name: 'AddIP', id: 'AddIP' },
+    { name: 'Compress', id: 'Compress' },
     { name: 'Delete', id: 'Delete' },
 ];
 
@@ -27,6 +28,7 @@ const ExtractActions = ({ resource, filters, displayedFilters, filterValues, bas
     <CardActions style={cardActionStyle}>
         {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
         <ActionExtractButton />
+        <CreateButton basePath={basePath} />
         <RefreshButton />
     </CardActions>
 );
