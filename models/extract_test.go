@@ -166,7 +166,9 @@ func TestExtract(t *testing.T) {
 	dbmap.Insert(&s3)
 
 	al := Alerte{CRCa: a1.CRCa, CRCs: s1.CRCs, Role: "test", Line: "some log with IP: 192.168.1.1"}
+	al2 := Alerte{CRCa: a1.CRCa, CRCs: s1.CRCs, Role: "test", Line: "some log with IP: 192.168.1.2"}
 	dbmap.Insert(&al)
+	dbmap.Insert(&al2)
 
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
@@ -175,8 +177,10 @@ func TestExtract(t *testing.T) {
 
 	var url = "/admin/api/v1/extracts"
 	router.POST(url, PostExtract)
+	var url2 = "/admin/api/v1/actionextract"
+	router.PUT(url2, RestExtract)
 
-	// Add
+	// AddIP
 	log.Println("= http POST Extract")
 	var e = Extract{Search: "IP: (.*)", Active: true, Role: "test", Action: "AddIP"}
 	b := new(bytes.Buffer)
@@ -192,10 +196,40 @@ func TestExtract(t *testing.T) {
 	assert.Equal(t, 201, resp.Code, "http POST success")
 	//fmt.Println(resp.Body)
 
-	// Searches
-	res := ExtractSearchs(dbmap)
-	assert.Equal(t, 1, res, "1 alerte line match")
+	// Searches with rest request
+	r, _ := http.NewRequest("PUT", url2, nil)
+	resp = httptest.NewRecorder()
+	router.ServeHTTP(resp, r)
+	assert.Equal(t, 200, resp.Code, "http PUT success")
+	fmt.Println(resp.Body)
+	assert.Equal(t, `{"result":2}`, string(resp.Body.Bytes()), "2 alerte line match")
+	e.Active = false
+	dbmap.Update(&e)
 
 	ip, _ := CreateOrUpdateIp(dbmap, "192.168.1.1")
 	assert.Equal(t, int64(2), ip.Count, "create IP")
+
+	// Compress
+	log.Println("= http POST Compress")
+	var e2 = Extract{Search: "IP: (.*)", Active: true, Role: "test", Action: "Compress"}
+	b2 := new(bytes.Buffer)
+	json.NewEncoder(b2).Encode(e2)
+	req2, err2 := http.NewRequest("POST", url, b2)
+	req2.Header.Set("Content-Type", "application/json")
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	resp2 := httptest.NewRecorder()
+	router.ServeHTTP(resp2, req2)
+	json.Unmarshal(resp2.Body.Bytes(), &e2)
+	assert.Equal(t, 201, resp2.Code, "http POST success")
+	//fmt.Println(resp.Body)
+
+	// Searches
+	log.Println("= ExtractSearchs")
+	res2 := ExtractSearchs(dbmap)
+	assert.Equal(t, 1, res2, "1 alerte line remain")
+	e2.Active = false
+	dbmap.Update(&e2)
+
 }

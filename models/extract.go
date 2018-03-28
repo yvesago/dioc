@@ -7,6 +7,7 @@ import (
 	//"log"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -218,6 +219,8 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 		}
 		query := "SELECT id,line,comment,updated FROM alerte where role=? "
 		var alertes []Alerte
+		var compress []string
+		firtAlerte := Alerte{} // to store compressed
 		dbmap.Select(&alertes, query, e.Role)
 		for _, a := range alertes {
 			fmt.Printf("%+v\n", a)
@@ -243,10 +246,20 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 			count++
 			ip := res[1]
 			fmt.Printf(" => <%s>\n", ip)
+			if e.Action == "Compress" && firtAlerte.Line == "" {
+				compress = append(compress, a.Comment)
+				compress = append(compress, a.Line)
+				firtAlerte = a
+				continue
+			}
 
 			switch e.Action {
 			case "Delete":
 				// TODO dbmap.Delete(&a)
+			case "Compress":
+				compress = append(compress, a.Line)
+				count--
+				dbmap.Delete(&a)
 			case "AddIP":
 				i, _ := CreateOrUpdateIp(dbmap, ip)
 				fmt.Println(i.totxt(false))
@@ -257,6 +270,16 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 				}
 			}
 		}
+
+		if e.Action == "Compress" && len(compress) > 0 && firtAlerte.Line != "" {
+			newComment := strings.Join(compress[:], "\n")
+			if len(newComment) > 60000 {
+				newComment = newComment[:60000] + "\n ... \n" + compress[len(compress)-1]
+			}
+			firtAlerte.Comment = strings.Join(compress[:], "\n")
+			dbmap.Exec("UPDATE Alerte SET comment = ? WHERE id = ?", newComment, firtAlerte.Id)
+		}
+
 	}
 
 	return count
