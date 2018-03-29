@@ -11,7 +11,7 @@
     "MailFrom":"No reply <noreply@my.test>",
     "MailTo": ["me@my.org", "other@my.test"],
     "AuthCASUrl": "http://localhost:3004",
-	"AuthJWTTimeout": 1,
+    "AuthJWTTimeout": 1,
     "AuthJWTPassword": "secretpass",
     "AuthJWTCallback": "http://localhost:3000/#callback",
     "AuthValidLogins": ["admin1","admin2"]

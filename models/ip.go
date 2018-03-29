@@ -57,9 +57,10 @@ func (i *IP) totxt(short bool) string {
 	if short == true {
 		return fmt.Sprintf("%s: %s -- %s", i.P, i.ASNnum, i.ASNname)
 	}
-	return fmt.Sprintf("%s %s (%d)\n%s %s %s / %s -- %s",
-		i.Name, i.Host, i.Count,
-		i.P, i.R, i.C, i.ASNnum, i.ASNname)
+	return fmt.Sprintf("%d: %s -- %s\n%s\n%s: %s -- %s/%s",
+		i.Count, i.P, i.ASNnum,
+		i.ASNname,
+		i.Name, i.Host, i.R, i.C)
 }
 
 func (i *IP) updateInfo(host bool) (err error) {

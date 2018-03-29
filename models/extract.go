@@ -223,28 +223,29 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 		firtAlerte := Alerte{} // to store compressed
 		dbmap.Select(&alertes, query, e.Role)
 		for _, a := range alertes {
-			fmt.Printf("%+v\n", a)
+			//fmt.Printf("%+v\n", a)
 			// Continue if outside dates
 			if e.FromDate.IsZero() == false {
 				if a.Updated.Before(e.FromDate) {
-					fmt.Printf(" => continue before\n")
+					//fmt.Printf(" => continue before\n")
 					continue
 				}
 			}
 			if e.ToDate.IsZero() == false {
 				if a.Updated.After(e.ToDate) {
-					fmt.Printf(" => continue after\n")
+					//fmt.Printf(" => continue after\n")
 					continue
 				}
 			}
 
 			res := re.FindStringSubmatch(a.Line)
 			if res == nil {
-				fmt.Printf(" => continue no match\n")
+				//fmt.Printf(" => continue no match\n")
 				continue
 			}
 			count++
 			ip := res[1]
+			fmt.Printf("%+v\n", a)
 			fmt.Printf(" => <%s>\n", ip)
 			if e.Action == "Compress" && firtAlerte.Line == "" {
 				compress = append(compress, a.Comment)
