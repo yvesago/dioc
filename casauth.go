@@ -31,7 +31,7 @@ import (
 	jwt_lib "github.com/dgrijalva/jwt-go"
 
 	//	"gopkg.in/cas.v2"
-	"github.com/yvesago/cas"
+	"github.com/go-cas/cas"
 	"net/url"
 )
 
@@ -116,14 +116,9 @@ func setCasHandler(config Config) http.Handler {
 	CasHandler.Config = config
 	mh.Handle("/", CasHandler)
 	u, _ := url.Parse(config.AuthCASUrl)
-	var fs *url.URL
-	if config.AuthCASService != "" {
-		fs, _ = url.Parse(config.AuthCASService)
-	}
 	client := cas.NewClient(&cas.Options{
 		URL:         u,
 		SendService: true,
-		FixService:  fs,
 	})
 
 	return client.Handle(mh)
