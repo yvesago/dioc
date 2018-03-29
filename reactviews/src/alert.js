@@ -38,11 +38,9 @@ export const AlertList = (props) => (
                 <Datagrid>
                     <TextField source="search" />
                     <TextField source="role" />
-                    <TextField source="ip" label="Agent" />
-                    <TextField source="filesurvey" />
                     <ColoredTextField source="level" />
                     <TextField source="line" />
-                    <RichTextField source="comment" stripTags />
+                    <RichTextField source="comment" stripTags elStyle={{width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                     <DeleteButton />
