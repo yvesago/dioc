@@ -2,8 +2,10 @@ package models
 
 import (
 	//	"fmt"
+	"log"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gorp.v2"
 )
@@ -92,6 +94,8 @@ func GetBoard(c *gin.Context) {
 
 func UpdateBoard(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] UpdateBoard\n", claims["id"])
 
 	var b Board
 	err := dbmap.SelectOne(&b, "SELECT * FROM Board WHERE id=1")

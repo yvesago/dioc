@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/paulmach/go.geojson"
 	"gopkg.in/gorp.v2"
-	//"log"
+	"log"
 	"net"
 	"strconv"
 	"time"
@@ -226,6 +227,8 @@ func GetIP(c *gin.Context) {
 
 func PostIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] PostIP\n", claims["id"])
 
 	var ip IP
 	c.Bind(&ip)
@@ -251,6 +254,8 @@ func PostIP(c *gin.Context) {
 func UpdateIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] UpdateIP %s\n", claims["id"], id)
 
 	var ip IP
 	err := dbmap.SelectOne(&ip, "SELECT * FROM ip WHERE id=?", id)
@@ -301,6 +306,8 @@ func UpdateIP(c *gin.Context) {
 func DeleteIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] DeleteIP %s\n", claims["id"], id)
 
 	var ip IP
 	err := dbmap.SelectOne(&ip, "SELECT * FROM ip WHERE id=?", id)
@@ -323,6 +330,8 @@ func DeleteIP(c *gin.Context) {
 
 func RestFlushIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] RestFlushIP\n", claims["id"])
 
 	_, err := dbmap.Exec("DELETE FROM ip WHERE comment == ''")
 	if err == nil {

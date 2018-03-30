@@ -2,9 +2,11 @@ package models
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gorp.v2"
 	"hash/crc32"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -123,6 +125,8 @@ func GetAgent(c *gin.Context) {
 
 func PostAgent(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] PostAgent\n", claims["id"])
 
 	var agent Agent
 	c.Bind(&agent)
@@ -148,6 +152,8 @@ func UpdateAgent(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	//id := c.Params.ByName("id")
 	crca := c.Params.ByName("crca")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] UpdateAgent %s\n", claims["id"], crca)
 
 	var agent Agent
 	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=?", id)
@@ -196,6 +202,8 @@ func DeleteAgent(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	//id := c.Params.ByName("id")
 	crca := c.Params.ByName("crca")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] DeleteAgent %s\n", claims["id"], crca)
 
 	var agent Agent
 	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=?", id)

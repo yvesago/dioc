@@ -2,9 +2,10 @@ package models
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gorp.v2"
-	//"log"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -109,6 +110,8 @@ func GetExtract(c *gin.Context) {
 
 func PostExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] PostExtract\n", claims["id"])
 
 	var extract Extract
 	c.Bind(&extract)
@@ -133,6 +136,8 @@ func PostExtract(c *gin.Context) {
 func UpdateExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] UpdateExtract %s\n", claims["id"], id)
 
 	var extract Extract
 	err := dbmap.SelectOne(&extract, "SELECT * FROM extract WHERE id=?", id)
@@ -179,6 +184,8 @@ func UpdateExtract(c *gin.Context) {
 func DeleteExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] DeleteExtract %s\n", claims["id"], id)
 
 	var extract Extract
 	err := dbmap.SelectOne(&extract, "SELECT * FROM extract WHERE id=?", id)
@@ -201,6 +208,9 @@ func DeleteExtract(c *gin.Context) {
 
 func RestExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] RestExtract\n", claims["id"])
+
 	i := ExtractSearchs(dbmap)
 	c.JSON(200, gin.H{"result": i})
 }
@@ -257,11 +267,14 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 			switch e.Action {
 			case "Delete":
 				// TODO dbmap.Delete(&a)
+				log.Println("Extract Delete")
 			case "Compress":
+				log.Println("Extract Compress")
 				compress = append(compress, a.Line)
 				count--
 				dbmap.Delete(&a)
 			case "AddIP":
+				log.Println("Extract AddIP")
 				i, _ := CreateOrUpdateIp(dbmap, ip)
 				fmt.Println(i.totxt(false))
 				if a.Comment == "" {

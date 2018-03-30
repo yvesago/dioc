@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	//	"flag"
 	"fmt"
-	"github.com/gin-gonic/contrib/jwt"
+	"log"
+	jwt_lib "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
+	"github.com/itzamna314/gin-jwt"
 	flag "github.com/spf13/pflag"
 	"net/http"
 	"os"
@@ -35,7 +37,6 @@ type Config struct {
 	TLScert         string
 	TLSkey          string
 	AuthCASUrl      string   // CAS server
-	AuthCASService  string   // Fix CAS service when a proxy need it
 	AuthJWTTimeOut  int      // Hours for jwt timeout
 	AuthJWTPassword string   // JWT secret password
 	AuthJWTCallback string   // client url callback to validate and register jwt
@@ -56,6 +57,7 @@ func SetConfig(config Config) gin.HandlerFunc {
 }
 
 func main() {
+    log.SetFlags(log.Ldate | log.Ltime) // Add date to logs
 	var Usage = func() {
 		fmt.Fprintf(os.Stderr, "\nUsage of %s\n\n  Default behaviour: start daemon\n\n", os.Args[0])
 		//flag.SortFlags = false
@@ -164,7 +166,14 @@ func servermain(config Config) {
 
 	admin := r.Group("admin/api/v1")
 	//admin.Use(TokenAuthMiddleware(config))
-	admin.Use(jwt.Auth(config.AuthJWTPassword))
+	validator := jwtauth.Validator{
+		Key:      []byte(config.AuthJWTPassword),
+		Method:   jwt_lib.SigningMethodHS256,
+		Location: new(string),
+	}
+	*validator.Location = "/login"
+
+	admin.Use(validator.Middleware())
 	{
 		admin.GET("/geojson", GetGeoJsonIPs)
 		admin.PUT("/actionextract", RestExtract)

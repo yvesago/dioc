@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gorp.v2"
-	//"log"
 	"hash/crc32"
+	"log"
 	"strconv"
 	"time"
 )
@@ -116,6 +117,8 @@ func GetSurvey(c *gin.Context) {
 
 func PostSurvey(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] PostSurvey\n", claims["id"])
 
 	var survey Survey
 	c.Bind(&survey)
@@ -140,6 +143,8 @@ func PostSurvey(c *gin.Context) {
 func UpdateSurvey(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] UpdateSurvey %s\n", claims["id"], id)
 
 	var survey Survey
 	err := dbmap.SelectOne(&survey, "SELECT * FROM survey WHERE id=?", id)
@@ -185,6 +190,8 @@ func UpdateSurvey(c *gin.Context) {
 func DeleteSurvey(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] DeleteSurvey %s\n", claims["id"], id)
 
 	var survey Survey
 	err := dbmap.SelectOne(&survey, "SELECT * FROM survey WHERE id=?", id)

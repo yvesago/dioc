@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
 	"gopkg.in/gorp.v2"
-	//	"log"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -110,6 +111,8 @@ func GetAlerte(c *gin.Context) {
 
 func PostAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] PostAlerte\n", claims["id"])
 
 	var alerte Alerte
 	c.Bind(&alerte)
@@ -134,6 +137,8 @@ func PostAlerte(c *gin.Context) {
 func UpdateAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] UpdateAlerte %s\n", claims["id"], id)
 
 	var alerte Alerte
 	err := dbmap.SelectOne(&alerte, "SELECT * FROM alerte WHERE id=?", id)
@@ -182,6 +187,8 @@ func UpdateAlerte(c *gin.Context) {
 func DeleteAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] DeleteAlerte %s\n", claims["id"], id)
 
 	var alerte Alerte
 	err := dbmap.SelectOne(&alerte, "SELECT * FROM alerte WHERE id=?", id)
@@ -211,6 +218,8 @@ func DeleteAlerte(c *gin.Context) {
 func PostNewAlerte(c *gin.Context) {
 	verbose := c.MustGet("Verbose").(bool)
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	claims := c.MustGet("claims").(jwt.MapClaims)
+	log.Printf("[%s] PostNewAlerte\n", claims["id"])
 
 	var alerte Alerte
 	c.Bind(&alerte)
@@ -277,7 +286,7 @@ func (a *Alerte) SendMail(mserver string, from string, to []string) {
 	}
 
 	if err := d.DialAndSend(m); err != nil {
-		fmt.Printf("Warn: send mail failed: %v\n", err)
+		log.Printf("Warn: send mail failed: %v\n", err)
 	}
 
 }

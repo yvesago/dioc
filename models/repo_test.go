@@ -6,6 +6,7 @@ package models
 
 import (
 	"fmt"
+	jwt_lib "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"os"
 )
@@ -37,6 +38,7 @@ func SetConfig(config Config) gin.HandlerFunc {
 		c.Set("MailTo", config.MailTo)
 		c.Set("MailFrom", config.MailFrom)
 		c.Set("Verbose", config.Verbose)
+		c.Set("claims", jwt_lib.MapClaims{"id": "test"})
 		c.Next()
 	}
 }

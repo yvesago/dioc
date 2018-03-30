@@ -4,7 +4,6 @@ package main
 In Config:
 
     AuthCASUrl        // CAS server
-	AuthCASService    // optional : force a service url for proxy
     AuthJWTTimeOut    // int: Hours for jwt timeout
     AuthJWTPassword   // JWT secret password
     AuthJWTCallback   // client url callback to validate and register jwt
@@ -25,6 +24,7 @@ In gin server:
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -60,22 +60,16 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/logout" {
-		if v == true {
-			fmt.Println("CAS Logout")
-		}
+		log.Println("CAS Logout")
 		cas.RedirectToLogout(w, r)
 		return
 	}
 
 	username := cas.Username(r)
-	if v == true {
-		fmt.Printf("Login %s\n", username)
-		//fmt.Printf("Login %v\n", cas.Attributes(r))
-	}
+	log.Printf("CAS Login [%s]\n", username)
+
 	if !contains(h.Config.AuthValidLogins, username) {
-		if v == true {
-			fmt.Println("Not admin access")
-		}
+		log.Println("CAS Not admin access")
 		cas.RedirectToLogout(w, r)
 		return
 	}
@@ -92,9 +86,7 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := token.SignedString([]byte(h.Config.AuthJWTPassword))
 	if err != nil { // mainly timeout
 		w.WriteHeader(http.StatusInternalServerError)
-		if v == true {
-			fmt.Println("CAS jwt err")
-		}
+		log.Println("CAS jwt err")
 		fmt.Fprintf(w, error500, err)
 		return
 	}
