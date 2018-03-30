@@ -18,6 +18,11 @@ const actions = [
     { name: 'Delete', id: 'Delete' },
 ];
 
+const colored = WrappedComponent => props => props.record.active === true ?
+    <span style={{ color: 'green', fontWeight: 'bold' }}><WrappedComponent {...props} /></span> :
+    <WrappedComponent {...props} />;
+
+
 const cardActionStyle = {
     zIndex: 2,
     display: 'inline-block',
@@ -33,12 +38,6 @@ const ExtractActions = ({ resource, filters, displayedFilters, filterValues, bas
     </CardActions>
 );
 
-
-const colored = WrappedComponent => props => props.record.actions === 'Delete' ?
-    <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
-    props.record.level === 'warn' ? 
-        <span style={{ color: 'orange' }}><WrappedComponent {...props} /></span> :
-        <WrappedComponent {...props} />;
 
 const ColoredTextField = colored(TextField);
 

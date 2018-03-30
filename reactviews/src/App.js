@@ -51,8 +51,8 @@ const App = () => (
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} remove={Delete} icon={SurveyIcon} />
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />
         <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} remove={Delete} icon={SettingsIcon} />
-        <Resource name="ips" list={IPList}  edit={IPEdit} create={IPCreate} remove={Delete} icon={AgentIcon} />
-        <Resource name='Map' options={{ label: 'Map'}} list={Mapview} icon={MapIcon} />
+        <Resource name="ips" options={{ label: '‣ Extract > IPs'}} list={IPList}  edit={IPEdit} create={IPCreate} remove={Delete} icon={AgentIcon} />
+        <Resource name='Map' options={{ label: '‣ Extract > Map'}} list={Mapview} icon={MapIcon} />
         <Resource name="board" edit={BoardEdit} />
     </Admin>
 );
