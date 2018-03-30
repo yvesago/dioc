@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Datagrid, TextField, Edit, Create, SimpleForm,
+import { List, Datagrid, TextField, Edit, Create, SimpleForm, CreateButton,
     TextInput, required, EditButton, DateField, NumberInput, DeleteButton,
     RichTextField, Filter, Responsive, SimpleList, RefreshButton
 } from 'admin-on-rest';
@@ -21,6 +21,7 @@ const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, bas
     <CardActions style={cardActionStyle}>
         {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
         <ActionFlushIPButton />
+        <CreateButton basePath={basePath} />
         <RefreshButton />
     </CardActions>
 );
