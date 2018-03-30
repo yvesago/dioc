@@ -16,6 +16,7 @@ install:
   - go get gopkg.in/gomail.v2
   - go get github.com/paulmach/go.geojson
   - go get github.com/oschwald/geoip2-golang
+  - go get github.com/dgrijalva/jwt-go
 
 script:
   - go test -v ./models/ -covermode=count -coverprofile=coverage.out
