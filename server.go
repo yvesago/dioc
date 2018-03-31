@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	//	"flag"
 	"fmt"
-	"log"
 	jwt_lib "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
 	"github.com/itzamna314/gin-jwt"
 	flag "github.com/spf13/pflag"
+	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -57,7 +57,7 @@ func SetConfig(config Config) gin.HandlerFunc {
 }
 
 func main() {
-    log.SetFlags(log.Ldate | log.Ltime) // Add date to logs
+	log.SetFlags(log.Ldate | log.Ltime) // Add date to logs
 	var Usage = func() {
 		fmt.Fprintf(os.Stderr, "\nUsage of %s\n\n  Default behaviour: start daemon\n\n", os.Args[0])
 		//flag.SortFlags = false

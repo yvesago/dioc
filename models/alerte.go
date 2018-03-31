@@ -22,7 +22,7 @@ or remove sqlite tricks
 
 **/
 
-// XXX custom struct name and fields
+// Alerte custom struct name and fields XXX
 type Alerte struct {
 	Id         int64     `db:"id" json:"id"`
 	CRCa       string    `db:"crca" json:"crca"`
@@ -38,21 +38,60 @@ type Alerte struct {
 	Updated    time.Time `db:"updated" json:"updated"`
 }
 
-// Hooks : PreInsert and PreUpdate
+/**
 
+Methods
+
+**/
+
+// PreInsert hook to register time
 func (a *Alerte) PreInsert(s gorp.SqlExecutor) error {
 	a.Created = time.Now() // or time.Now().UnixNano()
 	a.Updated = a.Created
 	return nil
 }
 
+// PreUpdate hook to register time
 func (a *Alerte) PreUpdate(s gorp.SqlExecutor) error {
 	a.Updated = time.Now()
 	return nil
 }
 
-// REST handlers
+// Sendmail method for new alerts
+func (a *Alerte) SendMail(mserver string, from string, to []string) {
+	s := strings.Split(mserver, ":")
+	server, p := s[0], s[1]
+	port, _ := strconv.Atoi(p)
 
+	msg := "\nFrom " + a.IP + " " + a.FileSurvey +
+		"\nMatch: " + a.Search +
+		"\n\n" + a.Line + "\n\n"
+
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to[0])
+	m.SetHeader("CC", strings.Join(to[:], " ,"))
+	m.SetHeader("Subject", "[ALERTE] ("+strings.ToUpper(a.Level)+") "+a.Search)
+	m.SetBody("text/plain", msg)
+
+	d := gomail.Dialer{Host: server, Port: port}
+	if server == "smtp.my.test" {
+		return
+	}
+
+	if err := d.DialAndSend(m); err != nil {
+		log.Printf("Warn: send mail failed: %v\n", err)
+	}
+
+}
+
+/**
+
+ REST admin interface handlers
+
+**/
+
+// GetAlertes all alerts
 func GetAlertes(c *gin.Context) {
 	verbose := c.MustGet("Verbose").(bool)
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
@@ -93,6 +132,7 @@ func GetAlertes(c *gin.Context) {
 	// curl -i http://localhost:8080/api/v1/alertes
 }
 
+// GetAlerte one alert by id
 func GetAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
@@ -109,6 +149,7 @@ func GetAlerte(c *gin.Context) {
 	// curl -i http://localhost:8080/api/v1/alertes/1
 }
 
+// PostAlerte add one alert
 func PostAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
@@ -134,6 +175,7 @@ func PostAlerte(c *gin.Context) {
 	// curl -i -X POST -H "Content-Type: application/json" -d "{ \"firstname\": \"Thea\", \"lastname\": \"Queen\" }" http://localhost:8080/api/v1/alertes
 }
 
+// UpdateAlerte by id
 func UpdateAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
@@ -184,6 +226,7 @@ func UpdateAlerte(c *gin.Context) {
 	// curl -i -X PUT -H "Content-Type: application/json" -d "{ \"firstname\": \"Thea\", \"lastname\": \"Merlyn\" }" http://localhost:8080/api/v1/alertes/1
 }
 
+// DeleteAlerte by id
 func DeleteAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
@@ -211,15 +254,14 @@ func DeleteAlerte(c *gin.Context) {
 
 /**
 
-
+REST client handlers
 
 **/
 
+// PostNewAlerte new alerte from agent
 func PostNewAlerte(c *gin.Context) {
 	verbose := c.MustGet("Verbose").(bool)
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
-	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] PostNewAlerte\n", claims["id"])
 
 	var alerte Alerte
 	c.Bind(&alerte)
@@ -262,31 +304,4 @@ func PostNewAlerte(c *gin.Context) {
 	} else {
 		c.JSON(400, gin.H{"error": "Mandatory fields are empty"})
 	}
-}
-
-func (a *Alerte) SendMail(mserver string, from string, to []string) {
-	s := strings.Split(mserver, ":")
-	server, p := s[0], s[1]
-	port, _ := strconv.Atoi(p)
-
-	msg := "\nFrom " + a.IP + " " + a.FileSurvey +
-		"\nMatch: " + a.Search +
-		"\n\n" + a.Line + "\n\n"
-
-	m := gomail.NewMessage()
-	m.SetHeader("From", from)
-	m.SetHeader("To", to[0])
-	m.SetHeader("CC", strings.Join(to[:], " ,"))
-	m.SetHeader("Subject", "[ALERTE] ("+strings.ToUpper(a.Level)+") "+a.Search)
-	m.SetBody("text/plain", msg)
-
-	d := gomail.Dialer{Host: server, Port: port}
-	if server == "smtp.my.test" {
-		return
-	}
-
-	if err := d.DialAndSend(m); err != nil {
-		log.Printf("Warn: send mail failed: %v\n", err)
-	}
-
 }
