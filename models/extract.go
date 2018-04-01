@@ -22,7 +22,7 @@ or remove sqlite tricks
 
 **/
 
-// XXX custom struct name and fields
+// Extract custom struct name and fields XXX
 type Extract struct {
 	Id       int64     `db:"id" json:"id"`
 	Search   string    `db:"search" json:"search"`
@@ -36,21 +36,27 @@ type Extract struct {
 	Updated  time.Time `db:"updated" json:"updated"`
 }
 
-// Hooks : PreInsert and PreUpdate
-
+// Hooks
+// PreInsert fix date hook
 func (e *Extract) PreInsert(s gorp.SqlExecutor) error {
 	e.Created = time.Now() // or time.Now().UnixNano()
 	e.Updated = e.Created
 	return nil
 }
 
+// PreUpdate fix date hook
 func (e *Extract) PreUpdate(s gorp.SqlExecutor) error {
 	e.Updated = time.Now()
 	return nil
 }
 
-// REST handlers
+/**
 
+REST handlers
+
+**/
+
+// GetExtracts all items
 func GetExtracts(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	verbose := c.MustGet("Verbose").(bool)
@@ -92,6 +98,7 @@ func GetExtracts(c *gin.Context) {
 	// curl -i http://localhost:8080/api/v1/extracts
 }
 
+// GetExtract one item by id
 func GetExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
@@ -108,6 +115,7 @@ func GetExtract(c *gin.Context) {
 	// curl -i http://localhost:8080/api/v1/extracts/1
 }
 
+// PostExtract add item
 func PostExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
@@ -133,6 +141,7 @@ func PostExtract(c *gin.Context) {
 	// curl -i -X POST -H "Content-Type: application/json" -d "{ \"firstname\": \"Thea\", \"lastname\": \"Queen\" }" http://localhost:8080/api/v1/extracts
 }
 
+// UpdateExtract update item by id
 func UpdateExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
@@ -181,6 +190,7 @@ func UpdateExtract(c *gin.Context) {
 	// curl -i -X PUT -H "Content-Type: application/json" -d "{ \"firstname\": \"Thea\", \"lastname\": \"Merlyn\" }" http://localhost:8080/api/v1/extracts/1
 }
 
+// DeleteExtract delte item by id
 func DeleteExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
@@ -206,16 +216,23 @@ func DeleteExtract(c *gin.Context) {
 	// curl -i -X DELETE http://localhost:8080/api/v1/extracts/1
 }
 
+// RestExtract run action via rest
 func RestExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
+	verbose := c.MustGet("Verbose").(bool)
 	claims := c.MustGet("claims").(jwt.MapClaims)
 	log.Printf("[%s] RestExtract\n", claims["id"])
 
-	i := ExtractSearchs(dbmap)
+	i := ExtractSearchs(dbmap, verbose)
 	c.JSON(200, gin.H{"result": i})
 }
 
-func ExtractSearchs(dbmap *gorp.DbMap) int {
+/**
+
+**/
+
+// ExtractSearchs run action
+func ExtractSearchs(dbmap *gorp.DbMap, verbose bool) int {
 	var extracts []Extract
 	dbmap.Select(&extracts, "SELECT * FROM extract WHERE active = 1")
 	//Searchs  = make(map[string]*regexp.Regexp)
@@ -255,8 +272,10 @@ func ExtractSearchs(dbmap *gorp.DbMap) int {
 			}
 			count++
 			ip := res[1]
-			fmt.Printf("%+v\n", a)
-			fmt.Printf(" => <%s>\n", ip)
+			if verbose == true {
+				fmt.Printf("%+v\n", a)
+				fmt.Printf(" => <%s>\n", ip)
+			}
 			if e.Action == "Compress" && firtAlerte.Line == "" {
 				compress = append(compress, a.Comment)
 				compress = append(compress, a.Line)

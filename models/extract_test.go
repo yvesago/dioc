@@ -227,7 +227,7 @@ func TestExtract(t *testing.T) {
 
 	// Searches
 	log.Println("= ExtractSearchs")
-	res2 := ExtractSearchs(dbmap)
+	res2 := ExtractSearchs(dbmap, true)
 	assert.Equal(t, 1, res2, "1 alerte line remain")
 	e2.Active = false
 	dbmap.Update(&e2)
