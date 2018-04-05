@@ -202,7 +202,9 @@ func TestExtract(t *testing.T) {
 	router.ServeHTTP(resp, r)
 	assert.Equal(t, 200, resp.Code, "http PUT success")
 	fmt.Println(resp.Body)
-	assert.Equal(t, `{"result":2}`, string(resp.Body.Bytes()), "2 alerte line match")
+	var jresp map[string]int
+	json.Unmarshal(resp.Body.Bytes(), &jresp)
+	assert.Equal(t, 2, jresp["result"], "2 alerte line match")
 	e.Active = false
 	dbmap.Update(&e)
 

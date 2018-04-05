@@ -126,7 +126,7 @@ func GetAgent(c *gin.Context) {
 func PostAgent(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] PostAgent\n", claims["id"])
+	log.Printf("%s [%s]: PostAgent\n", c.ClientIP(), claims["id"])
 
 	var agent Agent
 	c.Bind(&agent)
@@ -153,7 +153,7 @@ func UpdateAgent(c *gin.Context) {
 	//id := c.Params.ByName("id")
 	crca := c.Params.ByName("crca")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] UpdateAgent %s\n", claims["id"], crca)
+	log.Printf("%s [%s]: UpdateAgent %s\n", c.ClientIP(), claims["id"], crca)
 
 	var agent Agent
 	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=?", id)
@@ -203,7 +203,7 @@ func DeleteAgent(c *gin.Context) {
 	//id := c.Params.ByName("id")
 	crca := c.Params.ByName("crca")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] DeleteAgent %s\n", claims["id"], crca)
+	log.Printf("%s [%s]: DeleteAgent %s\n", c.ClientIP(), claims["id"], crca)
 
 	var agent Agent
 	//err := dbmap.SelectOne(&agent, "SELECT * FROM agent WHERE id=?", id)

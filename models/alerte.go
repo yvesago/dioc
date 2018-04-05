@@ -153,7 +153,7 @@ func GetAlerte(c *gin.Context) {
 func PostAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] PostAlerte\n", claims["id"])
+	log.Printf("%s [%s]: PostAlerte\n", c.ClientIP(), claims["id"])
 
 	var alerte Alerte
 	c.Bind(&alerte)
@@ -180,7 +180,7 @@ func UpdateAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] UpdateAlerte %s\n", claims["id"], id)
+	log.Printf("%s [%s]: UpdateAlerte %s\n", c.ClientIP(), claims["id"], id)
 
 	var alerte Alerte
 	err := dbmap.SelectOne(&alerte, "SELECT * FROM alerte WHERE id=?", id)
@@ -231,7 +231,7 @@ func DeleteAlerte(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] DeleteAlerte %s\n", claims["id"], id)
+	log.Printf("%s [%s]: DeleteAlerte %s\n", c.ClientIP(), claims["id"], id)
 
 	var alerte Alerte
 	err := dbmap.SelectOne(&alerte, "SELECT * FROM alerte WHERE id=?", id)

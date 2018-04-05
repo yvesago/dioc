@@ -119,7 +119,7 @@ func GetExtract(c *gin.Context) {
 func PostExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] PostExtract\n", claims["id"])
+	log.Printf("%s [%s]: PostExtract\n", c.ClientIP(), claims["id"])
 
 	var extract Extract
 	c.Bind(&extract)
@@ -146,7 +146,7 @@ func UpdateExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] UpdateExtract %s\n", claims["id"], id)
+	log.Printf("%s [%s]: UpdateExtract %s\n", c.ClientIP(), claims["id"], id)
 
 	var extract Extract
 	err := dbmap.SelectOne(&extract, "SELECT * FROM extract WHERE id=?", id)
@@ -195,7 +195,7 @@ func DeleteExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] DeleteExtract %s\n", claims["id"], id)
+	log.Printf("%s [%s]: DeleteExtract %s\n", c.ClientIP(), claims["id"], id)
 
 	var extract Extract
 	err := dbmap.SelectOne(&extract, "SELECT * FROM extract WHERE id=?", id)
@@ -221,7 +221,7 @@ func RestExtract(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	verbose := c.MustGet("Verbose").(bool)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] RestExtract\n", claims["id"])
+	log.Printf("%s [%s]: RestExtract\n", c.ClientIP(), claims["id"])
 
 	i := ExtractSearchs(dbmap, verbose)
 	c.JSON(200, gin.H{"result": i})

@@ -228,7 +228,7 @@ func GetIP(c *gin.Context) {
 func PostIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] PostIP\n", claims["id"])
+	log.Printf("%s [%s]: PostIP\n", c.ClientIP(), claims["id"])
 
 	var ip IP
 	c.Bind(&ip)
@@ -255,7 +255,7 @@ func UpdateIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] UpdateIP %s\n", claims["id"], id)
+	log.Printf("%s [%s]: UpdateIP %s\n", c.ClientIP(), claims["id"], id)
 
 	var ip IP
 	err := dbmap.SelectOne(&ip, "SELECT * FROM ip WHERE id=?", id)
@@ -307,7 +307,7 @@ func DeleteIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] DeleteIP %s\n", claims["id"], id)
+	log.Printf("%s [%s]: DeleteIP %s\n", c.ClientIP(), claims["id"], id)
 
 	var ip IP
 	err := dbmap.SelectOne(&ip, "SELECT * FROM ip WHERE id=?", id)
@@ -331,7 +331,7 @@ func DeleteIP(c *gin.Context) {
 func RestFlushIP(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] RestFlushIP\n", claims["id"])
+	log.Printf("%s [%s]: RestFlushIP\n", c.ClientIP(), claims["id"])
 
 	_, err := dbmap.Exec("DELETE FROM ip WHERE comment == ''")
 	if err == nil {

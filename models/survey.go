@@ -118,7 +118,7 @@ func GetSurvey(c *gin.Context) {
 func PostSurvey(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] PostSurvey\n", claims["id"])
+	log.Printf("%s [%s]: PostSurvey\n", c.ClientIP(), claims["id"])
 
 	var survey Survey
 	c.Bind(&survey)
@@ -144,7 +144,7 @@ func UpdateSurvey(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] UpdateSurvey %s\n", claims["id"], id)
+	log.Printf("%s [%s]: UpdateSurvey %s\n", c.ClientIP(), claims["id"], id)
 
 	var survey Survey
 	err := dbmap.SelectOne(&survey, "SELECT * FROM survey WHERE id=?", id)
@@ -191,7 +191,7 @@ func DeleteSurvey(c *gin.Context) {
 	dbmap := c.MustGet("DBmap").(*gorp.DbMap)
 	id := c.Params.ByName("id")
 	claims := c.MustGet("claims").(jwt.MapClaims)
-	log.Printf("[%s] DeleteSurvey %s\n", claims["id"], id)
+	log.Printf("%s [%s]: DeleteSurvey %s\n", c.ClientIP(), claims["id"], id)
 
 	var survey Survey
 	err := dbmap.SelectOne(&survey, "SELECT * FROM survey WHERE id=?", id)

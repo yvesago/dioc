@@ -50,6 +50,7 @@ const error500 = `<!DOCTYPE html>
 
 func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	v := h.Config.Verbose
+	ip := r.Header.Get("X-Forwarded-For")
 	//fmt.Println("CAS Login")
 	if !cas.IsAuthenticated(r) {
 		if v == true {
@@ -60,16 +61,16 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/logout" {
-		log.Println("CAS Logout")
+		log.Printf("%s: CAS Logout\n", ip)
 		cas.RedirectToLogout(w, r)
 		return
 	}
 
 	username := cas.Username(r)
-	log.Printf("CAS Login [%s]\n", username)
+	log.Printf("%s [%s]: CAS Login\n", ip, username)
 
 	if !contains(h.Config.AuthValidLogins, username) {
-		log.Println("CAS Not admin access")
+		log.Printf("%s [%s]: CAS Not admin access\n", ip, username)
 		cas.RedirectToLogout(w, r)
 		return
 	}
@@ -86,7 +87,7 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := token.SignedString([]byte(h.Config.AuthJWTPassword))
 	if err != nil { // mainly timeout
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println("CAS jwt err")
+		log.Println("%s: CAS jwt err", ip)
 		fmt.Fprintf(w, error500, err)
 		return
 	}
