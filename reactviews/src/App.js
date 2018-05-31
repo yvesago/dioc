@@ -1,14 +1,14 @@
 import React from 'react';
-import { fetchUtils, Admin, Resource, Delete } from 'admin-on-rest';
+import { fetchUtils, Admin, Resource } from 'react-admin';
 //import './App.css';
 
-import AlertIcon from 'material-ui/svg-icons/action/assessment';
-import SurveyIcon from 'material-ui/svg-icons/device/wifi-tethering';
-import AgentIcon from 'material-ui/svg-icons/notification/wifi';
-import SettingsIcon from 'material-ui/svg-icons/action/settings';
-import MapIcon from 'material-ui/svg-icons/social/public';
+import AlertIcon from '@material-ui/icons/Assessment';
+import SurveyIcon from '@material-ui/icons/WifiTethering';
+import AgentIcon from '@material-ui/icons/Wifi';
+import SettingsIcon from '@material-ui/icons/Settings';
+import MapIcon from '@material-ui/icons/Public';
 
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { createMuiTheme } from '@material-ui/core/styles';
 import myTheme from './myTheme';
 
 import { Dashboard } from './Dashboard';
@@ -43,15 +43,15 @@ const restClient = mySimpleRest( MyConfig.API_URL  + '/admin/api/v1', httpClient
 
 
 const App = () => (
-    <Admin title='Distributed IOC manager' theme={getMuiTheme(myTheme)} 
-        loginPage={authLoginPage} authClient={authClient(MyConfig.AUTH_URL)}
+    <Admin title='Distributed IOC manager' theme={ createMuiTheme(myTheme) }
+        loginPage={authLoginPage} authProvider={authClient(MyConfig.AUTH_URL)}
         customRoutes={customRoutes} dashboard={Dashboard} 
-        restClient={restClient}>
-        <Resource name="alertes" list={AlertList} edit={AlertEdit} remove={Delete} icon={AlertIcon} />
-        <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} remove={Delete} icon={SurveyIcon} />
-        <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} remove={Delete} icon={AgentIcon} />
-        <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} remove={Delete} icon={SettingsIcon} />
-        <Resource name="ips" options={{ label: '‣ Extract > IPs'}} list={IPList}  edit={IPEdit} create={IPCreate} remove={Delete} icon={AgentIcon} />
+        dataProvider={restClient}>
+        <Resource name="alertes" list={AlertList} edit={AlertEdit} icon={AlertIcon} />
+        <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} icon={SurveyIcon} />
+        <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} icon={AgentIcon} />
+        <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} icon={SettingsIcon} />
+        <Resource name="ips" options={{ label: '‣ Extract > IPs'}} list={IPList}  edit={IPEdit} create={IPCreate} icon={AgentIcon} />
         <Resource name='Map' options={{ label: '‣ Extract > Map'}} list={Mapview} icon={MapIcon} />
         <Resource name="board" edit={BoardEdit} />
     </Admin>

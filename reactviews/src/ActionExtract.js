@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import FlatButton from 'material-ui/FlatButton';
-import { showNotification as showNotificationAction } from 'admin-on-rest';
+import { Button } from 'react-admin';
+import { showNotification as showNotificationAction } from 'react-admin';
 import { push as pushAction } from 'react-router-redux';
 import request from 'superagent';
 import { MyConfig } from './MyConfig';
@@ -28,7 +28,7 @@ class ActionExtractButton extends Component {
     }
 
     render() {
-        return <FlatButton primary label="Extract" onClick={this.handleClick} />;
+        return <Button primary label="Extract" onClick={this.handleClick} />;
     }
 }
 

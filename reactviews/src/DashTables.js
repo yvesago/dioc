@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardHeader } from 'material-ui/Card';
-//import { List, ListItem } from 'material-ui/List';
-import TableIcon from 'material-ui/svg-icons/action/assessment';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import TableIcon from '@material-ui/icons/Assessment';
 
 import ChartDoghnut from './ChartDoghnut.js';
 
@@ -11,7 +11,7 @@ const styles = {
     dognut: { float: 'left', display: 'inline-block', marginLeft: 15 },
 };
 
-export default ({ nbagents = [], nbsurveys = [], nbalerts = [], subtitle }) => (
+export const DashTables = ({ nbagents = [], nbsurveys = [], nbalerts = [], subtitle }) => (
     <Card style={styles.card}>
         <TableIcon style={styles.icon} />
         <CardHeader title="Tables" subtitle={subtitle} />

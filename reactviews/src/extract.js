@@ -1,12 +1,12 @@
 import React from 'react';
+import CardActions from '@material-ui/core/CardActions';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, required, EditButton, DateField, CreateButton,
     RichTextField, SelectInput, Filter, Responsive, SimpleList,
     BooleanInput, BooleanField, DateInput, RefreshButton
-} from 'admin-on-rest';
-import RichTextInput from 'aor-rich-text-input';
-
-import { CardActions } from 'material-ui/Card';
+} from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
+import { withStyles } from '@material-ui/core/styles';
 
 
 import ActionExtractButton from './ActionExtract';
@@ -49,8 +49,12 @@ const ExtractFilter = (props) => (
     </Filter>
 );
 
+const styles = {
+    field: {
+        width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+};
 
-export const ExtractList = (props) => (
+export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
     <List filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
         <Responsive
             small={
@@ -66,20 +70,20 @@ export const ExtractList = (props) => (
                     <TextField source="role" />
                     <ColoredTextField source="action" />
                     <BooleanField source="active" />
-                    <RichTextField source="comment" stripTags elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <RichTextField source="comment" className={styles.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
             }
         />
     </List>
-);
+));
 
 
 export const ExtractCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput source="search" validate={required} />
+            <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} allowEmpty />
             <DateInput label="From" source="fromdate"
                 options={{
@@ -108,7 +112,7 @@ export const ExtractCreate = (props) => (
 export const ExtractEdit = (props) => (
     <Edit  {...props}>
         <SimpleForm>
-            <TextInput source="search" validate={required} />
+            <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} allowEmpty />
             <DateInput label="From" source="fromdate"
                 options={{

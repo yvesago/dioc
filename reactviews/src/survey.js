@@ -2,9 +2,9 @@ import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, DisabledInput, required, EditButton, DateField, 
     RichTextField, SelectInput, Filter, Responsive, SimpleList
-} from 'admin-on-rest';
-import RichTextInput from 'aor-rich-text-input';
-
+} from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
+import { withStyles } from '@material-ui/core/styles';
 import { roles } from './MyConfig';
 
 const levels = [
@@ -28,8 +28,12 @@ const SurveyFilter = (props) => (
     </Filter>
 );
 
+const styles = {
+    field: {
+        width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+};
 
-export const SurveyList = (props) => (
+export const SurveyList = withStyles(styles)(({ classes, ...props }) => (
     <List filters={<SurveyFilter />} perPage={30} {...props}>
         <Responsive
             small={
@@ -44,20 +48,20 @@ export const SurveyList = (props) => (
                     <TextField source="search" />
                     <TextField source="role" />
                     <ColoredTextField source="level" />
-                    <RichTextField source="comment" stripTags elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <RichTextField source="comment" className={classes.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
             }
         />
     </List>
-);
+));
 
 
 export const SurveyCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput source="search" validate={required} />
+            <TextInput source="search" validate={required()} />
             <SelectInput source="level" choices={levels} allowEmpty />
             <SelectInput source="role" choices={roles} allowEmpty />
             <RichTextInput source="comment" />
@@ -69,13 +73,13 @@ export const SurveyCreate = (props) => (
 export const SurveyEdit = (props) => (
     <Edit  {...props}>
         <SimpleForm>
-            <TextInput source="search" validate={required} />
+            <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} allowEmpty />
             <SelectInput source="level" choices={levels} allowEmpty />
             <RichTextInput source="comment" />
             <DateField label="Created" source="created" showTime />
             <DateField label="Updated" source="updated" showTime />
-            <DisabledInput source="crcs" validate={required} />
+            <DisabledInput source="crcs" validate={required()} />
         </SimpleForm>
     </Edit>
 );

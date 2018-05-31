@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { userLogin } from 'admin-on-rest';
+import { userLogin } from 'react-admin';
 import { MyConfig } from './MyConfig';
 
 class authLoginPage extends Component {

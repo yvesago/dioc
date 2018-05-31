@@ -1,31 +1,33 @@
-import {
-    blue500, blue700, 
-    indigo500,
-    cyan500, 
-    grey100, grey300, grey400, grey500,
-    white, darkBlack, fullBlack,
-} from 'material-ui/styles/colors';
-import { fade } from 'material-ui/utils/colorManipulator';
-import spacing from 'material-ui/styles/spacing';
+import blue from '@material-ui/core/colors/blue';
+import indigo from '@material-ui/core/colors/indigo';
+import cyan from '@material-ui/core/colors/cyan';
+import grey from '@material-ui/core/colors/grey';
+import white from '@material-ui/core/colors';
+import black from '@material-ui/core/colors';
+
+import { fade } from '@material-ui/core/styles/colorManipulator';
+//import spacing from '@material-ui/core/styles';
 
 const myTheme = {
-    spacing: spacing,
+    //spacing: spacing,
     fontFamily: 'Roboto, sans-serif',
     palette: {
-        primary1Color: blue500,
-        primary2Color: blue700,
-        primary3Color: grey400,
-        accent1Color: indigo500,
-        accent2Color: grey100,
-        accent3Color: grey500,
-        textColor: darkBlack,
+        primary: blue,
+        secondary: {main: '#2196F3'},
+        primary1Color: blue[500],
+        primary2Color: blue[700],
+        primary3Color: grey[400],
+        accent1Color: indigo[500],
+        accent2Color: grey[100],
+        accent3Color: grey[500],
+        textColor: grey[900],
         alternateTextColor: white,
         canvasColor: white,
-        borderColor: grey300,
-        disabledColor: fade(darkBlack, 0.3),
-        pickerHeaderColor: cyan500,
-        clockCircleColor: fade(darkBlack, 0.07),
-        shadowColor: fullBlack,
+        borderColor: grey[300],
+        disabledColor: fade(grey[800], 0.3),
+        pickerHeaderColor: cyan[500],
+        clockCircleColor:  fade(grey[800], 0.07),
+        shadowColor: black,
     },  
 };
 

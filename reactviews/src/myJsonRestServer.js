@@ -1,5 +1,5 @@
 import { stringify } from 'query-string';
-import { fetchJson } from 'admin-on-rest';
+import { fetchJson } from 'react-admin';
 const GET_LIST = 'GET_LIST';
 const GET_ONE = 'GET_ONE';
 const GET_MANY = 'GET_MANY';
@@ -21,7 +21,7 @@ const filterQuery = value => {
  * and ng-admin backport with json filter
  *
  *
- * Maps admin-on-rest queries to a json-server powered REST API
+ * Maps react-admin queries to a json-server powered REST API
  *
  * @see https://github.com/typicode/json-server
  * @example

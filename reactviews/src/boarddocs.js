@@ -1,6 +1,6 @@
 import React from 'react';
-import { Edit, SimpleForm  } from 'admin-on-rest';
-import RichTextInput from 'aor-rich-text-input';
+import { Edit, SimpleForm  } from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
 
 export const BoardEdit = (props) => (
     <Edit title="Docs" {...props}>

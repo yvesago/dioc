@@ -1,12 +1,13 @@
 import React from 'react';
-import { Card, CardText } from 'material-ui/Card';
-import { ViewTitle } from 'admin-on-rest/lib/mui';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import { ViewTitle } from 'react-admin';
 import MyLeaflet from './Leaflet';
 
 export default () => (
     <Card>
         <ViewTitle title="IP map" />
-        <CardText>From active Extracts</CardText>
+        <CardContent>From active Extracts</CardContent>
         <div id="mapContainer">
             <MyLeaflet zoom={4} />
         </div>

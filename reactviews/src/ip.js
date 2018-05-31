@@ -1,13 +1,13 @@
 import React from 'react';
+import CardActions from '@material-ui/core/CardActions';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm, CreateButton,
-    TextInput, required, EditButton, DateField, NumberInput, DeleteButton,
+    TextInput, required, EditButton, DateField, NumberInput,
     RichTextField, Filter, Responsive, SimpleList, RefreshButton
-} from 'admin-on-rest';
-import RichTextInput from 'aor-rich-text-input';
-
+} from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
+import { withStyles } from '@material-ui/core/styles';
 import MyLeaflet from './Leaflet';
 
-import { CardActions } from 'material-ui/Card';
 
 import ActionFlushIPButton from './ActionFlushIP';
 
@@ -41,8 +41,14 @@ const IPFilter = (props) => (
     </Filter>
 );
 
+const styles = {
+    fieldASN: {
+        width: '100px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'},
+    field: {
+        width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+};
 
-export const IPList = (props) => (
+export const IPList = withStyles(styles)(({ classes, ...props }) => (
     <List filters={<IPFilter />} perPage={30} actions={<FlushIPActions />} {...props}>
         <Responsive
             small={
@@ -61,22 +67,21 @@ export const IPList = (props) => (
                     <TextField label="Region" source="r" />
                     <TextField label="City" source="c" />
                     <TextField label="AS Num" source="asnnum" />
-                    <RichTextField source="asnname" stripTags elStyle={{width: '100px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
-                    <RichTextField source="comment" stripTags elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <RichTextField source="asnname" className={classes.fieldASN} stripTags />
+                    <RichTextField source="comment" className={classes.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
-                    <DeleteButton />
                 </Datagrid>
             }
         />
     </List>
-);
+));
 
 
 export const IPCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput source="name" validate={required} />
+            <TextInput source="name" validate={required()} />
             <RichTextInput source="comment" />
         </SimpleForm>
     </Create>

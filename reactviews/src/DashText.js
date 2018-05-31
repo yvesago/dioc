@@ -1,8 +1,11 @@
 import React from 'react';
-import { Card, CardHeader, CardText } from 'material-ui/Card';
-import { EditButton, RichTextField } from 'admin-on-rest';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
-import InfoIcon from 'material-ui/svg-icons/action/info';
+import { EditButton, RichTextField } from 'react-admin';
+
+import InfoIcon from '@material-ui/icons/Info';
 
 export const DashText = ({...props}) => {
     const { name, style, subtitle, txt } = props;
@@ -14,10 +17,10 @@ export const DashText = ({...props}) => {
                 title={name}
                 subtitle={subtitle}
             />
-            <CardText>  
+            <CardContent>
                 <RichTextField source={txt} {...props} />
                 <EditButton { ...props} />
-            </CardText>
+            </CardContent>
         </Card>
     );
 };

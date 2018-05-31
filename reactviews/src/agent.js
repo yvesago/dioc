@@ -3,9 +3,9 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, DisabledInput, required, EditButton, DateField, 
     RichTextField, SelectInput, LongTextInput, Filter, Responsive,
     SimpleList
-} from 'admin-on-rest';
-import RichTextInput from 'aor-rich-text-input';
-
+} from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
+import { withStyles } from '@material-ui/core/styles';
 import { roles } from './MyConfig';
 
 
@@ -38,8 +38,12 @@ const AgentFilter = (props) => (
     </Filter>
 );
 
+const styles = {
+    field: {
+        width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+};
 
-export const AgentList = (props) => (
+export const AgentList = withStyles(styles)(({ classes, ...props }) => (
     <List filters={<AgentFilter />} {...props}>
         <Responsive
             small={
@@ -55,7 +59,7 @@ export const AgentList = (props) => (
                     <TextField source="filesurvey" />
                     <ColoredTextField source="status" />
                     <TextField source="role" />
-                    <RichTextField source="lines" elStyle={{width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <RichTextField source="lines" className={classes.field} />
                     <RichTextField source="comment" stripTags />
                     <TextField source="cmd" />
                     <DateField label="updated" source="updated" showTime />
@@ -64,13 +68,13 @@ export const AgentList = (props) => (
             }
         />
     </List>
-);
+));
 
 
 export const AgentCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput source="ip" validate={required} />
+            <TextInput source="ip" validate={required()} />
             <TextInput source="filesurvey" />
             <TextInput source="status" />
             <SelectInput source="role" choices={roles} allowEmpty />

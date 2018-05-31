@@ -2,9 +2,9 @@ import React from 'react';
 import { List, Datagrid, TextField, DateField, EditButton,
     Edit, SimpleForm, Filter, TextInput, SelectInput, DeleteButton,
     RichTextField, Responsive, SimpleList
-} from 'admin-on-rest';
-import RichTextInput from 'aor-rich-text-input';
-
+} from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
+import { withStyles } from '@material-ui/core/styles';
 import { roles } from './MyConfig';
 
 const colored = WrappedComponent => props => props.record.level === 'critic' ?
@@ -23,8 +23,12 @@ const AlertFilter = (props) => (
     </Filter>
 );
 
+const styles = {
+    field: {
+        width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+};
 
-export const AlertList = (props) => (
+export const AlertList = withStyles(styles)(({ classes, ...props }) => (
     <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
         <Responsive
             small={
@@ -40,7 +44,7 @@ export const AlertList = (props) => (
                     <TextField source="role" />
                     <ColoredTextField source="level" />
                     <TextField source="line" />
-                    <RichTextField source="comment" stripTags elStyle={{width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} />
+                    <RichTextField source="comment" className={styles.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                     <DeleteButton />
@@ -48,7 +52,7 @@ export const AlertList = (props) => (
             }
         />
     </List>
-);
+));
 
 export const AlertEdit = (props) => (
     <Edit {...props}>

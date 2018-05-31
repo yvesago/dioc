@@ -3,10 +3,10 @@ import { MyConfig } from './MyConfig';
 import request from 'superagent';
 import jwt_decode from 'jwt-decode';
 
-import withWidth from 'material-ui/utils/withWidth';
-import { AppBarMobile } from 'admin-on-rest';
+import withWidth from '@material-ui/core/withWidth';
+import { AppBarMobile } from 'react-admin';
 
-import DashTables from './DashTables';
+import { DashTables } from './DashTables';
 import { DashText } from './DashText';
 
 const styles = {
