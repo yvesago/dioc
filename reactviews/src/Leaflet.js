@@ -58,7 +58,7 @@ class Leaflet extends React.Component {
       };
   } 
 
-  componentWillMount() {
+  componentDidMount() {
       if ( this.props.point === 0 ) {
           const token = localStorage.getItem('token');
           request

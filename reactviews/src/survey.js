@@ -34,7 +34,7 @@ const styles = {
 };
 
 export const SurveyList = withStyles(styles)(({ classes, ...props }) => (
-    <List filters={<SurveyFilter />} perPage={30} {...props}>
+    <List bulkActions={false} filters={<SurveyFilter />} perPage={30} {...props}>
         <Responsive
             small={
                 <SimpleList

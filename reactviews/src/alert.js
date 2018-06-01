@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Datagrid, TextField, DateField, EditButton,
-    Edit, SimpleForm, Filter, TextInput, SelectInput, DeleteButton,
+    Edit, SimpleForm, Filter, TextInput, SelectInput,
     RichTextField, Responsive, SimpleList
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
@@ -44,10 +44,9 @@ export const AlertList = withStyles(styles)(({ classes, ...props }) => (
                     <TextField source="role" />
                     <ColoredTextField source="level" />
                     <TextField source="line" />
-                    <RichTextField source="comment" className={styles.field} stripTags />
+                    <RichTextField source="comment" className={classes.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
-                    <DeleteButton />
                 </Datagrid>
             }
         />

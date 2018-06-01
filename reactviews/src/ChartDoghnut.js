@@ -35,6 +35,7 @@ const options={
     },
 };
 
+
 class DonutWithText extends React.Component {
 
     constructor(props) {
@@ -44,14 +45,7 @@ class DonutWithText extends React.Component {
         };
     }
 
-    componentWillReceiveProps(props) {
-        if (props.data !== null && props.data.length !== 0) {
-            this.setState({ alertes: props.data });
-            this.setData(props.data);
-        }
-    }
-
-    setData(alertes) {
+    static fixData (alertes) {
         var ndata = {labels:[],datasets:[]};
         
         var o = {data:[]};
@@ -69,9 +63,17 @@ class DonutWithText extends React.Component {
         o.hoverBackgroundColor = [ '#ff9f2e', '#3f97d4', '#bed7f8', '#ffca28', '#d4e157','#4caf50','#26a69a','#00e5ff', '#00b0ff', '#ff1744'];
         ndata.datasets.push(o);
 
-        this.setState({ data: ndata });
+        return ndata;
     }
 
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.data !== null && nextProps.data.length !== 0 ) {
+            return {
+                data: DonutWithText.fixData(nextProps.data)
+            };
+        }
+        return null;
+    }
 
 
     render() {

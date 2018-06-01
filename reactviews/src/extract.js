@@ -55,7 +55,7 @@ const styles = {
 };
 
 export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
-    <List filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
+    <List bulkActions={false} filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
         <Responsive
             small={
                 <SimpleList
@@ -70,7 +70,7 @@ export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
                     <TextField source="role" />
                     <ColoredTextField source="action" />
                     <BooleanField source="active" />
-                    <RichTextField source="comment" className={styles.field} stripTags />
+                    <RichTextField source="comment" className={classes.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
@@ -85,22 +85,8 @@ export const ExtractCreate = (props) => (
         <SimpleForm>
             <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} allowEmpty />
-            <DateInput label="From" source="fromdate"
-                options={{
-                    mode: 'landscape',
-                    defaultDate: new Date(),
-                    okLabel: 'OK',
-                    cancelLabel: 'Cancel',
-                    locale: 'fr'
-                }} allowEmpty />
-            <DateInput label="To" source="todate"
-                options={{
-                    mode: 'landscape',
-                    defaultDate: new Date(),
-                    okLabel: 'OK',
-                    cancelLabel: 'Cancel',
-                    locale: 'fr'
-                }} allowEmpty />
+            <DateInput label="From" source="fromdate" parse={dateParser} allowEmpty />
+            <DateInput label="To" source="todate" parse={dateParser} allowEmpty />
             <SelectInput source="action" choices={actions} allowEmpty />
             <BooleanInput source="active" />
             <RichTextInput source="comment" />
@@ -114,22 +100,8 @@ export const ExtractEdit = (props) => (
         <SimpleForm>
             <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} allowEmpty />
-            <DateInput label="From" source="fromdate"
-                options={{
-                    mode: 'landscape',
-                    defaultDate: new Date(),
-                    okLabel: 'OK',
-                    cancelLabel: 'Cancel',
-                    locale: 'fr'
-                }} allowEmpty />
-            <DateInput label="To" source="todate"
-                options={{
-                    mode: 'landscape',
-                    defaultDate: new Date(),
-                    okLabel: 'OK',
-                    cancelLabel: 'Cancel',
-                    locale: 'fr'
-                }} allowEmpty />
+            <DateInput label="From" source="fromdate" parse={dateParser} allowEmpty />
+            <DateInput label="To" source="todate" parse={dateParser} allowEmpty />
             <SelectInput source="action" choices={actions} allowEmpty />
             <BooleanInput source="active" />
             <RichTextInput source="comment" />
@@ -138,3 +110,23 @@ export const ExtractEdit = (props) => (
         </SimpleForm>
     </Edit>
 );
+
+/*const dateFormatter = v => { // from record to input
+    // v is a `Date` object
+    if (!(v instanceof Date) || isNaN(v)) return;
+    const pad = '00';
+    const yy = v.getFullYear().toString();
+    const mm = (v.getMonth() + 1).toString();
+    const dd = v.getDate().toString();
+    if (yy === "0001") return "";
+    return `${yy}-${(pad + mm).slice(-2)}-${(pad + dd).slice(-2)}`;
+};*/
+
+const dateParser = v => { // from input to record
+    // v is a string of "YYYY-MM-DD" format
+    const match = /(\d{4})-(\d{2})-(\d{2})/.exec(v);
+    if (match === null) return;
+    const d = new Date(match[1], parseInt(match[2], 10) - 1, match[3]);
+    if (isNaN(d)) return;
+    return d;
+};

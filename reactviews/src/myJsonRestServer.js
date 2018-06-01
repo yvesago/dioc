@@ -1,13 +1,16 @@
 import { stringify } from 'query-string';
-import { fetchJson } from 'react-admin';
-const GET_LIST = 'GET_LIST';
-const GET_ONE = 'GET_ONE';
-const GET_MANY = 'GET_MANY';
-const GET_MANY_REFERENCE = 'GET_MANY_REFERENCE';
-const CREATE = 'CREATE';
-const UPDATE = 'UPDATE';
-const DELETE = 'DELETE';
-const DELETE_MANY = 'DELETE_MANY';
+import {
+    fetchUtils,
+    GET_LIST,
+    GET_ONE,
+    GET_MANY,
+    GET_MANY_REFERENCE,
+    CREATE,
+    UPDATE,
+    UPDATE_MANY,
+    DELETE,
+    DELETE_MANY,
+} from 'react-admin';
 
 const filterQuery = value => {
     if (value && Object.keys(value).length) {
@@ -32,7 +35,7 @@ const filterQuery = value => {
  * CREATE       => POST http://my.api.url/posts/123
  * DELETE       => DELETE http://my.api.url/posts/123
  */
-export default (apiUrl, httpClient = fetchJson) => {
+export default (apiUrl, httpClient = fetchUtils.fetchJson) => {
     /**
      * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
      * @param {String} resource Name of the resource to fetch, e.g. 'posts'
@@ -60,6 +63,13 @@ export default (apiUrl, httpClient = fetchJson) => {
         case GET_ONE:
             url = `${apiUrl}/${resource}/${params.id}`;
             break;
+        case GET_MANY: {
+            const query = {
+                filter: JSON.stringify({ id: params.ids }),
+            };
+            url = `${apiUrl}/${resource}?${stringify(query)}`;
+            break;
+        }
         case GET_MANY_REFERENCE: {
             const { page, perPage } = params.pagination;
             const { field, order } = params.sort;
@@ -157,6 +167,31 @@ export default (apiUrl, httpClient = fetchJson) => {
         if (type === GET_MANY) {
             return Promise.all(
                 params.ids.map(id => httpClient(`${apiUrl}/${resource}/${id}`))
+            ).then(responses => ({
+                data: responses.map(response => response.json),
+            }));
+        }
+        // simple-rest doesn't handle filters on UPDATE route, so we fallback to calling UPDATE n times instead
+        if (type === UPDATE_MANY) {
+            return Promise.all(
+                params.ids.map(id =>
+                    httpClient(`${apiUrl}/${resource}/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(params.data),
+                    })
+                )
+            ).then(responses => ({
+                data: responses.map(response => response.json),
+            }));
+        }
+        // simple-rest doesn't handle filters on DELETE route, so we fallback to calling DELETE n times instead
+        if (type === DELETE_MANY) {
+            return Promise.all(
+                params.ids.map(id =>
+                    httpClient(`${apiUrl}/${resource}/${id}`, {
+                        method: 'DELETE',
+                    })
+                )
             ).then(responses => ({
                 data: responses.map(response => response.json),
             }));

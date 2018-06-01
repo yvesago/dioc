@@ -15,7 +15,7 @@ export const DashText = ({...props}) => {
             <InfoIcon style={style.icon} />
             <CardHeader
                 title={name}
-                subtitle={subtitle}
+                subheader={subtitle}
             />
             <CardContent>
                 <RichTextField source={txt} {...props} />

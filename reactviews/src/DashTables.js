@@ -14,7 +14,7 @@ const styles = {
 export const DashTables = ({ nbagents = [], nbsurveys = [], nbalerts = [], subtitle }) => (
     <Card style={styles.card}>
         <TableIcon style={styles.icon} />
-        <CardHeader title="Tables" subtitle={subtitle} />
+        <CardHeader title="Tables" subheader={subtitle} />
         <div style={styles.dognut} >
             <ChartDoghnut title="Agents" data={nbagents} />
         </div>

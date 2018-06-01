@@ -44,7 +44,7 @@ const styles = {
 };
 
 export const AgentList = withStyles(styles)(({ classes, ...props }) => (
-    <List filters={<AgentFilter />} {...props}>
+    <List bulkActions={false} filters={<AgentFilter />} {...props}>
         <Responsive
             small={
                 <SimpleList

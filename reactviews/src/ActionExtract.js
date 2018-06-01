@@ -28,7 +28,7 @@ class ActionExtractButton extends Component {
     }
 
     render() {
-        return <Button primary label="Extract" onClick={this.handleClick} />;
+        return <Button label="Extract" onClick={this.handleClick} />;
     }
 }
 
