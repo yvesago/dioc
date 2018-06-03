@@ -4,7 +4,7 @@ import request from 'superagent';
 import jwt_decode from 'jwt-decode';
 
 import withWidth from '@material-ui/core/withWidth';
-import { AppBarMobile } from 'react-admin';
+import { Responsive } from 'react-admin';
 
 import { DashTables } from './DashTables';
 import { DashText } from './DashText';
@@ -86,21 +86,12 @@ class DashboardCmp extends Component {
             username,
             record,
         } = this.state;
-        const { width } = this.props;
         return (
-            <div>
-                {width === 1 && <AppBarMobile title="DashBoard" />}
-                <div style={styles.flex}>
-                    <div style={styles.leftCol}>
+            <Responsive
+                small = {
+                    <div>
                         <div style={styles.flex}>
                             <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={username}  />
-                        </div>
-                        <div style={styles.flex}>
-                            <DashText record={record} 
-                                style={styles.agents} 
-                                name="Agents" 
-                                subtitle="Downloadable agents"
-                                txt="docagents"  />
                         </div>
                         <div style={styles.flex}>
                             <DashText record={record} 
@@ -109,8 +100,6 @@ class DashboardCmp extends Component {
                                 subtitle="Tips and tricks"
                                 txt="docsearchs"  />
                         </div>
-                    </div>
-                    <div style={styles.rightCol}>
                         <div style={styles.flex}>
                             <DashText record={record} 
                                 style={styles.docs} 
@@ -119,8 +108,42 @@ class DashboardCmp extends Component {
                                 txt="docs"  />
                         </div>
                     </div>
-                </div>
-            </div>
+                }
+                medium={
+                    <div>
+                        <div style={styles.flex}>
+                            <div style={styles.leftCol}>
+                                <div style={styles.flex}>
+                                    <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={username}  />
+                                </div>
+                                <div style={styles.flex}>
+                                    <DashText record={record} 
+                                        style={styles.agents} 
+                                        name="Agents" 
+                                        subtitle="Downloadable agents"
+                                        txt="docagents"  />
+                                </div>
+                                <div style={styles.flex}>
+                                    <DashText record={record} 
+                                        style={styles.docs} 
+                                        name="Searchs" 
+                                        subtitle="Tips and tricks"
+                                        txt="docsearchs"  />
+                                </div>
+                            </div>
+                            <div style={styles.rightCol}>
+                                <div style={styles.flex}>
+                                    <DashText record={record} 
+                                        style={styles.docs} 
+                                        name="Doc" 
+                                        subtitle="Main doc"
+                                        txt="docs"  />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            />
         );
     }
 
