@@ -5,7 +5,8 @@ import { fetchUtils, Admin, Resource } from 'react-admin';
 import AlertIcon from '@material-ui/icons/Assessment';
 import SurveyIcon from '@material-ui/icons/WifiTethering';
 import AgentIcon from '@material-ui/icons/Wifi';
-import SettingsIcon from '@material-ui/icons/Settings';
+import ExtractIcon from '@material-ui/icons/Transform';
+import IpIcon from '@material-ui/icons/Fingerprint';
 import MapIcon from '@material-ui/icons/Public';
 
 import { createMuiTheme } from '@material-ui/core/styles';
@@ -50,8 +51,8 @@ const App = () => (
         <Resource name="alertes" list={AlertList} edit={AlertEdit} icon={AlertIcon} />
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} icon={SurveyIcon} />
         <Resource name="agents" list={AgentList}  edit={AgentEdit} create={AgentCreate} icon={AgentIcon} />
-        <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} icon={SettingsIcon} />
-        <Resource name="ips" options={{ label: '‣ Extract > IPs'}} list={IPList}  edit={IPEdit} create={IPCreate} icon={AgentIcon} />
+        <Resource name="extracts" list={ExtractList}  edit={ExtractEdit} create={ExtractCreate} icon={ExtractIcon} />
+        <Resource name="ips" options={{ label: '‣ Extract > IPs'}} list={IPList}  edit={IPEdit} create={IPCreate} icon={IpIcon} />
         <Resource name='Map' options={{ label: '‣ Extract > Map'}} list={Mapview} icon={MapIcon} />
         <Resource name="board" edit={BoardEdit} />
     </Admin>
