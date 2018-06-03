@@ -28,7 +28,7 @@ class ActionFlushIPButton extends Component {
     }
 
     render() {
-        return <Button label="Flush IPs" onClick={this.handleClick} />;
+        return <Button color="primary" onClick={this.handleClick}>Flush IPs</Button>;
     }
 }
 
