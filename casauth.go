@@ -87,7 +87,7 @@ func (h *myCasHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := token.SignedString([]byte(h.Config.AuthJWTPassword))
 	if err != nil { // mainly timeout
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println("%s: CAS jwt err", ip)
+		log.Printf("%s: CAS jwt err\n", ip)
 		fmt.Fprintf(w, error500, err)
 		return
 	}
