@@ -1,9 +1,10 @@
 import React from 'react';
 import CardActions from '@material-ui/core/CardActions';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm, CreateButton,
-    TextInput, required, EditButton, DateField, NumberInput,
-    RichTextField, Filter, Responsive, SimpleList, RefreshButton
+    TextInput, required, EditButton, DateField, NumberInput, downloadCSV,
+    RichTextField, Filter, Responsive, SimpleList, RefreshButton, ExportButton
 } from 'react-admin';
+import { unparse as convertToCSV } from 'papaparse/papaparse.min';
 import RichTextInput from 'ra-input-rich-text';
 import { withStyles } from '@material-ui/core/styles';
 import MyLeaflet from './Leaflet';
@@ -17,10 +18,25 @@ const cardActionStyle = {
     float: 'right',
 };
 
-const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter }) => (
+const exporter = ips => {
+    const csv = convertToCSV({
+        data: ips,
+        fields: ['name', 'host', 'count', 'p', 'asnnum'] // order fields in the export
+    });
+    downloadCSV(csv, 'ips'); // download as 'ips.csv` file
+};
+
+const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter, currentSort, exporter }) => (
     <CardActions style={cardActionStyle}>
         {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
         <ActionFlushIPButton />
+        <ExportButton 
+            resource={resource}
+            sort={currentSort}
+            filter={filterValues}
+            exporter={exporter}
+            maxResults='10000'
+        />
         <CreateButton basePath={basePath} />
         <RefreshButton />
     </CardActions>
@@ -49,7 +65,7 @@ const styles = {
 };
 
 export const IPList = withStyles(styles)(({ classes, ...props }) => (
-    <List filters={<IPFilter />} perPage={30} actions={<FlushIPActions />} {...props}>
+    <List filters={<IPFilter />} perPage={30} actions={<FlushIPActions />} exporter={exporter} {...props}>
         <Responsive
             small={
                 <SimpleList
