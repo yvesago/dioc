@@ -6,6 +6,7 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import { withStyles } from '@material-ui/core/styles';
+import classnames from 'classnames';
 import { roles } from './MyConfig';
 
 
@@ -15,14 +16,24 @@ const cmd = [
     { label: 'STOP', id: 'STOP', name: 'STOP' },
 ];
 
+const coloredStyles = {
+    up: { color: 'green' },
+    down: { color: 'red' },
+};
 
-const colored = WrappedComponent => props => props.record.status === 'OffLine' ?
-    <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
-    props.record.status === 'OnLine' ?
-        <span style={{ color: 'green' }}><WrappedComponent {...props} /></span> :
-        <WrappedComponent {...props} />;
+const ColoredTextField = withStyles(coloredStyles)(
+    ({ classes, ...props }) => (
+        <TextField
+            className={classnames({
+                [classes.down]: props.record.status === 'OffLine',
+                [classes.up]: props.record.status === 'OnLine',
+            })}
+            {...props}
+        />
+    ));
 
-const ColoredTextField = colored(TextField);
+ColoredTextField.defaultProps = TextField.defaultProps;
+
 
 const AgentTitle = ({ record }) => {
     return <span>Agent {record ? `${record.ip}` : ''}</span>;

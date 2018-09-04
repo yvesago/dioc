@@ -5,15 +5,27 @@ import { List, Datagrid, TextField, DateField, EditButton,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import { withStyles } from '@material-ui/core/styles';
+import classnames from 'classnames';
 import { roles } from './MyConfig';
 
-const colored = WrappedComponent => props => props.record.level === 'critic' ?
-    <span style={{ color: 'red' }}><WrappedComponent {...props} /></span> :
-    props.record.level === 'warn' ?
-        <span style={{ color: 'orange' }}><WrappedComponent {...props} /></span> :
-        <WrappedComponent {...props} />;
+const coloredStyles = {
+    warn: { color: 'orange' },
+    critic: { color: 'red' },
+};
 
-const ColoredTextField = colored(TextField);
+const ColoredTextField = withStyles(coloredStyles)(
+    ({ classes, ...props }) => (
+        <TextField
+            className={classnames({
+                [classes.warn]: props.record.level === 'warn',
+                [classes.critic]: props.record.level === 'critic',
+            })}
+            {...props}
+        />
+    ));
+
+ColoredTextField.defaultProps = TextField.defaultProps;
+
 
 const AlertFilter = (props) => (
     <Filter {...props}>

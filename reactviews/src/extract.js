@@ -7,6 +7,7 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import { withStyles } from '@material-ui/core/styles';
+import classnames from 'classnames';
 
 
 import ActionExtractButton from './ActionExtract';
@@ -18,10 +19,21 @@ const actions = [
     { name: 'Delete', id: 'Delete' },
 ];
 
-const colored = WrappedComponent => props => props.record.active === true ?
-    <span style={{ color: 'green', fontWeight: 'bold' }}><WrappedComponent {...props} /></span> :
-    <WrappedComponent {...props} />;
+const coloredStyles = {
+    active: { color: 'green', fontWeight: 'bold' },
+};
 
+const ColoredTextField = withStyles(coloredStyles)(
+    ({ classes, ...props }) => (
+        <TextField
+            className={classnames({
+                [classes.active]: props.record.active === true,
+            })}
+            {...props}
+        />
+    ));
+
+ColoredTextField.defaultProps = TextField.defaultProps;
 
 const cardActionStyle = {
     zIndex: 2,
@@ -39,7 +51,6 @@ const ExtractActions = ({ resource, filters, displayedFilters, filterValues, bas
 );
 
 
-const ColoredTextField = colored(TextField);
 
 
 const ExtractFilter = (props) => (
