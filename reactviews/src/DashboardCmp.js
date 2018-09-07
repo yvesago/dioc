@@ -4,7 +4,7 @@ import request from 'superagent';
 import jwt_decode from 'jwt-decode';
 
 import withWidth from '@material-ui/core/withWidth';
-import { AppBarMobile, Responsive } from 'react-admin';
+import { AppBar, Title, Responsive } from 'react-admin';
 
 import { DashTables } from './DashTables';
 import { DashText } from './DashText';
@@ -90,7 +90,7 @@ class DashboardCmp extends Component {
             <Responsive
                 small = {
                     <div>
-                        <AppBarMobile title="DIOC" />
+                        <AppBar title="DIOC" />
                         <div style={styles.flex}>
                             <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={username}  />
                         </div>
@@ -112,6 +112,7 @@ class DashboardCmp extends Component {
                 }
                 medium={
                     <div>
+                        <Title title="Distributed IOC manager" />
                         <div style={styles.flex}>
                             <div style={styles.leftCol}>
                                 <div style={styles.flex}>

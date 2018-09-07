@@ -3,19 +3,12 @@ import { Edit, SimpleForm  } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import Divider from '@material-ui/core/Divider';
 
-import {
-    CardActions,
-    RefreshButton,
-} from 'react-admin';
-
-const PostBoardActions = ({ basePath, data, resource }) => (
-    <CardActions>
-        <RefreshButton />
-    </CardActions>
-);
+/* TODO
+ How to remove delete button since 2.3.0 ?
+*/
 
 export const BoardEdit = (props) => (
-    <Edit actions={<PostBoardActions />} title="Docs" undoable={false} {...props}>
+    <Edit title="Docs" undoable={false} {...props}>
         <SimpleForm redirect="/">
             <RichTextInput
                 source="docs"

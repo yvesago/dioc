@@ -66,7 +66,7 @@ const styles = {
 };
 
 export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
-    <List bulkActions={false} filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
+    <List bulkActionButtons={false} filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
         <Responsive
             small={
                 <SimpleList

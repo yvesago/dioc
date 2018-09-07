@@ -72,7 +72,7 @@ export const AlertEdit = (props) => (
             <TextField source="ip" label="Agent" />
             <TextField source="filesurvey" />
             <TextField source="role" />
-            <span style={{transform: 'scale(0.75) translate(0px, 10px)', transformOrigin: 'left top 0px',  color: 'rgba(0, 0, 0, 0.3)'}}>Level</span><ColoredTextField source="level" />
+            <ColoredTextField source="level" />
             <TextField source="line"  style={{whiteSpace: 'pre-line'}}/>
             <RichTextInput source="comment" />
             <DateField label="created" source="created" showTime />

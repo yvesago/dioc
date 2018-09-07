@@ -2,7 +2,7 @@ import React from 'react';
 import CardActions from '@material-ui/core/CardActions';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm, CreateButton,
     TextInput, required, EditButton, DateField, NumberInput, downloadCSV,
-    RichTextField, Filter, Responsive, SimpleList, RefreshButton, ExportButton
+    RichTextField, Filter, Responsive, SimpleList, ExportButton
 } from 'react-admin';
 import { unparse as convertToCSV } from 'papaparse/papaparse.min';
 import RichTextInput from 'ra-input-rich-text';
@@ -35,10 +35,9 @@ const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, bas
             sort={currentSort}
             filter={filterValues}
             exporter={exporter}
-            maxResults='10000'
+            maxResults={10000}
         />
         <CreateButton basePath={basePath} />
-        <RefreshButton />
     </CardActions>
 );
 
