@@ -73,7 +73,7 @@ export const AlertEdit = (props) => (
             <TextField source="filesurvey" />
             <TextField source="role" />
             <ColoredTextField source="level" />
-            <TextField source="line"  style={{whiteSpace: 'pre-line'}}/>
+            <TextField source="line" style={{width: '100%', whiteSpace: 'pre-line'}}/>
             <RichTextInput source="comment" />
             <DateField label="created" source="created" showTime />
             <DateField label="updated" source="updated" showTime />

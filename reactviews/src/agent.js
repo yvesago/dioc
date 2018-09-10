@@ -101,7 +101,7 @@ export const AgentEdit = (props) => (
             <TextField source="filesurvey" />
             <DateField label="created" source="created" showTime />
             <DateField label="updated" source="updated" showTime />
-            <TextField source="lines"  style={{whiteSpace: 'pre-line'}}/>
+            <TextField source="lines"  style={{width: '100%', whiteSpace: 'pre-line'}}/>
             <SelectInput source="role" choices={roles} allowEmpty />
             <SelectInput source="cmd" choices={cmd} allowEmpty optionText="label" />
             <RichTextInput source="comment" />
