@@ -14,7 +14,7 @@
     "react-dom": "^16.4.0",
     "react-leaflet": "1.1.7",
     "react-leaflet-markercluster": "^1.1.8",
-    "react-scripts": "^1.1.1",
+    "react-scripts": "2.1.8",
     "react-spinner-material": "^1.0.17",
     "superagent": "^3.8.2"
   },
@@ -26,5 +26,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
