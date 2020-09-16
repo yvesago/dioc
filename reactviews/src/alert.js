@@ -37,7 +37,7 @@ const AlertFilter = (props) => (
 
 const styles = {
     field: {
-        width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+        display: 'inline-block', width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
 export const AlertList = withStyles(styles)(({ classes, ...props }) => (

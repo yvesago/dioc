@@ -62,7 +62,7 @@ const ExtractFilter = (props) => (
 
 const styles = {
     field: {
-        width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+        display: 'inline-block', width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
 export const ExtractList = withStyles(styles)(({ classes, ...props }) => (

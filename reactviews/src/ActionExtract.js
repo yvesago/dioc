@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Button } from 'react-admin';
 import { showNotification as showNotificationAction } from 'react-admin';
-import { push as pushAction } from 'react-router-redux';
+import { push as pushAction } from 'connected-react-router';
 import request from 'superagent';
 import { MyConfig } from './MyConfig';
 

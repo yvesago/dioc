@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
-    TextInput, DisabledInput, required, EditButton, DateField, 
-    RichTextField, SelectInput, LongTextInput, Filter, Responsive,
+    TextInput, required, EditButton, DateField,
+    RichTextField, SelectInput, Filter, Responsive,
     SimpleList
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
@@ -51,7 +51,7 @@ const AgentFilter = (props) => (
 
 const styles = {
     field: {
-        width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+        display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
 export const AgentList = withStyles(styles)(({ classes, ...props }) => (
@@ -90,7 +90,7 @@ export const AgentCreate = (props) => (
             <TextInput source="status" />
             <SelectInput source="role" choices={roles} allowEmpty />
             <TextInput source="lines" options={{ multiLine: true }}  />
-            <LongTextInput source="comment" />
+            <TextInput multiline source="comment" />
         </SimpleForm>
     </Create>
 );
@@ -105,7 +105,7 @@ export const AgentEdit = (props) => (
             <SelectInput source="role" choices={roles} allowEmpty />
             <SelectInput source="cmd" choices={cmd} allowEmpty optionText="label" />
             <RichTextInput source="comment" />
-            <DisabledInput source="crca" />
+            <TextInput source="crca" disabled />
         </SimpleForm>
     </Edit>
 );

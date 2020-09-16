@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
-    TextInput, DisabledInput, required, EditButton, DateField, 
+    TextInput, required, EditButton, DateField,
     RichTextField, SelectInput, Filter, Responsive, SimpleList
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
@@ -42,7 +42,7 @@ const SurveyFilter = (props) => (
 
 const styles = {
     field: {
-        width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+        display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
 export const SurveyList = withStyles(styles)(({ classes, ...props }) => (
@@ -91,7 +91,7 @@ export const SurveyEdit = (props) => (
             <RichTextInput source="comment" />
             <DateField label="Created" source="created" showTime />
             <DateField label="Updated" source="updated" showTime />
-            <DisabledInput source="crcs" validate={required()} />
+            <TextInput source="crcs" validate={required()} disabled />
         </SimpleForm>
     </Edit>
 );

@@ -4,7 +4,7 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm, CreateButton,
     TextInput, required, EditButton, DateField, NumberInput, downloadCSV,
     RichTextField, Filter, Responsive, SimpleList, ExportButton
 } from 'react-admin';
-import { unparse as convertToCSV } from 'papaparse/papaparse.min';
+import jsonExport from 'jsonexport/dist';
 import RichTextInput from 'ra-input-rich-text';
 import { withStyles } from '@material-ui/core/styles';
 import MyLeaflet from './Leaflet';
@@ -19,11 +19,11 @@ const cardActionStyle = {
 };
 
 const exporter = ips => {
-    const csv = convertToCSV({
-        data: ips,
-        fields: ['name', 'host', 'count', 'p', 'asnnum'] // order fields in the export
+    jsonExport(ips, {
+        headers: ['name', 'host', 'count', 'p', 'asnnum']
+    }, (err, csv) => {
+        downloadCSV(csv, 'posts');
     });
-    downloadCSV(csv, 'ips'); // download as 'ips.csv` file
 };
 
 const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter, currentSort, exporter }) => (
@@ -58,9 +58,9 @@ const IPFilter = (props) => (
 
 const styles = {
     fieldASN: {
-        width: '100px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'},
+        display: 'inline-block', width: '100px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'},
     field: {
-        width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
+        display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
 export const IPList = withStyles(styles)(({ classes, ...props }) => (
