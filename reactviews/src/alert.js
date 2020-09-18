@@ -1,7 +1,8 @@
 import React from 'react';
+import { useMediaQuery } from '@material-ui/core';
 import { List, Datagrid, TextField, DateField, EditButton,
     Edit, SimpleForm, Filter, TextInput, SelectInput,
-    RichTextField, Responsive, SimpleList
+    RichTextField, SimpleList
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import { withStyles } from '@material-ui/core/styles';
@@ -14,15 +15,19 @@ const coloredStyles = {
 };
 
 const ColoredTextField = withStyles(coloredStyles)(
-    ({ classes, ...props }) => (
-        <TextField
-            className={classnames({
-                [classes.warn]: props.record.level === 'warn',
-                [classes.critic]: props.record.level === 'critic',
-            })}
-            {...props}
-        />
-    ));
+    ({ classes, ...props }) => {
+        try {
+            return (
+                <TextField
+                    className={classnames({
+                        [classes.warn]: props.record.level === 'warn',
+                        [classes.critic]: props.record.level === 'critic',
+                    })}
+                    {...props}
+                />
+            );
+        } catch(err) {return (<TextField {...props} />); }
+    });
 
 ColoredTextField.defaultProps = TextField.defaultProps;
 
@@ -40,17 +45,17 @@ const styles = {
         display: 'inline-block', width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const AlertList = withStyles(styles)(({ classes, ...props }) => (
-    <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
-        <Responsive
-            small={
+export const AlertList = withStyles(styles)(({ classes, ...props }) => {
+    const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+    return (
+        <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
+            {isSmall ? (
                 <SimpleList
                     primaryText={record => `[${record.level}] ${record.search}`}
                     secondaryText={record => record.line}
                     tertiaryText={record => new Date(record.updated).toLocaleString()}
                 />
-            }
-            medium={
+            ) : (
                 <Datagrid>
                     <TextField source="search" />
                     <TextField source="role" />
@@ -60,10 +65,10 @@ export const AlertList = withStyles(styles)(({ classes, ...props }) => (
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
-            }
-        />
-    </List>
-));
+            )}
+        </List>
+    );
+});
 
 export const AlertEdit = (props) => (
     <Edit {...props}>

@@ -84,7 +84,7 @@ export const AgentList = withStyles(styles)(({ classes, ...props }) => (
 
 export const AgentCreate = (props) => (
     <Create {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="list">
             <TextInput source="ip" validate={required()} />
             <TextInput source="filesurvey" />
             <TextInput source="status" />

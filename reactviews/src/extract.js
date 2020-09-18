@@ -66,7 +66,7 @@ const styles = {
 };
 
 export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
-    <List bulkActionButtons={false} filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} {...props}>
+    <List bulkActionButtons={false} filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} sort={{ field: 'updated', order: 'DESC' }} {...props}>
         <Responsive
             small={
                 <SimpleList
@@ -93,7 +93,7 @@ export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
 
 export const ExtractCreate = (props) => (
     <Create {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="list">
             <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} allowEmpty />
             <DateInput label="From" source="fromdate" parse={dateParser} allowEmpty />

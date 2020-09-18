@@ -1,8 +1,8 @@
 import React from 'react';
-import CardActions from '@material-ui/core/CardActions';
+import { useMediaQuery } from '@material-ui/core';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm, CreateButton,
     TextInput, required, EditButton, DateField, NumberInput, downloadCSV,
-    RichTextField, Filter, Responsive, SimpleList, ExportButton
+    RichTextField, Filter, TopToolbar, SimpleList, ExportButton
 } from 'react-admin';
 import jsonExport from 'jsonexport/dist';
 import RichTextInput from 'ra-input-rich-text';
@@ -27,7 +27,7 @@ const exporter = ips => {
 };
 
 const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter, currentSort, exporter }) => (
-    <CardActions style={cardActionStyle}>
+    <TopToolbar style={cardActionStyle}>
         {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
         <ActionFlushIPButton />
         <ExportButton 
@@ -38,7 +38,7 @@ const FlushIPActions = ({ resource, filters, displayedFilters, filterValues, bas
             maxResults={10000}
         />
         <CreateButton basePath={basePath} />
-    </CardActions>
+    </TopToolbar>
 );
 
 
@@ -63,17 +63,17 @@ const styles = {
         display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const IPList = withStyles(styles)(({ classes, ...props }) => (
-    <List filters={<IPFilter />} perPage={30} actions={<FlushIPActions />} exporter={exporter} {...props}>
-        <Responsive
-            small={
+export const IPList = withStyles(styles)(({ classes, ...props }) => {
+    const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+    return (
+        <List filters={<IPFilter />} perPage={30} actions={<FlushIPActions />} exporter={exporter} {...props}>
+            {isSmall ? (
                 <SimpleList
                     primaryText={record => `${record.name} -- ${record.host}`}
                     secondaryText={record => `${record.p} AS: ${record.asnname}`}
                     tertiaryText={record => new Date(record.updated).toLocaleString()}
                 />
-            }
-            medium={
+            ) : (
                 <Datagrid>
                     <TextField source="name" />
                     <TextField source="host" />
@@ -87,10 +87,10 @@ export const IPList = withStyles(styles)(({ classes, ...props }) => (
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
-            }
-        />
-    </List>
-));
+            )}
+        </List>
+    );
+});
 
 
 export const IPCreate = (props) => (

@@ -46,7 +46,7 @@ const styles = {
 };
 
 export const SurveyList = withStyles(styles)(({ classes, ...props }) => (
-    <List bulkActionButtons={false} filters={<SurveyFilter />} perPage={30} {...props}>
+    <List bulkActionButtons={false} filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
         <Responsive
             small={
                 <SimpleList
@@ -72,7 +72,7 @@ export const SurveyList = withStyles(styles)(({ classes, ...props }) => (
 
 export const SurveyCreate = (props) => (
     <Create {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="list">
             <TextInput source="search" validate={required()} />
             <SelectInput source="level" choices={levels} allowEmpty />
             <SelectInput source="role" choices={roles} allowEmpty />
