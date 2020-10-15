@@ -116,7 +116,7 @@ class DashboardCmp extends Component {
                         <div style={styles.flex}>
                             <div style={styles.leftCol}>
                                 <div style={styles.flex}>
-                                    <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={username}  />
+                                    <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={null}  />
                                 </div>
                                 <div style={styles.flex}>
                                     <DashText record={record} 

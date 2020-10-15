@@ -1,32 +1,31 @@
-import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK } from 'react-admin';
+import decodeJwt from 'jwt-decode';
 import request from 'superagent';
-import { MyConfig } from './MyConfig';
 
-export default (authUrl) => (type, params) => {
-    if (type === AUTH_LOGIN) {
-        return request.get(authUrl);
-    }
-
-    if (type === AUTH_ERROR) {
-        const {status} = params;
-        
-        if (status === 401 || status === 403) {
-            localStorage.removeItem('token');
-            window.location.href = MyConfig.BASE_PATH + '#/login';
-            return Promise.reject();
-        }
-
-        return Promise.resolve();
-    }
-
-    if (type === AUTH_CHECK) {
-        return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();
-    }
-
-    if (type === AUTH_LOGOUT) {
+const authClient = (authUrl) => ({
+    login: () => {return request.get(authUrl);},
+    logout: () => {
         localStorage.removeItem('token');
         return Promise.resolve();
-    }
+    },
+    checkAuth: () => Promise.resolve(),
+    checkError: (error) => {
+        const status = error.status;
+        if (status === 401 || status === 403) {
+            localStorage.removeItem('token');
+            return Promise.reject();
+        }
+        return Promise.resolve();
+    },
+    getPermissions: params => Promise.resolve(),
+    getIdentity: () => {
+        if ( localStorage.getItem('token') !== null ) {
+            const decodedToken = decodeJwt(localStorage.getItem('token'));
+            //console.log('== getIdentity() : ' + JSON.stringify({ id: decodedToken.id, fullName: decodedToken.id, avatar: '' }) );
+            return { id: decodedToken.id, fullName: decodedToken.id, avatar: '' };
+        }
+        return { id: '', fullName: '', avatar: ''};
+    },
+});
 
-    return Promise.resolve();
-};
+export default authClient;
+
