@@ -9,7 +9,7 @@ import ExtractIcon from '@material-ui/icons/Transform';
 import IpIcon from '@material-ui/icons/Fingerprint';
 import MapIcon from '@material-ui/icons/Public';
 
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles';
 import myTheme from './myTheme';
 
 import { Dashboard } from './Dashboard';
@@ -44,7 +44,7 @@ const restClient = mySimpleRest( MyConfig.API_URL  + '/admin/api/v1', httpClient
 
 
 const App = () => (
-    <Admin title='Distributed IOC manager' theme={ createMuiTheme(myTheme) }
+    <Admin title='Distributed IOC manager' theme={ createTheme(myTheme) }
         loginPage={authLoginPage} authProvider={authClient(MyConfig.AUTH_URL)}
         customRoutes={customRoutes} dashboard={Dashboard} 
         dataProvider={restClient}>
