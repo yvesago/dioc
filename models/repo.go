@@ -166,6 +166,6 @@ func ParseQuery(q map[string][]string) (string, string, string) {
 
 func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		log.Println(msg, err)
 	}
 }
