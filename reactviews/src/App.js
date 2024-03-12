@@ -22,7 +22,7 @@ import { BoardEdit } from './boarddocs';
 import Mapview from './Mapview';
 
 import { MyConfig } from './MyConfig';
-import mySimpleRest from './myJsonRestServer';
+import mySimpleRest from './myJsonRestNew';
 
 import authLoginPage from './authLoginPage';
 import authClient from './authClient';
