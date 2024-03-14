@@ -42,6 +42,14 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
     getOne: async (resource, params) => {
         const url = `${apiUrl}/${resource}/${params.id}`;
         const { json } = await httpClient(url);
+        if (resource === 'agents') {
+            if ( json instanceof Array === true ) {
+                json.map(x => { if (x.id === undefined ) { x.id = x.crca; } return x; });
+            }
+            else {
+                if (json.id === undefined ) { json.id = json.crca; }
+            }
+        }
         return { data: json };
     },
 
@@ -51,6 +59,14 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
         };
         const url = `${apiUrl}/${resource}?${stringify(query)}`;
         const { json } = await httpClient(url);
+        if (resource === 'agents') {
+            if ( json instanceof Array === true ) {
+                json.map(x => { if (x.id === undefined ) { x.id = x.crca; } return x; });
+            }
+            else {
+                if (json.id === undefined ) { json.id = json.crca; }
+            }
+        }
         return { data: json };
     },
 
@@ -75,6 +91,14 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
         };
         const url = `${apiUrl}/${resource}?${stringify(query)}`;
         const { json, headers } = await httpClient(url);
+        if (resource === 'agents') {
+            if ( json instanceof Array === true ) {
+                json.map(x => { if (x.id === undefined ) { x.id = x.crca; } return x; });
+            }
+            else {
+                if (json.id === undefined ) { json.id = json.crca; }
+            }
+        }
         return {
             data: json,
             total: parseInt(headers.get('x-total-count').split('/').pop(), 10),
@@ -95,6 +119,14 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
             method: 'PUT',
             body: JSON.stringify(params.data),
         });
+        if (resource === 'agents') {
+            if ( json instanceof Array === true ) {
+                json.map(x => { if (x.id === undefined ) { x.id = x.crca; } return x; });
+            }
+            else {
+                if (json.id === undefined ) { json.id = json.crca; }
+            }
+        }
         return { data: json };
     },
 
@@ -107,6 +139,14 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
             method: 'PUT',
             body: JSON.stringify(params.data),
         });
+        if (resource === 'agents') {
+            if ( json instanceof Array === true ) {
+                json.map(x => { if (x.id === undefined ) { x.id = x.crca; } return x; });
+            }
+            else {
+                if (json.id === undefined ) { json.id = json.crca; }
+            }
+        }
         return { data: json };
     },
 
