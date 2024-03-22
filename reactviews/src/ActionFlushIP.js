@@ -1,45 +1,32 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Button } from 'react-admin';
-import { showNotification as showNotificationAction } from 'react-admin';
-import { push as pushAction } from 'connected-react-router';
+import { Button, useNotify } from 'react-admin';
+import { useNavigate } from 'react-router-dom';
+import { Alert } from '@mui/material';
 import request from 'superagent';
 import { MyConfig } from './MyConfig';
 
 
-class ActionFlushIPButton extends Component {
-    handleClick = () => {
-        const token = localStorage.getItem('token');
-        const { push, showNotification } = this.props;
+const ActionFlushIPButton = () => {
+    const navigate = useNavigate();
+    const notify = useNotify();
+    const handleClick = () => {
+        const token = localStorage.getItem('gotoken');
         request
             .put(MyConfig.API_URL + '/admin/api/v1/actionfluship') 
             .set('Authorization', `Bearer ${token}`)
             .then( (response)  => { 
-                showNotification('Flush IPs done'); 
-                /*console.log(response); */
-                push('/extracts'); 
+                notify(<Alert severity="success">Flush IPs done</Alert>);
+                // console.log(response);
+                navigate('/extracts'); 
             })
             .catch((e) => {
                 // console.error(e);
-                showNotification('Error in action Flush IPs', 'warning');
+                notify(<Alert severity="error">Error in action Flush IPs</Alert>);
             });
 
-    }
+    };
 
-    render() {
-        return <Button label="Flush IPs" onClick={this.handleClick} />;
-    }
-}
-
-ActionFlushIPButton.propTypes = {
-    push: PropTypes.func,
-    showNotification: PropTypes.func,
+    return <Button label="Flush IPs" onClick={handleClick} />;
 };
 
 
-export default connect(null, {
-    showNotification: showNotificationAction,
-    push: pushAction,
-})(ActionFlushIPButton);
-
+export default ActionFlushIPButton;

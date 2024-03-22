@@ -1,4 +1,4 @@
-import blue from '@material-ui/core/colors/blue';
+import blue from '@mui/material/colors/blue';
 /*import indigo from '@material-ui/core/colors/indigo';
 import cyan from '@material-ui/core/colors/cyan';
 import grey from '@material-ui/core/colors/grey';

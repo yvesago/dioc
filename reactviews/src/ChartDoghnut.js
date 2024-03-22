@@ -52,7 +52,8 @@ class DonutWithText extends React.Component {
         for (var i in alertes){
             var ni = alertes[i];
             for (var k in ni){
-                if (ni.hasOwnProperty(k)) {
+                //if (ni.hasOwnProperty(k)) {
+                if (Object.prototype.hasOwnProperty.call(ni,k)) {
                     ndata.labels.push(k);
                     o.data.push(ni[k]);
                 }

@@ -1,13 +1,12 @@
 import React from 'react';
-import CardActions from '@material-ui/core/CardActions';
+import { useMediaQuery } from '@mui/material';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, required, EditButton, DateField, CreateButton,
-    RichTextField, SelectInput, Filter, Responsive, SimpleList,
-    BooleanInput, BooleanField, DateInput, RefreshButton
+    RichTextField, SelectInput, Filter, SimpleList, useRecordContext,
+    BooleanInput, BooleanField, DateInput, RefreshButton,
+    TopToolbar, FilterButton, Labeled
 } from 'react-admin';
-import RichTextInput from 'ra-input-rich-text';
-import { withStyles } from '@material-ui/core/styles';
-import classnames from 'classnames';
+import { RichTextInput } from 'ra-input-rich-text';
 
 
 import ActionExtractButton from './ActionExtract';
@@ -19,86 +18,74 @@ const actions = [
     { name: 'Delete', id: 'Delete' },
 ];
 
-const coloredStyles = {
-    active: { color: 'green', fontWeight: 'bold' },
-};
 
-const ColoredTextField = withStyles(coloredStyles)(
-    ({ classes, ...props }) => (
+const ColoredTextField = (props) => {
+    const record = useRecordContext();
+    return (
         <TextField
-            className={classnames({
-                [classes.active]: props.record.active === true,
-            })}
+            sx={ record.active === true ? { color: 'green', fontWeight: 'bold' } : {} }
             {...props}
         />
-    ));
-
+    );
+};
 ColoredTextField.defaultProps = TextField.defaultProps;
 
-const cardActionStyle = {
-    zIndex: 2,
-    display: 'inline-block',
-    float: 'right',
-};
 
-const ExtractActions = ({ resource, filters, displayedFilters, filterValues, basePath, showFilter }) => (
-    <CardActions style={cardActionStyle}>
-        {filters && React.cloneElement(filters, { resource, showFilter, displayedFilters, filterValues, context: 'button' }) }
+const ExtractActions = () => (
+    <TopToolbar>
+        <FilterButton />
         <ActionExtractButton />
-        <CreateButton basePath={basePath} />
-        <RefreshButton />
-    </CardActions>
+        <CreateButton />
+    </TopToolbar>
 );
 
-
-
-
-const ExtractFilter = (props) => (
-    <Filter {...props}>
-        <TextInput label="Comment" source="comment" />
-        <SelectInput source="role" choices={roles} allowEmpty alwaysOn />
-    </Filter>
-);
+const postFilters = [
+    <TextInput label="Comment" source="comment" />,
+    <SelectInput source="role" choices={roles} alwaysOn />,
+];
 
 const styles = {
     field: {
         display: 'inline-block', width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const ExtractList = withStyles(styles)(({ classes, ...props }) => (
-    <List bulkActionButtons={false} filters={<ExtractFilter />} perPage={30} actions={<ExtractActions />} sort={{ field: 'updated', order: 'DESC' }} {...props}>
-        <Responsive
-            small={
+export const ExtractList = ({ props }) => {
+    const isSmall = useMediaQuery(
+        theme => theme.breakpoints.down('sm'),
+        { noSsr: true }
+    );
+    return (
+        <List bulkActionButtons={false} filters={postFilters} perPage={50} actions={<ExtractActions />} sort={{ field: 'updated', order: 'DESC' }} {...props}>
+            {isSmall ? (
                 <SimpleList
                     primaryText={record => record.search}
                     secondaryText={record => `Role: ${record.role}, Active: ${record.active}`}
                     tertiaryText={record => new Date(record.updated).toLocaleString()}
                 />
-            }
-            medium={
+            ) : (
                 <Datagrid>
                     <TextField source="search" />
                     <TextField source="role" />
                     <ColoredTextField source="action" />
                     <BooleanField source="active" />
-                    <RichTextField source="comment" className={classes.field} stripTags />
+                    <RichTextField source="comment" sx={styles.field} stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
-            }
-        />
-    </List>
-));
+            )}
+        </List>
+    );
+};
 
 
 export const ExtractCreate = (props) => (
     <Create {...props}>
         <SimpleForm redirect="list">
             <TextInput source="search" validate={required()} />
-            <SelectInput source="role" choices={roles} allowEmpty />
-            <DateInput label="From" source="fromdate" parse={dateParser} allowEmpty />
-            <DateInput label="To" source="todate" parse={dateParser} allowEmpty />
-            <SelectInput source="action" choices={actions} allowEmpty />
+            <SelectInput source="role" choices={roles} />
+            <DateInput label="From" source="fromdate" parse={dateParser} />
+            <DateInput label="To" source="todate" parse={dateParser} />
+            <SelectInput source="action" choices={actions} />
             <BooleanInput source="active" />
             <RichTextInput source="comment" />
         </SimpleForm>
@@ -110,14 +97,18 @@ export const ExtractEdit = (props) => (
     <Edit  {...props}>
         <SimpleForm>
             <TextInput source="search" validate={required()} />
-            <SelectInput source="role" choices={roles} allowEmpty />
-            <DateInput label="From" source="fromdate" parse={dateParser} allowEmpty />
-            <DateInput label="To" source="todate" parse={dateParser} allowEmpty />
-            <SelectInput source="action" choices={actions} allowEmpty />
+            <SelectInput source="role" choices={roles} />
+            <DateInput label="From" source="fromdate" parse={dateParser} />
+            <DateInput label="To" source="todate" parse={dateParser} />
+            <SelectInput source="action" choices={actions} />
             <BooleanInput source="active" />
             <RichTextInput source="comment" />
-            <DateField label="Created" source="created" showTime />
-            <DateField label="Updated" source="updated" showTime />
+            <Labeled label="Created">
+                <DateField source="created" showTime />
+            </Labeled>
+            <Labeled label="Updated">
+                <DateField source="updated" showTime />
+            </Labeled>
         </SimpleForm>
     </Edit>
 );

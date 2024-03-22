@@ -3,8 +3,8 @@ import { MyConfig } from './MyConfig';
 import request from 'superagent';
 import jwt_decode from 'jwt-decode';
 
-import withWidth from '@material-ui/core/withWidth';
-import { AppBar, Title, Responsive } from 'react-admin';
+import { useMediaQuery } from '@mui/material';
+import { AppBar, Title } from 'react-admin';
 
 import { DashTables } from './DashTables';
 import { DashText } from './DashText';
@@ -28,14 +28,14 @@ class DashboardCmp extends Component {
     state = {};
 
     handleGetBoard() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('gotoken');
         request
             .get(MyConfig.API_URL + '/admin/api/v1/board')
             //.set('X-MyToken', MyConfig.API_KEY)
             .set('Authorization', `Bearer ${token}`)
             .end(function(error, response){
                 if ( (error && error.status === 401 ) || response === undefined) {
-                    localStorage.removeItem('token');
+                    localStorage.removeItem('gotoken');
                     window.location.href = MyConfig.BASE_PATH + '#/login';
                     return;
                 }
@@ -62,9 +62,9 @@ class DashboardCmp extends Component {
     componentDidMount() {
         this.handleGetBoard();
         let timer = setInterval(this.tick, 60000);
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('gotoken');
         if (token !== null) {
-            var decoded = jwt_decode(localStorage.getItem('token'));
+            var decoded = jwt_decode(localStorage.getItem('gotoken'));
             this.setState({username: decoded.id});
         }
         this.setState({timer});
@@ -87,67 +87,42 @@ class DashboardCmp extends Component {
             record,
         } = this.state;
         return (
-            <Responsive
-                small = {
-                    <div>
-                        <AppBar title="DIOC" />
+            <div>
+                <Title title="Distributed IOC manager" />
+                <div style={styles.flex}>
+                    <div style={styles.leftCol}>
                         <div style={styles.flex}>
-                            <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={username}  />
+                            <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={null}  />
                         </div>
                         <div style={styles.flex}>
-                            <DashText record={record} 
-                                style={styles.docs} 
-                                name="Searchs" 
+                            <DashText record={record}
+                                style={styles.agents}
+                                name="Agents"
+                                subtitle="Downloadable agents"
+                                txt="docagents"  />
+                        </div>
+                        <div style={styles.flex}>
+                            <DashText record={record}
+                                style={styles.docs}
+                                name="Searchs"
                                 subtitle="Tips and tricks"
                                 txt="docsearchs"  />
                         </div>
+                    </div>
+                    <div style={styles.rightCol}>
                         <div style={styles.flex}>
-                            <DashText record={record} 
-                                style={styles.docs} 
-                                name="Doc" 
+                            <DashText record={record}
+                                style={styles.docs}
+                                name="Doc"
                                 subtitle="Main doc"
                                 txt="docs"  />
                         </div>
                     </div>
-                }
-                medium={
-                    <div>
-                        <Title title="Distributed IOC manager" />
-                        <div style={styles.flex}>
-                            <div style={styles.leftCol}>
-                                <div style={styles.flex}>
-                                    <DashTables nbagents={nbAgents} nbsurveys={nbSurveys} nbalerts={nbAlerts} subtitle={null}  />
-                                </div>
-                                <div style={styles.flex}>
-                                    <DashText record={record} 
-                                        style={styles.agents} 
-                                        name="Agents" 
-                                        subtitle="Downloadable agents"
-                                        txt="docagents"  />
-                                </div>
-                                <div style={styles.flex}>
-                                    <DashText record={record} 
-                                        style={styles.docs} 
-                                        name="Searchs" 
-                                        subtitle="Tips and tricks"
-                                        txt="docsearchs"  />
-                                </div>
-                            </div>
-                            <div style={styles.rightCol}>
-                                <div style={styles.flex}>
-                                    <DashText record={record} 
-                                        style={styles.docs} 
-                                        name="Doc" 
-                                        subtitle="Main doc"
-                                        txt="docs"  />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            />
+                </div>
+            </div>
         );
     }
 
 }
-export default withWidth()(DashboardCmp);
+
+export default DashboardCmp;

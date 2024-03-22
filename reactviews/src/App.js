@@ -1,15 +1,16 @@
 import React from 'react';
 import { fetchUtils, Admin, Resource } from 'react-admin';
+import { Route } from 'react-router-dom';
 //import './App.css';
 
-import AlertIcon from '@material-ui/icons/Assessment';
-import SurveyIcon from '@material-ui/icons/WifiTethering';
-import AgentIcon from '@material-ui/icons/Wifi';
-import ExtractIcon from '@material-ui/icons/Transform';
-import IpIcon from '@material-ui/icons/Fingerprint';
-import MapIcon from '@material-ui/icons/Public';
+import AlertIcon from '@mui/icons-material/Assessment';
+import SurveyIcon from '@mui/icons-material/WifiTethering';
+import AgentIcon from '@mui/icons-material/Wifi';
+import ExtractIcon from '@mui/icons-material/Transform';
+import IpIcon from '@mui/icons-material/Fingerprint';
+import MapIcon from '@mui/icons-material/Public';
 
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 import myTheme from './myTheme';
 
 import { Dashboard } from './Dashboard';
@@ -26,7 +27,6 @@ import mySimpleRest from './myJsonRestNew';
 
 import authLoginPage from './authLoginPage';
 import authClient from './authClient';
-import customRoutes from './customRoutes';
 
 const httpClient = (url, options = {}) => {
     if (!options.headers) {
@@ -34,7 +34,7 @@ const httpClient = (url, options = {}) => {
     }
     // add your own headers here
     //options.headers.set('X-MyToken', MyConfig.API_KEY );
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('gotoken');
     options.headers.set('Authorization', `Bearer ${token}`);
     return fetchUtils.fetchJson(url, options);
 };
@@ -46,7 +46,7 @@ const restClient = mySimpleRest( MyConfig.API_URL  + '/admin/api/v1', httpClient
 const App = () => (
     <Admin title='Distributed IOC manager' theme={ createTheme(myTheme) }
         loginPage={authLoginPage} authProvider={authClient(MyConfig.AUTH_URL)}
-        customRoutes={customRoutes} dashboard={Dashboard} 
+        dashboard={Dashboard} 
         dataProvider={restClient}>
         <Resource name="alertes" list={AlertList} edit={AlertEdit} icon={AlertIcon} />
         <Resource name="surveys" list={SurveyList}  edit={SurveyEdit} create={SurveyCreate} icon={SurveyIcon} />

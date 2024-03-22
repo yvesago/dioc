@@ -1,15 +1,15 @@
 import React from 'react';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 
 import { EditButton, RichTextField } from 'react-admin';
 
-import InfoIcon from '@material-ui/icons/Info';
+import InfoIcon from '@mui/icons-material/Info';
 
 export const DashText = ({...props}) => {
     const { name, style, subtitle, txt } = props;
-    props.basePath='board';
+    props.resource='board';
     return (
         <Card style={style.card}>
             <InfoIcon style={style.icon} />

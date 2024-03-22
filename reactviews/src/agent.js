@@ -1,12 +1,11 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     TextInput, required, EditButton, DateField,
-    RichTextField, SelectInput, Filter, Responsive,
-    SimpleList
+    RichTextField, SelectInput, Filter, Labeled,
+    SimpleList, useRecordContext
 } from 'react-admin';
-import RichTextInput from 'ra-input-rich-text';
-import { withStyles } from '@material-ui/core/styles';
-import classnames from 'classnames';
+import { RichTextInput } from 'ra-input-rich-text';
+import { useMediaQuery } from '@mui/material';
 import { roles } from './MyConfig';
 
 
@@ -16,22 +15,15 @@ const cmd = [
     { label: 'STOP', id: 'STOP', name: 'STOP' },
 ];
 
-const coloredStyles = {
-    up: { color: 'green' },
-    down: { color: 'red' },
-};
-
-const ColoredTextField = withStyles(coloredStyles)(
-    ({ classes, ...props }) => (
+const ColoredTextField = (props) => {
+    const record = useRecordContext();
+    return (
         <TextField
-            className={classnames({
-                [classes.down]: props.record.status === 'OffLine',
-                [classes.up]: props.record.status === 'OnLine',
-            })}
+            sx={{ color: record.status === 'OnLine' ? 'green' : 'red' }}
             {...props}
         />
-    ));
-
+    );
+};
 ColoredTextField.defaultProps = TextField.defaultProps;
 
 
@@ -54,32 +46,36 @@ const styles = {
         display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const AgentList = withStyles(styles)(({ classes, ...props }) => (
-    <List bulkActionButtons={false} filters={<AgentFilter />} {...props}>
-        <Responsive
-            small={
+export const AgentList = (props) => {
+    const isSmall = useMediaQuery(
+        theme => theme.breakpoints.down('sm'),
+        { noSsr: true }
+    );
+    return (
+        <List bulkActionButtons={false} filters={<AgentFilter />} {...props}>
+            {isSmall ? (
                 <SimpleList
                     primaryText={record => `[${record.status}] ${record.ip}`}
                     secondaryText={record => record.filesurvey}
                     tertiaryText={record => new Date(record.updated).toLocaleString()}
                 />
-            }
-            medium={
+            ) : (
                 <Datagrid>
                     <TextField source="ip" />
                     <TextField source="filesurvey" />
                     <ColoredTextField source="status" />
                     <TextField source="role" />
-                    <RichTextField source="lines" className={classes.field} />
+                    <RichTextField source="lines" sx = { styles.field }/>
                     <RichTextField source="comment" stripTags />
                     <TextField source="cmd" />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
+            )
             }
-        />
-    </List>
-));
+        </List>
+    );
+};
 
 
 export const AgentCreate = (props) => (
@@ -98,12 +94,20 @@ export const AgentCreate = (props) => (
 export const AgentEdit = (props) => (
     <Edit title={<AgentTitle />} {...props}>
         <SimpleForm>
-            <TextField source="filesurvey" />
-            <DateField label="created" source="created" showTime />
-            <DateField label="updated" source="updated" showTime />
-            <TextField source="lines"  style={{width: '100%', whiteSpace: 'pre-line'}}/>
-            <SelectInput source="role" choices={roles} allowEmpty />
-            <SelectInput source="cmd" choices={cmd} allowEmpty optionText="label" />
+            <Labeled label="File Survey">
+                <TextField source="filesurvey" />
+            </Labeled>
+            <Labeled label="Created">
+                <DateField label="created" source="created" showTime />
+            </Labeled>
+            <Labeled label="Updated">
+                <DateField label="updated" source="updated" showTime />
+            </Labeled>
+            <Labeled label="Lines">
+                <TextField source="lines"  style={{width: '100%', whiteSpace: 'pre-line'}}/>
+            </Labeled>
+            <SelectInput source="role" choices={roles} />
+            <SelectInput source="cmd" choices={cmd} optionText="label" />
             <RichTextInput source="comment" />
             <TextInput source="crca" disabled />
         </SimpleForm>

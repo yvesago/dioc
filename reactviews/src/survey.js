@@ -1,11 +1,10 @@
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm,
-    TextInput, required, EditButton, DateField,
-    RichTextField, SelectInput, Filter, Responsive, SimpleList
+    TextInput, required, EditButton, DateField, useRecordContext,
+    RichTextField, SelectInput, Filter, SimpleList, Labeled
 } from 'react-admin';
-import RichTextInput from 'ra-input-rich-text';
-import { withStyles } from '@material-ui/core/styles';
-import classnames from 'classnames';
+import { useMediaQuery } from '@mui/material';
+import { RichTextInput } from 'ra-input-rich-text';
 import { roles } from './MyConfig';
 
 const levels = [
@@ -14,29 +13,22 @@ const levels = [
 ];
 
 
-const coloredStyles = {
-    warn: { color: 'orange' },
-    critic: { color: 'red' },
-};
-
-const ColoredTextField = withStyles(coloredStyles)(
-    ({ classes, ...props }) => (
+const ColoredTextField = (props) => {
+    const record = useRecordContext();
+    return (
         <TextField
-            className={classnames({
-                [classes.warn]: props.record.level === 'warn',
-                [classes.critic]: props.record.level === 'critic',
-            })}
+            sx={{ color: record.level === 'critic' ? 'red' : 'orange' }}
             {...props}
         />
-    ));
-
+    );
+};
 ColoredTextField.defaultProps = TextField.defaultProps;
 
 
 const SurveyFilter = (props) => (
     <Filter {...props}>
         <TextInput label="Comment" source="comment" />
-        <SelectInput source="role" choices={roles} allowEmpty alwaysOn />
+        <SelectInput source="role" choices={roles} alwaysOn />
     </Filter>
 );
 
@@ -45,37 +37,40 @@ const styles = {
         display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const SurveyList = withStyles(styles)(({ classes, ...props }) => (
-    <List bulkActionButtons={false} filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={30} {...props}>
-        <Responsive
-            small={
+export const SurveyList = ({ classes, ...props }) => {
+    const isSmall = useMediaQuery(
+        theme => theme.breakpoints.down('sm'),
+        { noSsr: true }
+    );
+    return (
+        <List bulkActionButtons={false} filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={50} {...props}>
+            {isSmall ? (
                 <SimpleList
                     primaryText={record => record.search}
                     secondaryText={record => `Role: ${record.role}, Level: ${record.level}`}
                     tertiaryText={record => new Date(record.updated).toLocaleString()}
                 />
-            }
-            medium={
+            ) : (
                 <Datagrid>
                     <TextField source="search" />
                     <TextField source="role" />
                     <ColoredTextField source="level" />
-                    <RichTextField source="comment" className={classes.field} stripTags />
+                    <RichTextField source="comment" sx={ styles.field } stripTags />
                     <DateField label="updated" source="updated" showTime />
                     <EditButton />
                 </Datagrid>
-            }
-        />
-    </List>
-));
+            )}
+        </List>
+    );
+};
 
 
 export const SurveyCreate = (props) => (
     <Create {...props}>
         <SimpleForm redirect="list">
             <TextInput source="search" validate={required()} />
-            <SelectInput source="level" choices={levels} allowEmpty />
-            <SelectInput source="role" choices={roles} allowEmpty />
+            <SelectInput source="level" choices={levels} />
+            <SelectInput source="role" choices={roles} />
             <RichTextInput source="comment" />
         </SimpleForm>
     </Create>
@@ -86,11 +81,15 @@ export const SurveyEdit = (props) => (
     <Edit  {...props}>
         <SimpleForm>
             <TextInput source="search" validate={required()} />
-            <SelectInput source="role" choices={roles} allowEmpty />
-            <SelectInput source="level" choices={levels} allowEmpty />
+            <SelectInput source="role" choices={roles} />
+            <SelectInput source="level" choices={levels} />
             <RichTextInput source="comment" />
-            <DateField label="Created" source="created" showTime />
-            <DateField label="Updated" source="updated" showTime />
+            <Labeled label="Created">
+                <DateField source="created" />
+            </Labeled>
+            <Labeled label="Updated">
+                <DateField source="updated" />
+            </Labeled>
             <TextInput source="crcs" validate={required()} disabled />
         </SimpleForm>
     </Edit>

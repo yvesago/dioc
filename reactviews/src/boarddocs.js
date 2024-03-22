@@ -1,29 +1,35 @@
 import React from 'react';
-import { Edit, SimpleForm  } from 'react-admin';
-import RichTextInput from 'ra-input-rich-text';
-import Divider from '@material-ui/core/Divider';
+import { Edit, SimpleForm, Toolbar, SaveButton  } from 'react-admin';
+import { RichTextInput } from 'ra-input-rich-text';
+import Divider from '@mui/material/Divider';
 
-/* TODO
- How to remove delete button since 2.3.0 ?
-*/
+
+const BoardEditToolbar = () => {
+    return (
+        <Toolbar>
+            <SaveButton />
+        </Toolbar>
+    );
+};
 
 export const BoardEdit = (props) => (
-    <Edit title="Docs" undoable={false} {...props}>
-        <SimpleForm redirect="/">
+    <Edit title="Docs" redirect="/" undoable={false}>
+        <SimpleForm sx={{width: '100%'}} toolbar={<BoardEditToolbar />}>
+            <Divider flexItem />
             <RichTextInput
                 source="docs"
                 label="Main Doc"
             />
             <br />
             <br />
-            <Divider inset />
+            <Divider flexItem />
             <RichTextInput
                 source="docagents"
                 label="Agents"
             />
             <br />
             <br />
-            <Divider inset />
+            <Divider flexItem />
             <RichTextInput
                 source="docsearchs"
                 label="Searchs"

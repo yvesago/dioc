@@ -13,6 +13,6 @@
     "AuthCASUrl": "http://localhost:3004",
     "AuthJWTTimeout": 1,
     "AuthJWTPassword": "secretpass",
-    "AuthJWTCallback": "http://localhost:3000/#callback",
+    "AuthJWTCallback": "http://localhost:3000/#/auth-callback",
     "AuthValidLogins": ["admin1","admin2"]
 }
