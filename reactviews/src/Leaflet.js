@@ -13,7 +13,7 @@ import { Box } from '@mui/material';
 import 'leaflet/dist/leaflet.css';
 
 function getLeafletPopup(name, ipname,loc) {
-    var ipurl = '/#/ips/' + name;
+    var ipurl = MyConfig.BASE_PATH + '#/ips/' + name;
     return (
         <div>
             <b>{loc}:</b><br /> {ipname} »» <a href={ipurl}>View IP details</a>

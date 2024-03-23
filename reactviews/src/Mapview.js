@@ -4,6 +4,8 @@ import CardContent from '@mui/material/CardContent';
 import { Title } from 'react-admin';
 import MyLeaflet from './Leaflet';
 
+
+
 export default () => (
     <Card>
         <Title title="IP map" />

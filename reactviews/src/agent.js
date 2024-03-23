@@ -4,7 +4,12 @@ import { List, Datagrid, TextField, Edit, Create, SimpleForm,
     RichTextField, SelectInput, Filter, Labeled,
     SimpleList, useRecordContext
 } from 'react-admin';
-import { RichTextInput } from 'ra-input-rich-text';
+//import { RichTextInput } from 'ra-input-rich-text';
+const RichTextInput = React.lazy(() =>
+    import('ra-input-rich-text').then(module => ({
+        default: module.RichTextInput,
+    }))
+);
 import { useMediaQuery } from '@mui/material';
 import { roles } from './MyConfig';
 

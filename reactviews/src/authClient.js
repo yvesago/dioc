@@ -46,6 +46,7 @@ const authClient = (authUrl) => ({
         console.log(match[1]);
         const token = match[1]; 
         localStorage.setItem('gotoken', token);
+        //console.log(token);
         //window.location.href = MyConfig.BASE_PATH;
         window.location.href = localStorage.getItem(PreviousLocationStorageKey) !== null ? localStorage.getItem(PreviousLocationStorageKey) : MyConfig.BASE_PATH;
         return Promise.resolve();

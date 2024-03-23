@@ -44,7 +44,7 @@ const restClient = mySimpleRest( MyConfig.API_URL  + '/admin/api/v1', httpClient
 
 
 const App = () => (
-    <Admin title='Distributed IOC manager' theme={ createTheme(myTheme) }
+    <Admin disableTelemetry title='Distributed IOC manager' theme={ createTheme(myTheme) }
         loginPage={authLoginPage} authProvider={authClient(MyConfig.AUTH_URL)}
         dashboard={Dashboard} 
         dataProvider={restClient}>

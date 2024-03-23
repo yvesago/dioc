@@ -1,6 +1,11 @@
 import React from 'react';
 import { Edit, SimpleForm, Toolbar, SaveButton  } from 'react-admin';
-import { RichTextInput } from 'ra-input-rich-text';
+//import { RichTextInput } from 'ra-input-rich-text';
+const RichTextInput = React.lazy(() =>
+    import('ra-input-rich-text').then(module => ({
+        default: module.RichTextInput,
+    }))
+);
 import Divider from '@mui/material/Divider';
 
 
