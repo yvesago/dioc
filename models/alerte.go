@@ -74,7 +74,7 @@ func (a *Alerte) SendMail(mserver string, from string, to []string) {
 	m.SetHeader("Subject", "[ALERTE] ("+strings.ToUpper(a.Level)+") "+a.Search)
 	m.SetBody("text/plain", msg)
 
-	d := gomail.Dialer{Host: server, Port: port}
+	d := gomail.Dialer{Host: server, Port: port, LocalName: "dioc"}
 	if server == "smtp.my.test" {
 		return
 	}
