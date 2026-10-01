@@ -131,6 +131,7 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
     },
 
     updateMany: async (resource, params) => {
+        // TODO to be fixed
         const query = {
             filter: JSON.stringify({ id: params.ids}),
         };
@@ -162,12 +163,16 @@ export default(apiUrl, httpClient = fetchUtils.fetchJson) => ({
         const query = {
             filter: JSON.stringify({ id: params.ids}),
         };
-        const url = `${apiUrl}/${resource}?${stringify(query)}`;
-        const { json } = await httpClient(url, {
-            method: 'DELETE',
-            body: JSON.stringify(params.data),
-        });
-        return { data: json };
+        return Promise.all(
+            params.ids.map(id =>
+                httpClient(`${apiUrl}/${resource}/${id}`, {
+                    method: 'DELETE',
+                })
+            )
+        ).then(responses => ({
+            data: responses.map(response => response.json),
+        }));
+
     },
 });
 

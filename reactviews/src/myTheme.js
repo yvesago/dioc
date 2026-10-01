@@ -1,4 +1,4 @@
-import blue from '@mui/material/colors/blue';
+//import blue from '@mui/material/colors/blue';
 /*import indigo from '@material-ui/core/colors/indigo';
 import cyan from '@material-ui/core/colors/cyan';
 import grey from '@material-ui/core/colors/grey';
@@ -11,7 +11,7 @@ import black from '@material-ui/core/colors';*/
 const myTheme = {
     //spacing: spacing,
     palette: {
-        primary: blue,
+        // primary: blue,
         secondary: {main: '#2196F3'},
     },  
 };

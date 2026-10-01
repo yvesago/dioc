@@ -51,13 +51,13 @@ const styles = {
         display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const AgentList = (props) => {
+export const AgentList = () => {
     const isSmall = useMediaQuery(
         theme => theme.breakpoints.down('sm'),
         { noSsr: true }
     );
     return (
-        <List bulkActionButtons={false} filters={<AgentFilter />} {...props}>
+        <List bulkActionButtons={false} filters={<AgentFilter />}>
             {isSmall ? (
                 <SimpleList
                     primaryText={record => `[${record.status}] ${record.ip}`}
@@ -83,8 +83,8 @@ export const AgentList = (props) => {
 };
 
 
-export const AgentCreate = (props) => (
-    <Create {...props}>
+export const AgentCreate = () => (
+    <Create>
         <SimpleForm redirect="list">
             <TextInput source="ip" validate={required()} />
             <TextInput source="filesurvey" />
@@ -96,8 +96,8 @@ export const AgentCreate = (props) => (
     </Create>
 );
 
-export const AgentEdit = (props) => (
-    <Edit title={<AgentTitle />} {...props}>
+export const AgentEdit = () => (
+    <Edit title={<AgentTitle />}>
         <SimpleForm>
             <Labeled label="File Survey">
                 <TextField source="filesurvey" />

@@ -54,13 +54,13 @@ const styles = {
         display: 'inline-block', width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const ExtractList = ({ props }) => {
+export const ExtractList = () => {
     const isSmall = useMediaQuery(
         theme => theme.breakpoints.down('sm'),
         { noSsr: true }
     );
     return (
-        <List bulkActionButtons={false} filters={postFilters} perPage={50} actions={<ExtractActions />} sort={{ field: 'updated', order: 'DESC' }} {...props}>
+        <List bulkActionButtons={false} filters={postFilters} perPage={50} actions={<ExtractActions />} sort={{ field: 'updated', order: 'DESC' }}>
             {isSmall ? (
                 <SimpleList
                     primaryText={record => record.search}
@@ -83,8 +83,8 @@ export const ExtractList = ({ props }) => {
 };
 
 
-export const ExtractCreate = (props) => (
-    <Create {...props}>
+export const ExtractCreate = () => (
+    <Create>
         <SimpleForm redirect="list">
             <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} />
@@ -98,8 +98,8 @@ export const ExtractCreate = (props) => (
 );
 
 
-export const ExtractEdit = (props) => (
-    <Edit  {...props}>
+export const ExtractEdit = () => (
+    <Edit>
         <SimpleForm>
             <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} />

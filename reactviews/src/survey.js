@@ -42,13 +42,13 @@ const styles = {
         display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const SurveyList = ({ classes, ...props }) => {
+export const SurveyList = ({ classes }) => {
     const isSmall = useMediaQuery(
         theme => theme.breakpoints.down('sm'),
         { noSsr: true }
     );
     return (
-        <List bulkActionButtons={false} filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={50} {...props}>
+        <List bulkActionButtons={false} filters={<SurveyFilter />} sort={{ field: 'updated', order: 'DESC' }} perPage={50}>
             {isSmall ? (
                 <SimpleList
                     primaryText={record => record.search}
@@ -70,8 +70,8 @@ export const SurveyList = ({ classes, ...props }) => {
 };
 
 
-export const SurveyCreate = (props) => (
-    <Create {...props}>
+export const SurveyCreate = () => (
+    <Create>
         <SimpleForm redirect="list">
             <TextInput source="search" validate={required()} />
             <SelectInput source="level" choices={levels} />
@@ -82,8 +82,8 @@ export const SurveyCreate = (props) => (
 );
 
 
-export const SurveyEdit = (props) => (
-    <Edit  {...props}>
+export const SurveyEdit = () => (
+    <Edit>
         <SimpleForm>
             <TextInput source="search" validate={required()} />
             <SelectInput source="role" choices={roles} />

@@ -1,39 +1,46 @@
 import React from 'react';
-import {Doughnut, Chart} from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
 
-// some of this code is a variation on https://jsfiddle.net/cmyker/u6rr5moq/
-var originalDoughnutDraw = Chart.controllers.doughnut.prototype.draw;
-Chart.helpers.extend(Chart.controllers.doughnut.prototype, {
-    draw: function() {
-        originalDoughnutDraw.apply(this, arguments);
-    
-        var chart = this.chart;
-        var width = chart.chart.width,
-            height = chart.chart.height,
-            ctx = chart.chart.ctx;
-
-        var fontSize = (height / 114).toFixed(2);
-        ctx.font = fontSize + 'em sans-serif';
-        ctx.textBaseline = 'middle';
-
-        var sum = 0;
-        for (var i = 0; i < chart.config.data.datasets[0].data.length; i++) {
-            sum += chart.config.data.datasets[0].data[i];
-        }
-
-        var text = sum,
-            textX = Math.round((width - ctx.measureText(text).width) / 2),
-            textY = height / 2;
-
-        ctx.fillText(text, textX, textY);
-    }
-});
 
 const options={
     legend: {
         display: false,
     },
 };
+
+
+ChartJS.register(ArcElement, Tooltip);
+
+const textCenterPlugin = {
+    id: 'textCenter',
+    beforeDraw(chart) {
+        const { ctx, width, height } = chart;
+        ctx.restore();
+
+        // Configuration de la police (s'adapte dynamiquement à la taille du graphique)
+        const fontSize = (height / 120).toFixed(2);
+        ctx.font = `${fontSize}em sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#1e293b'; // Couleur du texte
+
+        var sum = 0;
+        for (var i = 0; i < chart.config.data.datasets[0].data.length; i++) {
+            sum += chart.config.data.datasets[0].data[i];
+        }
+        // Texte à afficher
+        const text = sum;
+
+        // Calcul du centrage horizontal et vertical
+        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+        const textY = height / 2;
+
+        // Dessiner le texte
+        ctx.fillText(text, textX, textY);
+        ctx.save();
+    },
+};
+
 
 
 class DonutWithText extends React.Component {
@@ -87,7 +94,7 @@ class DonutWithText extends React.Component {
         return (
             <div>
                 {this.props.title} : 
-                <Doughnut data={this.state.data} options={options}  height={150} width={180} />
+                <Doughnut data={this.state.data} options={options} plugins={[textCenterPlugin]}  height={150} width={180} />
             </div>
         );
     }

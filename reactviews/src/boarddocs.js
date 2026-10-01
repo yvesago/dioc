@@ -17,9 +17,9 @@ const BoardEditToolbar = () => {
     );
 };
 
-export const BoardEdit = (props) => (
+export const BoardEdit = () => (
     <Edit title="Docs" redirect="/" undoable={false}>
-        <SimpleForm sx={{width: '100%'}} toolbar={<BoardEditToolbar />}>
+        <SimpleForm toolbar={<BoardEditToolbar />}>
             <Divider flexItem />
             <RichTextInput
                 source="docs"

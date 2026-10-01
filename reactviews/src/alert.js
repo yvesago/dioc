@@ -38,10 +38,10 @@ const styles = {
         display: 'inline-block', width: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const AlertList = ({ classes, ...props }) => {
+export const AlertList = ({ classes }) => {
     const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
     return (
-        <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={50} {...props}>
+        <List filters={<AlertFilter />}  sort={{ field: 'updated', order: 'DESC' }} perPage={50}>
             {isSmall ? (
                 <SimpleList
                     primaryText={record => `[${record.level}] ${record.search}`}
@@ -63,8 +63,8 @@ export const AlertList = ({ classes, ...props }) => {
     );
 };
 
-export const AlertEdit = (props) => (
-    <Edit {...props}>
+export const AlertEdit = () => (
+    <Edit>
         <SimpleForm>
             <Labeled label="Search">
                 <TextField source="search" />

@@ -56,10 +56,10 @@ const styles = {
         display: 'inline-block', width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}
 };
 
-export const IPList = ({ props }) => {
+export const IPList = () => {
     const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
     return (
-        <List filters={postFilters} perPage={50} actions={<FlushIPActions />} exporter={exporter} {...props}>
+        <List filters={postFilters} perPage={50} actions={<FlushIPActions />} exporter={exporter}>
             {isSmall ? (
                 <SimpleList
                     primaryText={record => `${record.name} -- ${record.host}`}
@@ -86,8 +86,8 @@ export const IPList = ({ props }) => {
 };
 
 
-export const IPCreate = (props) => (
-    <Create {...props}>
+export const IPCreate = () => (
+    <Create>
         <SimpleForm>
             <TextInput source="name" validate={required()} />
             <RichTextInput source="comment" />
